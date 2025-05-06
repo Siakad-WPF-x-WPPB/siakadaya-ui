@@ -20,6 +20,42 @@ Route::get('/', [DashboardController::class, 'index'])->name('pages-admin-dashbo
 Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('pages-admin-mahasiswa');
 Route::get('/dosen', [DosenController::class, 'index'])->name('pages-admin-dosen');
 
+// Testing Get Data
+Route::get('/tahun-ajar', function () {
+  return response()->json([
+    'data' => \App\Models\TahunAjar::all()
+  ]);
+});
+
+Route::get('/jurusan', function () {
+  return response()->json([
+    'data' => \App\Models\Jurusan::all()
+  ]);
+});
+Route::get('/ruangan', function () {
+  return response()->json([
+    'data' => \App\Models\Ruangan::all()
+  ]);
+});
+
+Route::get('/kelas', function () {
+  return response()->json([
+    'data' => \App\Models\Kelas::all()
+  ]);
+});
+
+Route::get('/dosen', function () {
+  return response()->json([
+    'data' => \App\Models\Dosen::all()
+  ]);
+});
+
+Route::get('/mahasiswa', function () {
+  return response()->json([
+    'data' => \App\Models\Mahasiswa::all()
+  ]);
+});
+
 // locale
 Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
 Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
