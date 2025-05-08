@@ -3,6 +3,7 @@
 namespace App\Http\Resources\admin;
 
 use App\Models\Mahasiswa;
+use App\Models\Matakuliah;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -28,9 +29,22 @@ class MahasiswaCollection extends ResourceCollection
     $filteredRecords = $totalRecords; // Assume no filtering for now
 
     // Generate fake data for the current page
-    $data = Mahasiswa::factory()
-      ->count(min($length, $totalRecords - $start)) // Generate only the required number of records
-      ->make()
+    $data = Matakuliah::query()
+      ->offset($start)
+      ->limit($length)
+      ->get()
+      ->map(
+        function ($dosen) {
+          return [
+            'nip' => $dosen->nip,
+            'nama_dosen' => $dosen->nama_dosen,
+            'telepon' => $dosen->telepon,
+            'golongan_akhir' => $dosen->golongan_akhir,
+            'jenis_kelamin' => $dosen->jenis_kelamin,
+            'jabatan' => $dosen->jabatan,
+          ];
+        }
+      )
       ->toArray();
 
     return [
