@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Resources\admin\DosenCollection;
+use App\Http\Resources\admin\KelasCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,9 +29,7 @@ Route::get('/ruangan', function () {
 });
 
 Route::get('/kelas', function () {
-  return response()->json([
-    'data' => \App\Models\Kelas::all()
-  ]);
+  return new KelasCollection([]);
 });
 
 Route::get('/dosen', function () {

@@ -12,10 +12,10 @@ return new class extends Migration
   public function up(): void
   {
     Schema::create('mahasiswa', function (Blueprint $table) {
-      $table->id();
+      $table->uuid('mahasiswa_id')->primary();
+      $table->foreignId('prodi_id')->constrained('program_studi')->onDelete('cascade');
+      $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
       $table->string('nrp')->unique();
-      $table->foreignId('kode_jurusan')->constrained('jurusan')->onDelete('cascade');
-      $table->foreignId('id_kelas')->constrained('kelas')->onDelete('cascade');
       $table->string('nama_mahasiswa');
       $table->enum('jenis_kelamin', ['L', 'P']);
       $table->char('telepon', length: 15);

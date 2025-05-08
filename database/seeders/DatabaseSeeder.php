@@ -33,5 +33,22 @@ class DatabaseSeeder extends Seeder
     //   'name' => 'Test User',
     //   'email' => 'test@example.com',
     // ]);
+    $dosen = Dosen::factory()->create([
+      'nip' => '1234567890',
+      'nama_dosen' => 'Dr. Andi Setiawan',
+      'email' => 'andisetiawan@example.com',
+      'telepon' => '081234567890',
+      'tanggal_lahir' => '1980-05-15',
+      'jenis_kelamin' => 'L',
+      'kode_jurusan' => '1',
+      'jabatan' => 'Dosen Tetap',
+      'golongan_akhir' => 'III/a',
+      'is_wali' => false
+  ]);
+
+  Kelas::factory()->create([
+    'nama_kelas' => 'D3 IT B',
+    'nip' => $dosen->id  // <- ini penting
+  ]);
   }
 }
