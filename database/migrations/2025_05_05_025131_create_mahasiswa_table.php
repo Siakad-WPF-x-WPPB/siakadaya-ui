@@ -12,19 +12,27 @@ return new class extends Migration
   public function up(): void
   {
     Schema::create('mahasiswa', function (Blueprint $table) {
-      $table->uuid('mahasiswa_id')->primary();
+      $table->uuid('id')->primary();
       $table->foreignId('prodi_id')->constrained('program_studi')->onDelete('cascade');
       $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
       $table->string('nrp')->unique();
-      $table->string('nama_mahasiswa');
+      $table->string('nama');
       $table->enum('jenis_kelamin', ['L', 'P']);
       $table->char('telepon', length: 15);
       $table->string('email')->unique();
       $table->string('password');
+      $table->string('agama');
+      $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
       $table->date('tanggal_lahir');
       $table->date('tanggal_masuk');
       $table->enum('status', ['Aktif', 'Cuti', 'Keluar']);
-      $table->text('alamat');
+      $table->text('alamat_jalan');
+      $table->string('provinsi');
+      $table->string('kode_pos');
+      $table->string('negara');
+      $table->string('kelurahan');
+      $table->string('kecamatan');
+      $table->string('kota');
       $table->timestamps();
     });
   }
