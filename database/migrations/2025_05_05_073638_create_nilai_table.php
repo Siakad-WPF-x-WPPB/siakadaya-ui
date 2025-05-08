@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('nilai', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('nip')->constrained('dosen')->onDelete('cascade');
-            $table->foreignId('nrp')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignId('kode_matakuliah')->constrained('matakuliah')->onDelete('cascade');
-            $table->foreignId('id_tahun_ajar')->constrained('tahun_ajar')->onDelete('cascade');
+            $table->uuid('id')->primary();
+            $table->foreignId('dosen_id')->constrained('dosen')->onDelete('cascade');
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+            $table->foreignId('mk_id')->constrained('matakuliah')->onDelete('cascade');
+            $table->foreignId('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
             $table->enum('status', ['lulus', 'tidak lulus']);
             $table->enum('nilai_huruf', ['A', 'AB', 'B', 'BC', 'C', 'D', 'E']);
             $table->integer('nilai_angka');

@@ -12,11 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('frs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('nrp')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignId('nip')->constrained('dosen')->onDelete('cascade');
-            $table->foreignId('id_tahun_ajar')->constrained('tahun_ajar')->onDelete('cascade');
-            $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
+            $table->uuid('id')->primary();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+            $table->foreignId('dosen_id')->constrained('dosen')->onDelete('cascade');
+            $table->foreignId('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
             $table->date('tanggal_pengisian');
             $table->timestamps();
         });
