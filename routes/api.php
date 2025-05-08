@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Resources\admin\MahasiswaCollection;
+use App\Http\Resources\admin\MataKuliahCollection;
 
 Route::get('/user', function (Request $request) {
   return $request->user();
@@ -39,4 +40,8 @@ Route::get('/dosen', function () {
 
 Route::get('/mahasiswa', function () {
   return new MahasiswaCollection([]);
+});
+
+Route::get('/matakuliah', function () {
+  return new MataKuliahCollection([]);
 });
