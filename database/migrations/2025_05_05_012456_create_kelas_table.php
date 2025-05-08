@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('kelas', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('dosen_id')->constrained('dosen')->onDelete('cascade');
+            $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
             $table->string('pararel');
             $table->timestamps();
         });

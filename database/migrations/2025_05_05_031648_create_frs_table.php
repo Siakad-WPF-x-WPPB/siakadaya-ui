@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('frs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignId('dosen_id')->constrained('dosen')->onDelete('cascade');
-            $table->foreignId('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
+            $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+            $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
+            $table->foreignUuid('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
             $table->date('tanggal_pengisian');
             $table->timestamps();
         });

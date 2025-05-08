@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('matakuliah', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('prodi_id')->constrained('program_studi')->onDelete('cascade');
+            $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
             $table->string('kode')->unique();
             $table->string('nama');
             $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);

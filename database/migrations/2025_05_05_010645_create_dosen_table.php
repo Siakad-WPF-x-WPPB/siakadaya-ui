@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('dosen', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nip')->unique();
-            $table->foreignId('prodi_id')->constrained('program_studi')->onDelete('cascade');
+            $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
             $table->string('nama');
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->char('telepon', length: 15);

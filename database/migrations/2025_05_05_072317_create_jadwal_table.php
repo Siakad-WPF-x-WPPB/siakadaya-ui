@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('jadwal', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
-            $table->foreignId('dosen_id')->constrained('dosen')->onDelete('cascade');
-            $table->foreignId('mk_id')->constrained('matakuliah')->onDelete('cascade');
-            $table->foreignId('ruangan_id')->constrained('ruangan')->onDelete('cascade');
+            $table->foreignUuid('kelas_id')->constrained('kelas')->onDelete('cascade');
+            $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
+            $table->foreignUuid('mk_id')->constrained('matakuliah')->onDelete('cascade');
+            $table->foreignUuid('ruangan_id')->constrained('ruangan')->onDelete('cascade');
             $table->time('jam_mulai');
             $table->time('jam_selesai');
             $table->date('hari');

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('detail_jadwal', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('jadwal_id')->constrained('jadwal')->onDelete('cascade');
-            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+            $table->foreignUuid('jadwal_id')->constrained('jadwal')->onDelete('cascade');
+            $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->timestamps();
         });
     }

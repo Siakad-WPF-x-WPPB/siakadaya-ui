@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('persetujuan_frs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('frs_id')->constrained('frs')->onDelete('cascade');
-            $table->foreignId('jadwal_id')->constrained('jadwal')->onDelete('cascade');
+            $table->foreignUuid('frs_id')->constrained('frs')->onDelete('cascade');
+            $table->foreignUuid('jadwal_id')->constrained('jadwal')->onDelete('cascade');
             $table->enum('status', ['disetujui', 'ditolak', 'pending'])->default('pending');
             $table->timestamps();
         });

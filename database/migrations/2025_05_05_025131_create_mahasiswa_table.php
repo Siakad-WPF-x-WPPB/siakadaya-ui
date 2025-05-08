@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('mahasiswa', function (Blueprint $table) {
       $table->uuid('id')->primary();
-      $table->foreignId('prodi_id')->constrained('program_studi')->onDelete('cascade');
-      $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
+      $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
+      $table->foreignUuid('kelas_id')->constrained('kelas')->onDelete('cascade');
       $table->string('nrp')->unique();
       $table->string('nama');
       $table->enum('jenis_kelamin', ['L', 'P']);
