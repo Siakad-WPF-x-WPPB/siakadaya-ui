@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jadwal', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_kelas')->constrained('kelas')->onDelete('cascade');
-            $table->foreignId('kode_matakuliah')->constrained('matakuliah')->onDelete('cascade');
-            $table->foreignId('nip')->constrained('dosen')->onDelete('cascade');
-            $table->foreignId('kode_ruangan')->constrained('ruangan')->onDelete('cascade');
+            $table->uuid('id')->primary();
+            $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
+            $table->foreignId('dosen_id')->constrained('dosen')->onDelete('cascade');
+            $table->foreignId('mk_id')->constrained('matakuliah')->onDelete('cascade');
+            $table->foreignId('ruangan_id')->constrained('ruangan')->onDelete('cascade');
             $table->time('jam_mulai');
             $table->time('jam_selesai');
             $table->date('hari');

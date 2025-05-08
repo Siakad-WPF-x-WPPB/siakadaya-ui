@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('program_studi', function (Blueprint $table) {
-            $table->uuid('prodi_id')->primary();
-            $table->string('kode_prodi')->unique();
-            $table->string('nama_prodi');
+            $table->uuid('id')->primary();
+            $table->string('kode')->unique();
+            $table->string('nam');
             $table->timestamps();
         });
     }
