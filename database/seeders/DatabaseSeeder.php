@@ -6,6 +6,7 @@ use App\Models\Dosen;
 use App\Models\Jurusan;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
+use App\Models\Matakuliah;
 use App\Models\Ruangan;
 use App\Models\TahunAjar;
 use App\Models\User;
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
     Kelas::factory(10)->create();
     Mahasiswa::factory(10)->create();
     Ruangan::factory(10)->create();
+    Matakuliah::factory(10)->create();
     // User::factory(10)->create();
 
     // User::factory()->create([

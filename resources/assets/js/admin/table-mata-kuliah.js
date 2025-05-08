@@ -129,16 +129,22 @@ $(function () {
 
   if (dt_basic_table.length) {
     dt_basic = dt_basic_table.DataTable({
-      ajax: assetsPath + 'json/data-mata-kuliah.json',
+      ajax: {
+        url: '/api/matakuliah',
+        dataSrc: function (json) {
+          console.log('Fetched data: ', json);
+          return json.data;
+        }
+      },
       columns: [
         { data: '' },
-        { data: 'kode_mk' },
-        { data: 'kode_mk' },
-        { data: 'nama_mk' },
+        { data: 'kode_matakuliah' },
+        { data: 'kode_matakuliah' },
+        { data: 'nama_matakuliah' },
         { data: 'kode_jurusan' },
         { data: 'sks' },
         { data: 'semester' },
-        { data: 'tipe_mk' },
+        { data: 'tipe_matakuliah' },
         { data: '' }
       ],
       columnDefs: [
