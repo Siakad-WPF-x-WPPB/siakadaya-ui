@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('dosen', function (Blueprint $table) {
             $table->id();
+            $table->string('nip')->unique();
             $table->foreignId('kode_jurusan')->constrained('jurusan')->onDelete('cascade');
             $table->string('nama_dosen');
             $table->enum('jenis_kelamin', ['L', 'P']);

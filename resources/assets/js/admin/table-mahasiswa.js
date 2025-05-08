@@ -139,7 +139,7 @@ $(function () {
       processing: true,
       serverSide: true,
       ajax: {
-        url: 'http://localhost:8000/api/mahasiswa',
+        url: '/api/mahasiswa',
         dataSrc: function (json) {
           console.log('Fetched data: ', json);
           return json.data;

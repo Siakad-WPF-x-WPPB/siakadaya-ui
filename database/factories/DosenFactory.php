@@ -18,6 +18,7 @@ class DosenFactory extends Factory
     {
         return [
             //
+            'nip' => fake()->unique()->numerify('##########'),
             'kode_jurusan' => fake()->randomDigitNotNull(),
             'nama_dosen' => fake()->name(),
             'jenis_kelamin' => fake()->randomElement(['L', 'P']),

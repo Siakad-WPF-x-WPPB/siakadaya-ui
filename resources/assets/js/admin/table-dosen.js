@@ -129,14 +129,20 @@ $(function () {
 
   if (dt_basic_table.length) {
     dt_basic = dt_basic_table.DataTable({
-      ajax: assetsPath + 'json/data-dosen.json',
+      ajax: {
+        url: '/api/dosen',
+        dataSrc: function (json) {
+          console.log('Fetched data: ', json);
+          return json.data;
+        }
+      },
       columns: [
         { data: '' },
         { data: 'nip' },
         { data: 'nip' },
-        { data: 'nama' },
+        { data: 'nama_dosen' },
         { data: 'telepon' },
-        { data: 'program_studi' },
+        { data: 'golongan_akhir' },
         { data: 'jenis_kelamin' },
         { data: 'jabatan' },
         { data: '' }

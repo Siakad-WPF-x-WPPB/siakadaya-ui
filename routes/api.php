@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Resources\admin\DosenCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,9 +34,7 @@ Route::get('/kelas', function () {
 });
 
 Route::get('/dosen', function () {
-  return response()->json([
-    'data' => \App\Models\Dosen::all()
-  ]);
+  return new DosenCollection([]);
 });
 
 Route::get('/mahasiswa', function () {
