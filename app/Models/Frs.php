@@ -25,15 +25,14 @@ class Frs extends Model
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 
-    // Relasi ke Dosen
-    public function dosen()
-    {
-        return $this->belongsTo(Dosen::class, 'dosen_id');
-    }
-
     // Relasi ke Tahun Ajar
     public function tahunAjar()
     {
         return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
+    }
+
+    public function jadwal()
+    {
+        return $this->belongsTo(Jadwal::class, 'jadwal_id');
     }
 }

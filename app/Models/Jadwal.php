@@ -45,4 +45,10 @@ class Jadwal extends Model
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
+
+    public function frs()
+    {
+        return $this->hasMany(Frs::class, 'jadwal_id');
+    }
+
 }
