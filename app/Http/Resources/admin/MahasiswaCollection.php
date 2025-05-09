@@ -50,7 +50,8 @@ class MahasiswaCollection extends ResourceCollection
             'alamat_jalan' => $mahasiswa->alamat_jalan,
             'provinsi' => $mahasiswa->provinsi,
             'kode_pos' => $mahasiswa->kode_pos,
-            'negara' => $mahasiswa->kelurahan,
+            'negara' => $mahasiswa->negara,
+            'kelurahan' => $mahasiswa->kelurahan,
             'kecamatan' => $mahasiswa->kecamatan,
             'kota' => $mahasiswa->kota
           ];
