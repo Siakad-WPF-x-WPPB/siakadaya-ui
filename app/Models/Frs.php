@@ -12,28 +12,27 @@ class Frs extends Model
     protected $table = 'frs';
 
     protected $fillable = [
-        'nrp',
-        'nip',
-        'id_tahun_ajar',
-        'semester',
+        'mahasiswa_id',
+        'jadwal_id',
+        'tahun_ajar_id',
         'tanggal_pengisian',
     ];
 
     // Relasi ke Mahasiswa
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class, 'nrp');
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 
     // Relasi ke Dosen
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class, 'nip');
+        return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 
     // Relasi ke Tahun Ajar
     public function tahunAjar()
     {
-        return $this->belongsTo(TahunAjar::class, 'id_tahun_ajar');
+        return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
     }
 }

@@ -12,10 +12,10 @@ class Nilai extends Model
     protected $table = 'nilai';
 
     protected $fillable = [
-        'nip',
-        'nrp',
-        'kode_matakuliah',
-        'id_tahun_ajar',
+        'dosen_id',
+        'mahasiswa_id',
+        'mk_id',
+        'tahun_ajar_id',
         'status',
         'nilai_huruf',
         'nilai_angka',
@@ -24,24 +24,24 @@ class Nilai extends Model
     // Relasi ke Dosen
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class, 'nip');
+        return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 
     // Relasi ke Mahasiswa
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class, 'nrp');
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 
     // Relasi ke Matakuliah
     public function matakuliah()
     {
-        return $this->belongsTo(Matakuliah::class, 'kode_matakuliah');
+        return $this->belongsTo(Matakuliah::class, 'mk_id');
     }
 
     // Relasi ke Tahun Ajar
     public function tahunAjar()
     {
-        return $this->belongsTo(TahunAjar::class, 'id_tahun_ajar');
+        return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
     }
 }

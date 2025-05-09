@@ -12,10 +12,10 @@ class Jadwal extends Model
     protected $table = 'jadwal';
 
     protected $fillable = [
-        'id_kelas',
-        'kode_matakuliah',
-        'nip',
-        'kode_ruangan',
+        'kelas_id',
+        'dosen_id',
+        'mk_id',
+        'ruangan_id',
         'jam_mulai',
         'jam_selesai',
         'hari',
@@ -24,24 +24,24 @@ class Jadwal extends Model
     // Relasi ke Kelas
     public function kelas()
     {
-        return $this->belongsTo(Kelas::class, 'id_kelas');
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
     // Relasi ke Matakuliah
     public function matakuliah()
     {
-        return $this->belongsTo(Matakuliah::class, 'kode_matakuliah');
+        return $this->belongsTo(Matakuliah::class, 'mk_id');
     }
 
     // Relasi ke Dosen
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class, 'nip');
+        return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 
     // Relasi ke Ruangan
     public function ruangan()
     {
-        return $this->belongsTo(Ruangan::class, 'kode_ruangan');
+        return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
 }

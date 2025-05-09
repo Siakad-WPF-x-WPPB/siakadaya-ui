@@ -12,8 +12,8 @@ class Kelas extends Model
     protected $table = 'kelas';
 
     protected $fillable = [
-        'nip',
-        'nama_kelas',
+        'dosen_id',
+        'pararel',
     ];
 
     // Relasi ke Dosen (satu kelas dimiliki oleh satu dosen)

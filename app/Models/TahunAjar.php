@@ -12,12 +12,18 @@ class TahunAjar extends Model
     protected $table = 'tahun_ajar';
 
     protected $fillable = [
-        'tahun_ajaran',
+        'semester',
+        'tahun'
     ];
 
     // Relasi ke FRS (jika ada banyak FRS untuk 1 tahun ajar)
     public function frs()
     {
-        return $this->hasMany(Frs::class, 'id_tahun_ajar');
+        return $this->hasMany(Frs::class, 'tahun_ajar_id');
+    }
+
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'tahun_ajar_id');
     }
 }

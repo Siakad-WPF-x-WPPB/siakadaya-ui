@@ -12,16 +12,17 @@ class Matakuliah extends Model
     protected $table = 'matakuliah';
 
     protected $fillable = [
-        'kode_jurusan',
-        'nama_matakuliah',
-        'sks',
+        'prodi_id',
+        'kode',
+        'nama',
         'semester',
+        'sks',
         'tipe_matakuliah',
     ];
 
     // Relasi ke Jurusan
-    public function jurusan()
+    public function programStudi()
     {
-        return $this->belongsTo(Jurusan::class, 'kode_jurusan');
+        return $this->belongsTo(ProgramStudi::class, 'prodi_id');
     }
 }

@@ -5,25 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Jurusan extends Model
+class ProgramStudi extends Model
 {
     use HasFactory;
 
-    protected $table = 'jurusan';
+    protected $table = 'program_studi';
 
     protected $fillable = [
-        'nama_jurusan',
+        'nama',
+        'kode'
     ];
 
     // Relasi ke Mahasiswa (satu jurusan punya banyak mahasiswa)
     public function mahasiswa()
     {
-        return $this->hasMany(Mahasiswa::class, 'kode_jurusan');
+        return $this->hasMany(Mahasiswa::class, 'prodi_id');
     }
 
     // Relasi ke Dosen (satu jurusan punya banyak dosen)
     public function dosen()
     {
-        return $this->hasMany(Dosen::class, 'kode_jurusan');
+        return $this->hasMany(Dosen::class, 'prodi_id');
     }
 }

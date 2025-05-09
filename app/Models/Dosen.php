@@ -12,8 +12,9 @@ class Dosen extends Model
     protected $table = 'dosen';
 
     protected $fillable = [
-        'kode_jurusan',
-        'nama_dosen',
+        'nip',
+        'prodi_id',
+        'nama',
         'jenis_kelamin',
         'telepon',
         'email',
@@ -31,8 +32,8 @@ class Dosen extends Model
         'is_wali' => 'boolean',
     ];
 
-    public function jurusan()
+    public function programStudi()
     {
-        return $this->belongsTo(Jurusan::class, 'kode_jurusan');
+        return $this->belongsTo(ProgramStudi::class, 'prodi_id');
     }
 }
