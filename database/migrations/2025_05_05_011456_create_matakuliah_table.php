@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
             $table->string('kode')->unique();
             $table->string('nama');
-            $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
+            $table->string('semester');
             $table->string('sks');
             $table->enum('tipe_matakuliah', ['MPK', 'MPI', 'MW']);
             $table->timestamps();

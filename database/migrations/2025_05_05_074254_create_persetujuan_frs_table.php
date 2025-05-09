@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('frs_id')->constrained('frs')->onDelete('cascade');
             $table->foreignUuid('jadwal_id')->constrained('jadwal')->onDelete('cascade');
             $table->enum('status', ['disetujui', 'ditolak', 'pending'])->default('pending');
+            $table->date('tanggal_persetujuan');
             $table->timestamps();
         });
     }

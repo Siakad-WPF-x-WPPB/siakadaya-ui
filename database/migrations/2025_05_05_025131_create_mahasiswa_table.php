@@ -22,7 +22,7 @@ return new class extends Migration
       $table->string('email')->unique();
       $table->string('password');
       $table->string('agama');
-      $table->enum('semester', ['1', '2', '3', '4', '5', '6', '7', '8']);
+      $table->string('semester');
       $table->date('tanggal_lahir');
       $table->date('tanggal_masuk');
       $table->enum('status', ['Aktif', 'Cuti', 'Keluar']);
