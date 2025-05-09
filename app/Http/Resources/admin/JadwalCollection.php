@@ -2,11 +2,11 @@
 
 namespace App\Http\Resources\admin;
 
-use App\Models\Kelas;
+use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class KelasCollection extends ResourceCollection
+class JadwalCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -27,15 +27,20 @@ class KelasCollection extends ResourceCollection
         $filteredRecords = $totalRecords; // Assume no filtering for now
 
         // Generate fake data for the current page
-        $data = Kelas::query()
+        $data = Jadwal::query()
             ->offset($start)
             ->limit($length)
             ->get()
             ->map(
-                function ($kelas) {
+                function ($jadwal) {
                     return [
-                        'nama_dosen' => $kelas->dosen->nama,
-                        'pararel' => $kelas->pararel,
+                        'kelas' => $jadwal->kelas->pararel,
+                        'nama_dosen' => $jadwal->dosen->nama,
+                        'matakuliah' => $jadwal->matakuliah->nama,
+                        'ruangan' => $jadwal->ruangan->nama,
+                        'jam_mulai' => $jadwal->jam_mulai,
+                        'jam_selesai' => $jadwal->jam_selesai,
+                        'hari' => $jadwal->hari
                     ];
                 }
             )

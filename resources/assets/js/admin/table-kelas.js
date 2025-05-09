@@ -138,8 +138,8 @@ $(function () {
       },
       columns: [
         { data: '' },
-        { data: 'nama_kelas' },
-        { data: 'nama_kelas' },
+        { data: 'pararel' },
+        { data: 'pararel' },
         { data: 'nama_dosen' },
         { data: '' }
       ],

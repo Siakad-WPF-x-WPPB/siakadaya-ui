@@ -141,7 +141,7 @@ $(function () {
         { data: 'kode_matakuliah' },
         { data: 'kode_matakuliah' },
         { data: 'nama_matakuliah' },
-        { data: 'kode_jurusan' },
+        { data: 'program_studi' },
         { data: 'sks' },
         { data: 'semester' },
         { data: 'tipe_matakuliah' },

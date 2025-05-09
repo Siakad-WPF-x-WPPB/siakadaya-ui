@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Dosen;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,8 +19,8 @@ class KelasFactory extends Factory
     {
         return [
             //
-            'nip' => fake()->randomDigitNotNull(),
-            'nama_kelas' => fake()->name(),
+            'dosen_id' => Dosen::inRandomOrder()->first()->id,
+            'pararel' => fake()->randomLetter(),
         ];
     }
 }

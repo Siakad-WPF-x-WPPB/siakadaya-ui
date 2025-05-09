@@ -2,7 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Kelas;
+use App\Models\ProgramStudi;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Mahasiswa>
@@ -18,17 +21,25 @@ class MahasiswaFactory extends Factory
   {
     return [
       'nrp' => fake()->unique()->numerify('##########'),
-      'kode_jurusan' => fake()->randomElement([1, 2, 3]),
-      'id_kelas' => fake()->randomElement([1, 2, 3, 4]),
-      'nama_mahasiswa' => fake()->name(),
+      'prodi_id' => ProgramStudi::inRandomOrder()->first()->id,
+      'kelas_id' => Kelas::inRandomOrder()->first()->id, // pastikan tabel kelas ada
+      'nama' => fake()->name(),
       'jenis_kelamin' => fake()->randomElement(['L', 'P']),
-      'telepon' => fake()->randomDigit(),
+      'telepon' => fake()->numerify('08##########'),
       'email' => fake()->unique()->safeEmail(),
-      'password' => fake()->password(),
-      'tanggal_lahir' => fake()->date(),
-      'tanggal_masuk' => fake()->date(),
+      'password' => Hash::make('password'), // jangan gunakan fake()->password() langsung
+      'agama' => fake()->randomElement(['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']),
+      'semester' => fake()->numberBetween(1, 8),
+      'tanggal_lahir' => fake()->date('Y-m-d', '-18 years'),
+      'tanggal_masuk' => fake()->date('Y-m-d', '-4 years'),
       'status' => fake()->randomElement(['Aktif', 'Cuti', 'Keluar']),
-      'alamat' => fake()->address(),
+      'alamat_jalan' => fake()->streetAddress(),
+      'provinsi' => fake()->state(),
+      'kode_pos' => fake()->postcode(),
+      'negara' => 'Indonesia',
+      'kelurahan' => fake()->citySuffix(),
+      'kecamatan' => fake()->streetSuffix(),
+      'kota' => fake()->city(),
     ];
   }
 }

@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Jurusan>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProgramStudi>
  */
-class JurusanFactory extends Factory
+class ProgramStudiFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,9 @@ class JurusanFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_jurusan' => fake()->name(),
+            //
+            'kode' => fake()->unique()->numerify('###'),
+            'nama' => fake()->jobTitle(),
         ];
     }
 }

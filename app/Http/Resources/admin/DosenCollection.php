@@ -36,14 +36,15 @@ class DosenCollection extends ResourceCollection
                 function ($dosen) {
                     return [
                         'nip' => $dosen->nip,
-                        'nama_dosen' => $dosen->nama_dosen,
+                        'program_studi' => $dosen->programStudi->nama,
+                        'nama_dosen' => $dosen->nama,
+                        'jenis_kelamin' => $dosen->jenis_kelamin,
                         'telepon' => $dosen->telepon,
                         'email' => $dosen->email,
                         'tanggal_lahir' => $dosen->tanggal_lahir,
-                        'is_wali' => $dosen->is_wali,
-                        'golongan_akhir' => $dosen->golongan_akhir,
-                        'jenis_kelamin' => $dosen->jenis_kelamin,
                         'jabatan' => $dosen->jabatan,
+                        'golongan_akhir' => $dosen->golongan_akhir,
+                        'is_wali' => $dosen->is_wali,
                     ];
                 }
             )

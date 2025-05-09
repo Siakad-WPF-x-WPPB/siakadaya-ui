@@ -17,7 +17,8 @@ class RuanganFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_ruangan' => fake()->name(),
+            'kode' => fake()->numerify('###'),
+            'nama' => fake()->name(),
             'gedung' => fake()->name(),
         ];
     }

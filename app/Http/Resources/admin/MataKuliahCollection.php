@@ -35,11 +35,11 @@ class MataKuliahCollection extends ResourceCollection
             ->map(
                 function ($matakuliah) {
                     return [
-                        'kode_matakuliah' => $matakuliah->kode_matakuliah,
-                        'kode_jurusan' => $matakuliah->kode_jurusan,
-                        'nama_matakuliah' => $matakuliah->nama_matakuliah,
-                        'sks' => $matakuliah->sks,
+                        'program_studi' => $matakuliah->programStudi->nama,
+                        'kode_matakuliah' => $matakuliah->kode,
+                        'nama_matakuliah' => $matakuliah->nama,
                         'semester' => $matakuliah->semester,
+                        'sks' => $matakuliah->sks,
                         'tipe_matakuliah' => $matakuliah->tipe_matakuliah,
                     ];
                 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProgramStudi;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,11 +18,11 @@ class MataKuliahFactory extends Factory
     public function definition(): array
     {
         return [
-            'kode_matakuliah' => fake()->unique()->numerify('#####'),
-            'kode_jurusan' => fake()->randomDigitNotNull(),
-            'nama_matakuliah' => fake()->name(),
-            'sks' => fake()->name(),
+            'kode' => fake()->unique()->numerify('#####'),
+            'prodi_id' => ProgramStudi::inRandomOrder()->first()->id,
+            'nama' => fake()->name(),
             'semester' => fake()->name(),
+            'sks' => fake()->name(),
             'tipe_matakuliah' => fake()->randomElement(['MPK', 'MPI', 'MW']),
         ];
     }

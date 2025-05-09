@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProgramStudi;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,15 +20,15 @@ class DosenFactory extends Factory
         return [
             //
             'nip' => fake()->unique()->numerify('##########'),
-            'kode_jurusan' => fake()->randomElement([1, 2, 3]),
-            'nama_dosen' => fake()->name(),
+            'prodi_id' => ProgramStudi::inRandomOrder()->first()->id,
+            'nama' => fake()->name(),
             'jenis_kelamin' => fake()->randomElement(['L', 'P']),
-            'telepon' => fake()->randomDigit(),
+            'telepon' => fake()->numerify('08##########'),
             'email' => fake()->unique()->safeEmail(),
             'password' => fake()->password(),
             'tanggal_lahir' => fake()->date(),
-            'jabatan' => fake()->name(),
-            'golongan_akhir' => fake()->name(),
+            'jabatan' => fake()->jobTitle(),
+            'golongan_akhir' => fake()->randomDigit(),
             'is_wali' => fake()->boolean()
         ];
     }

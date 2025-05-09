@@ -35,18 +35,24 @@ class MahasiswaCollection extends ResourceCollection
       ->map(
         function ($mahasiswa) {
           return [
+            'program_studi' => $mahasiswa->programStudi->nama,
+            'kelas' => $mahasiswa->kelas->pararel,
             'nrp' => $mahasiswa->nrp,
-            'kode_jurusan' => $mahasiswa->kode_jurusan,
-            'id_kelas' => $mahasiswa->id_kelas,
-            'nama' => $mahasiswa->nama_mahasiswa,
+            'nama_mahasiswa' => $mahasiswa->nama,
             'jenis_kelamin' => $mahasiswa->jenis_kelamin,
             'telepon' => $mahasiswa->telepon,
             'email' => $mahasiswa->email,
+            'agama' => $mahasiswa->agama,
+            'semester' => $mahasiswa->semester,
             'tanggal_lahir' => $mahasiswa->tanggal_lahir,
             'tanggal_masuk' => $mahasiswa->tanggal_masuk,
             'status' => $mahasiswa->status,
-            'alamat_jalan' => $mahasiswa->alamat,
-
+            'alamat_jalan' => $mahasiswa->alamat_jalan,
+            'provinsi' => $mahasiswa->provinsi,
+            'kode_pos' => $mahasiswa->kode_pos,
+            'negara' => $mahasiswa->kelurahan,
+            'kecamatan' => $mahasiswa->kecamatan,
+            'kota' => $mahasiswa->kota
           ];
         }
       )

@@ -150,8 +150,8 @@ $(function () {
         { data: 'nrp' },
         { data: 'nrp' },
         { data: 'nama_mahasiswa' },
-        { data: 'kode_jurusan' },
-        { data: 'id_kelas' },
+        { data: 'program_studi' },
+        { data: 'kelas' },
         { data: 'jenis_kelamin' },
         { data: 'status' },
         { data: '' }

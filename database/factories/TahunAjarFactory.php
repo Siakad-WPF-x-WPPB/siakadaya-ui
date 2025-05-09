@@ -17,7 +17,8 @@ class TahunAjarFactory extends Factory
     public function definition(): array
     {
         return [
-            'tahun_ajaran' => fake()->name(),
+            'semester' => fake()->randomDigitNotNull(),
+            'tahun' => fake()->year(),
         ];
     }
 }
