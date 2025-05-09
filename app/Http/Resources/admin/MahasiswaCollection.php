@@ -38,14 +38,14 @@ class MahasiswaCollection extends ResourceCollection
             'nrp' => $mahasiswa->nrp,
             'kode_jurusan' => $mahasiswa->kode_jurusan,
             'id_kelas' => $mahasiswa->id_kelas,
-            'nama_mahasiswa' => $mahasiswa->nama_mahasiswa,
+            'nama' => $mahasiswa->nama_mahasiswa,
             'jenis_kelamin' => $mahasiswa->jenis_kelamin,
             'telepon' => $mahasiswa->telepon,
             'email' => $mahasiswa->email,
             'tanggal_lahir' => $mahasiswa->tanggal_lahir,
             'tanggal_masuk' => $mahasiswa->tanggal_masuk,
             'status' => $mahasiswa->status,
-            'alamat' => $mahasiswa->alamat,
+            'alamat_jalan' => $mahasiswa->alamat,
 
           ];
         }

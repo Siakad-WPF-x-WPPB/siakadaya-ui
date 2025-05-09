@@ -19,12 +19,12 @@ class Kelas extends Model
     // Relasi ke Dosen (satu kelas dimiliki oleh satu dosen)
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class, 'nip', 'id');
+        return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 
     // Relasi ke Mahasiswa (satu kelas memiliki banyak mahasiswa)
     public function mahasiswa()
     {
-        return $this->hasMany(Mahasiswa::class, 'id_kelas');
+        return $this->hasMany(Mahasiswa::class, 'kelas_id');
     }
 }

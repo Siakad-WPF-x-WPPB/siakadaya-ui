@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
 
   Kelas::factory()->create([
     'nama_kelas' => 'D3 IT B',
-    'nip' => $dosen->id  // <- ini penting
+    'dosen_id' => $dosen->id  // <- ini penting
   ]);
   }
 }
