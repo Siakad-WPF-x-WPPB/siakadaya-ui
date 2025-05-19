@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\pages\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -28,7 +29,17 @@ class KelasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'dosen_id' => 'required|exists:dosen,id',
+            'pararel' => 'required|string',
+        ]);
+
+        $kelas = Kelas::create($validated);
+
+        return response()->json([
+            'message' => 'Kelas berhasil',
+            'data' => $kelas
+        ]);
     }
 
     /**
@@ -52,7 +63,19 @@ class KelasController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $kelas = Kelas::findOrFail($id);
+
+        $validated = $request->validate([
+            'dosen_id' => 'required|exists:dosen,id',
+            'pararel' => 'required|string',
+        ]);
+
+        $kelas->update($validated);
+
+        return response()->json([
+            'message' => 'kelas berhasil diupdate',
+            'data' => $kelas
+        ]);
     }
 
     /**
@@ -60,6 +83,11 @@ class KelasController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $kelas = Kelas::findOrFail($id);
+        $kelas->delete();
+
+        return response()->json([
+            'message' => 'kelas berhasil dihapus'
+        ]);
     }
 }

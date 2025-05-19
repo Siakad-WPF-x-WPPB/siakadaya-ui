@@ -142,7 +142,7 @@ $(function () {
         { data: 'nip' },
         { data: 'nama_dosen' },
         { data: 'telepon' },
-        { data: 'golongan_akhir' },
+        { data: 'program_studi' },
         { data: 'jenis_kelamin' },
         { data: 'jabatan' },
         { data: '' }

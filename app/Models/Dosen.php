@@ -37,4 +37,9 @@ class Dosen extends Model
     {
         return $this->belongsTo(ProgramStudi::class, 'prodi_id');
     }
+
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'jadwal_id');
+    }
 }

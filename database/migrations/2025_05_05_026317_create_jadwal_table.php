@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignUuid('ruangan_id')->constrained('ruangan')->onDelete('cascade');
             $table->time('jam_mulai');
             $table->time('jam_selesai');
-            $table->date('hari');
+            $table->string('hari');
             $table->timestamps();
         });
     }
