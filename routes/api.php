@@ -33,7 +33,7 @@ Route::get('/mahasiswa', function () {
 Route::get('/mahasiswa/{id}', [MahasiswaController::class, 'show']);
 Route::post('/mahasiswa/store', [MahasiswaController::class, 'store']);
 Route::put('/mahasiswa/update/{id}', [MahasiswaController::class, 'update']);
-Route::delete('mahasiswa/destroy/{id}', [MahasiswaController::class, 'destroy']);
+Route::delete('/mahasiswa/destroy/{id}', [MahasiswaController::class, 'destroy']);
 
 // * API Dosen
 // TODO: implementasi API Dosen
