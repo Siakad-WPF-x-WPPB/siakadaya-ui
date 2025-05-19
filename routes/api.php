@@ -93,4 +93,4 @@ Route::get('/tahun-ajar', function () {
 Route::get('/tahun-ajar/{id}', [TahunAjarController::class, 'show']);
 Route::post('/tahun-ajar/store', [TahunAjarController::class, 'store']);
 Route::put('/tahun-ajar/update/{id}', [TahunAjarController::class, 'update']);
-Route::delete('tahun-ajar/destroy/{id}', [TahunAjarController::class, 'destroy']);
+Route::delete('/tahun-ajar/destroy/{id}', [TahunAjarController::class, 'destroy']);
