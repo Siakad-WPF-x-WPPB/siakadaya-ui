@@ -69,7 +69,7 @@ Route::get('/kelas', function () {
 Route::get('/kelas/{id}', [KelasController::class, 'show']);
 Route::post('/kelas/store', [KelasController::class, 'store']);
 Route::put('/kelas/update/{id}', [KelasController::class, 'update']);
-Route::delete('kelas/destroy/{id}', [KelasController::class, 'destroy']);
+Route::delete('/kelas/destroy/{id}', [KelasController::class, 'destroy']);
 
 // * API Jadwal Kuliah
 // TODO: implementasi API Jadwal Kuliah
