@@ -57,7 +57,7 @@ Route::get('/matakuliah', function () {
 Route::get('/matakuliah/{id}', [MataKuliahController::class, 'show']);
 Route::post('/matakuliah/store', [MataKuliahController::class, 'store']);
 Route::put('/matakuliah/update/{id}', [MataKuliahController::class, 'update']);
-Route::delete('matakuliah/destroy/{id}', [MataKuliahController::class, 'destroy']);
+Route::delete('/matakuliah/destroy/{id}', [MataKuliahController::class, 'destroy']);
 
 // * API Kelas
 // TODO: implementasi API Kelas
