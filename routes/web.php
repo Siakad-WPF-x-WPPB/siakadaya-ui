@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\authentications\AdminLoginController;
+use App\Http\Controllers\authentications\DosenLoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\language\LanguageController;
 use App\Http\Controllers\pages\HomePage;
@@ -35,6 +37,22 @@ Route::prefix('admin')->group(function () {
   Route::resource('dosen', DosenController::class);
   Route::resource('kelas', KelasController::class);
 });
+
+Route::prefix('dosen')->name('dosen.')->group(function () {
+    Route::get('/login', [DosenLoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [DosenLoginController::class, 'login']);
+    Route::post('/logout', [DosenLoginController::class, 'logout'])->name('logout');
+
+    // Rute Dosen yang dilindungi
+    Route::middleware('auth:dosen')->group(function () {
+        Route::get('/dashboard', function () {
+            // dd(Auth::user()); // Pastikan instance Dosen
+            return view('dosen.dashboard'); // resources/views/dosen/dashboard.blade.php
+        })->name('dashboard');
+        // Rute dosen lainnya
+    });
+});
+
 Route::get('admin/jadwal-kuliah', [JadwalKuliahController::class, 'index'])->name('admin-jadwal-kuliah');
 // Route::get('admin/kelas', [KelasController::class, 'index'])->name('admin-kelas');
 Route::get('admin/mahasiswa', [MahasiswaController::class, 'index'])->name('admin-mahasiswa');
