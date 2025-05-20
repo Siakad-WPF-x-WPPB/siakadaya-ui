@@ -26,7 +26,7 @@ return new class extends Migration
       $table->date('tanggal_lahir');
       $table->date('tanggal_masuk');
       $table->enum('status', ['Aktif', 'Cuti', 'Keluar']);
-      $table->text('alamat_jalan');
+      $table->text('alamat_jalan')->nullable();
       $table->string('provinsi');
       $table->string('kode_pos');
       $table->string('negara');
