@@ -1,7 +1,7 @@
 {
   "menu": [
     {
-      "url": "/",
+      "url": "/admin/dashboard",
       "name": "Home",
       "icon": "menu-icon tf-icons ti ti-smart-home",
       "slug": "admin-dashboard"
