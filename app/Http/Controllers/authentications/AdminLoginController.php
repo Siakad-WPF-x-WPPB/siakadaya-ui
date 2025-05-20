@@ -16,7 +16,7 @@ class AdminLoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('auth.admin-login'); // Buat view: resources/views/auth/admin-login.blade.php
+        return view('content.authentications.auth-login-basic'); // Buat view: resources/views/auth/admin-login.blade.php
     }
 
     public function login(Request $request) // Ganti LoginRequest dengan Request atau buat LoginRequest khusus Admin

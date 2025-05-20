@@ -60,10 +60,12 @@ class MahasiswaController extends Controller
             'kota' => 'required|string',
         ]);
 
+        
+
         $validated['password'] = bcrypt($validated['password']);
         $mahasiswa = Mahasiswa::create($validated);
 
-return redirect()->route('admin-mahasiswa-index')->with('success', 'Data mahasiswa berhasil disimpan.');
+        return redirect()->route('admin-mahasiswa-index')->with('success', 'Data mahasiswa berhasil disimpan.');
     }
 
     /**
