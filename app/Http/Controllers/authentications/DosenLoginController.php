@@ -16,7 +16,8 @@ class DosenLoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('auth.dosen-login'); // Buat view: resources/views/auth/dosen-login.blade.php
+        $pageConfigs = ['myLayout' => 'blank'];
+        return view('pages.login.login-dosen', ['pageConfigs' => $pageConfigs]);
     }
 
     public function login(Request $request) // Ganti LoginRequest dengan Request atau buat LoginRequest khusus dosen
@@ -29,7 +30,7 @@ class DosenLoginController extends Controller
         // Coba login dengan guard 'dosen'
         if (Auth::guard('dosen')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dosen.dashboard')); // Arahkan ke dashboard dosen
+            return redirect()->intended(route('dosen-dashboard'));
         }
 
         return back()->withErrors([

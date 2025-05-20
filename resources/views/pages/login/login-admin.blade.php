@@ -50,10 +50,14 @@ $customizerHidden = 'customizer-hide';
           <h4 class="mb-1">Welcome to {{ config('variables.templateName') }}! 👋</h4>
           <p class="mb-6">Please sign-in to your account and start the adventure</p>
 
-          <form id="formAuthentication" class="mb-4" action="{{url('/')}}" method="GET">
+          <form id="formAuthentication" class="mb-4" action="{{ route('login-admin') }}" method="POST">
+            @csrf
             <div class="mb-6">
               <label for="email" class="form-label">Email or Username</label>
-              <input type="text" class="form-control" id="email" name="email-username" placeholder="Enter your email or username" autofocus>
+              <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email or username" autofocus>
+              @error('email')
+              <div class="text-danger">{{ $message }}</div>
+              @enderror
             </div>
             <div class="mb-6 form-password-toggle">
               <label class="form-label" for="password">Password</label>
@@ -61,6 +65,9 @@ $customizerHidden = 'customizer-hide';
                 <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                 <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
               </div>
+              @error('password')
+              <div class="text-danger">{{ $message }}</div>
+              @enderror
             </div>
             <div class="my-8">
               <div class="d-flex justify-content-between">
@@ -81,9 +88,9 @@ $customizerHidden = 'customizer-hide';
           </form>
 
           <p class="text-center">
-            <span>New on our platform?</span>
-            <a href="{{url('auth/register-basic')}}">
-              <span>Create an account</span>
+            <span>Login sebagai Dosen?</span>
+            <a href="{{ route('login-dosen-view') }}">
+              <span>Kesini</span>
             </a>
           </p>
 
