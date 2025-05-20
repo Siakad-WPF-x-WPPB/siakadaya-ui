@@ -1,4 +1,6 @@
 <?php
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\MahasiswaAuthController;
 use App\Http\Controllers\authentications\AdminLoginController;
@@ -9,60 +11,36 @@ use App\Http\Controllers\pages\admin\KelasController;
 use App\Http\Controllers\pages\admin\MahasiswaController;
 use App\Http\Controllers\pages\admin\MataKuliahController;
 use App\Http\Controllers\pages\admin\TahunAjarController;
+
 use App\Http\Resources\admin\DosenCollection;
 use App\Http\Resources\admin\JadwalCollection;
 use App\Http\Resources\admin\KelasCollection;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Resources\admin\MahasiswaCollection;
 use App\Http\Resources\admin\MataKuliahCollection;
 use App\Http\Resources\admin\TahunAjarCollection;
 
+// * API Auth
+// TODO: implementasi API Auth
+// *********************************************************************************
 Route::get('/user', function (Request $request) {
   return $request->user();
 })->middleware('auth:sanctum');
 
-// Untuk tahun ajar
-Route::get('/tahun-ajar', function () {
-  return new TahunAjarCollection([]);
-});
+// Rute Autentikasi Admin
+Route::prefix('admin')->name('admin.')->group(function () {
+  Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login');
+  Route::post('/login', [AdminLoginController::class, 'login']);
+  Route::post('/logout', [AdminLoginController::class, 'logout'])->name('logout');
 
-Route::prefix('admin')->group(function () {
-  Route::post('/tahun-ajar', [TahunAjarController::class, 'store']);
-  Route::put('/tahun-ajar/{id}', [TahunAjarController::class, 'update']);
-  Route::delete('/tahun-ajar/{id}', [TahunAjarController::class, 'destroy']);
-});
-
-Route::get('/jurusan', function () {
-  return response()->json([
-    'data' => \App\Models\ProgramStudi::all()
-  ]);
-});
-Route::get('/ruangan', function () {
-  return response()->json([
-    'data' => \App\Models\Ruangan::all()
-  ]);
-});
-
-Route::get('/kelas', function () {
-  return new KelasCollection([]);
-});
-Route::post('/kelas/store', [KelasController::class, 'store']);
-Route::put('/kelas/update/{id}', [KelasController::class, 'update']);
-Route::delete('kelas/destroy/{id}', [KelasController::class, 'destroy']);
-
-// Dosen API & Testing
-Route::get('/dosen', function () {
-  return new DosenCollection([]);
-});
-Route::post('/dosen/store', [DosenController::class, 'store']);
-Route::put('/dosen/update/{id}', [DosenController::class, 'update']);
-Route::delete('dosen/destroy/{id}', [DosenController::class, 'destroy']);
-
-// Untuk mahasiswa
-Route::get('/mahasiswa', function () {
-  return new MahasiswaCollection([]);
+  // Rute Admin yang dilindungi
+  Route::middleware('auth:admin')->group(function () { // Menggunakan middleware 'auth:nama_guard'
+    Route::get('/dashboard', function () {
+      // Pastikan Auth::user() mengembalikan instance Admin
+      // dd(Auth::user());
+      return view('admin.dashboard'); // resources/views/admin/dashboard.blade.php
+    })->name('dashboard');
+    // Rute admin lainnya
+  });
 });
 
 Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
@@ -79,46 +57,74 @@ Route::middleware('auth:sanctum')->prefix('mahasiswa')->group(function () {
   });
 });
 
-Route::prefix('admin')->group(function () {
-  Route::post('/mahasiswa', [MahasiswaController::class, 'store']);
-  Route::put('/mahasiswa/{id}', [MahasiswaController::class, 'update']);
-  Route::delete('/mahasiswa/{id}', [MahasiswaController::class, 'destroy']);
+// * API Mahasiswa
+// TODO: implementasi API Mahasiswa
+// *********************************************************************************
+
+Route::get('/mahasiswa', function () {
+  return new MahasiswaCollection([]);
 });
+Route::get('/mahasiswa/{id}', [MahasiswaController::class, 'show']);
+Route::post('/mahasiswa/store', [MahasiswaController::class, 'store']);
+Route::put('/mahasiswa/update/{id}', [MahasiswaController::class, 'update']);
+Route::delete('/mahasiswa/destroy/{id}', [MahasiswaController::class, 'destroy']);
 
+// * API Dosen
+// TODO: implementasi API Dosen
+// *********************************************************************************
 
-// Untuk matakuliah
+Route::get('/dosen', function () {
+  return new DosenCollection([]);
+});
+Route::get('/dosen/{id}', [DosenController::class, 'show']);
+Route::post('/dosen/store', [DosenController::class, 'store']);
+Route::put('/dosen/update/{id}', [DosenController::class, 'update']);
+Route::delete('dosen/destroy/{id}', [DosenController::class, 'destroy']);
+
+// * API Mata Kuliah
+// TODO: implementasi API Mata Kuliah
+// *********************************************************************************
+
 Route::get('/matakuliah', function () {
   return new MataKuliahCollection([]);
 });
-Route::prefix('admin')->group(function () {
-  Route::post('/matakuliah', [MataKuliahController::class, 'store']);
-  Route::put('/matakuliah/{id}', [MatakuliahController::class, 'update']);
-  Route::delete('/matakuliah/{id}', [MatakuliahController::class, 'destroy']);
-});
+Route::get('/matakuliah/{id}', [MataKuliahController::class, 'show']);
+Route::post('/matakuliah/store', [MataKuliahController::class, 'store']);
+Route::put('/matakuliah/update/{id}', [MataKuliahController::class, 'update']);
+Route::delete('/matakuliah/destroy/{id}', [MataKuliahController::class, 'destroy']);
 
+// * API Kelas
+// TODO: implementasi API Kelas
+// *********************************************************************************
+
+Route::get('/kelas', function () {
+  return new KelasCollection([]);
+});
+Route::get('/kelas/{id}', [KelasController::class, 'show']);
+Route::post('/kelas/store', [KelasController::class, 'store']);
+Route::put('/kelas/update/{id}', [KelasController::class, 'update']);
+Route::delete('/kelas/destroy/{id}', [KelasController::class, 'destroy']);
+
+// * API Jadwal Kuliah
+// TODO: implementasi API Jadwal Kuliah
+// *********************************************************************************
 
 Route::get('/jadwal', function () {
   return new JadwalCollection([]);
 });
+Route::get('/jadwal/{id}', [JadwalKuliahController::class, 'show']);
 Route::post('/jadwal/store', [JadwalKuliahController::class, 'store']);
 Route::put('/jadwal/update/{id}', [JadwalKuliahController::class, 'update']);
 Route::delete('jadwal/destroy/{id}', [JadwalKuliahController::class, 'destroy']);
 
-// Rute Autentikasi Admin
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AdminLoginController::class, 'login']);
-    Route::post('/logout', [AdminLoginController::class, 'logout'])->name('logout');
+// * API Tahun Ajar
+// TODO: implementasi API Tahun Ajar
+// *********************************************************************************
 
-    // Rute Admin yang dilindungi
-    Route::middleware('auth:admin')->group(function () { // Menggunakan middleware 'auth:nama_guard'
-        Route::get('/dashboard', function () {
-            // Pastikan Auth::user() mengembalikan instance Admin
-            // dd(Auth::user());
-            return view('admin.dashboard'); // resources/views/admin/dashboard.blade.php
-        })->name('dashboard');
-        // Rute admin lainnya
-    });
+Route::get('/tahun-ajar', function () {
+  return new TahunAjarCollection([]);
 });
-
-// Rute Autentikasi Dosen
+Route::get('/tahun-ajar/{id}', [TahunAjarController::class, 'show']);
+Route::post('/tahun-ajar/store', [TahunAjarController::class, 'store']);
+Route::put('/tahun-ajar/update/{id}', [TahunAjarController::class, 'update']);
+Route::delete('/tahun-ajar/destroy/{id}', [TahunAjarController::class, 'destroy']);
