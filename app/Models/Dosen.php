@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Dosen extends Model
+class Dosen extends Authenticatable
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, Notifiable;
 
     protected $table = 'dosen';
 
@@ -31,6 +34,7 @@ class Dosen extends Model
     protected $casts = [
         'tanggal_lahir' => 'date',
         'is_wali' => 'boolean',
+        'password' => 'hashed',
     ];
 
     public function programStudi()

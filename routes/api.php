@@ -2,6 +2,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\MahasiswaAuthController;
+use App\Http\Controllers\authentications\AdminLoginController;
+use App\Http\Controllers\authentications\DosenLoginController;
 use App\Http\Controllers\pages\admin\DosenController;
 use App\Http\Controllers\pages\admin\JadwalKuliahController;
 use App\Http\Controllers\pages\admin\KelasController;
@@ -22,6 +25,37 @@ use App\Http\Resources\admin\TahunAjarCollection;
 Route::get('/user', function (Request $request) {
   return $request->user();
 })->middleware('auth:sanctum');
+
+// Rute Autentikasi Admin
+Route::prefix('admin')->name('admin.')->group(function () {
+  Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login');
+  Route::post('/login', [AdminLoginController::class, 'login']);
+  Route::post('/logout', [AdminLoginController::class, 'logout'])->name('logout');
+
+  // Rute Admin yang dilindungi
+  Route::middleware('auth:admin')->group(function () { // Menggunakan middleware 'auth:nama_guard'
+    Route::get('/dashboard', function () {
+      // Pastikan Auth::user() mengembalikan instance Admin
+      // dd(Auth::user());
+      return view('admin.dashboard'); // resources/views/admin/dashboard.blade.php
+    })->name('dashboard');
+    // Rute admin lainnya
+  });
+});
+
+Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
+
+// Rute ini akan menggunakan 'auth:sanctum'.
+// Sanctum akan mengautentikasi token dan mengambil 'tokenable' model (yaitu Mahasiswa).
+Route::middleware('auth:sanctum')->prefix('mahasiswa')->group(function () {
+  Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
+  Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
+  // Rute API mahasiswa lainnya
+  Route::get('/data-khusus', function (Request $request) {
+    // $request->user() di sini adalah instance Mahasiswa
+    return response()->json(['message' => 'Ini data khusus untuk mahasiswa: ' . $request->user()->name]);
+  });
+});
 
 // * API Mahasiswa
 // TODO: implementasi API Mahasiswa

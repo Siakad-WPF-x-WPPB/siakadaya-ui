@@ -10,37 +10,37 @@
       "url": "admin/mahasiswa",
       "name": "Mahasiswa",
       "icon": "menu-icon tf-icons ti ti-user",
-      "slug": "admin-mahasiswa"
+      "slug": "admin-mahasiswa-index"
     },
     {
       "url": "admin/dosen",
       "name": "Dosen",
       "icon": "menu-icon tf-icons ti ti-user-square",
-      "slug": "admin-dosen"
+      "slug": "admin-dosen-index"
     },
     {
       "url": "admin/mata-kuliah",
       "name": "Mata Kuliah",
       "icon": "menu-icon tf-icons ti ti-books",
-      "slug": "admin-mata-kuliah"
+      "slug": "admin-mata-kuliah-index"
     },
     {
       "url": "admin/kelas",
       "name": "Kelas",
       "icon": "menu-icon tf-icons ti ti-chalkboard",
-      "slug": "admin-kelas"
+      "slug": "admin-kelas-index"
     },
     {
       "url": "admin/jadwal-kuliah",
       "name": "Jadwal Kuliah",
       "icon": "menu-icon tf-icons ti ti-alarm",
-      "slug": "admin-jadwal-kuliah"
+      "slug": "admin-jadwal-kuliah-index"
     },
     {
       "url": "admin/tahun-ajar",
       "name": "Tahun Ajar",
       "icon": "menu-icon tf-icons ti ti-calendar-clock",
-      "slug": "admin-tahun-ajar"
+      "slug": "admin-tahun-ajar-index"
     }
   ]
 }

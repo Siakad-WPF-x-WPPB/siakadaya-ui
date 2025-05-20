@@ -22,7 +22,12 @@ class MahasiswaController extends Controller
      */
     public function create()
     {
-        //
+        // ambil data program studi dan kelas
+        $program_studi = \App\Models\ProgramStudi::all();
+        $kelas = \App\Models\Kelas::all();
+
+        // kirim data ke view
+        return view('pages.admin.mahasiswa.form', compact('program_studi', 'kelas'));
     }
 
     /**
@@ -30,6 +35,7 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
+
         // validasi data mahasiswa
         $validated = $request->validate([
             'prodi_id' => 'required|exists:program_studi,id',
@@ -57,10 +63,7 @@ class MahasiswaController extends Controller
         $validated['password'] = bcrypt($validated['password']);
         $mahasiswa = Mahasiswa::create($validated);
 
-        return response()->json([
-            'message' => 'Data mahasiswa berhasil disimpan.',
-            'data' => $mahasiswa
-        ], 201);
+return redirect()->route('admin-mahasiswa-index')->with('success', 'Data mahasiswa berhasil disimpan.');
     }
 
     /**
