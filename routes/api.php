@@ -26,6 +26,10 @@ Route::get('/user', function (Request $request) {
   return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/login', function () {
+    return response()->json(['message' => 'Please login'], 401);
+})->name('login');
+
 // Rute Autentikasi Admin
 Route::prefix('admin')->name('admin.')->group(function () {
   Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login');
@@ -47,10 +51,10 @@ Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
 
 // Rute ini akan menggunakan 'auth:sanctum'.
 // Sanctum akan mengautentikasi token dan mengambil 'tokenable' model (yaitu Mahasiswa).
-Route::middleware('auth:sanctum')->prefix('mahasiswa')->group(function () {
+Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () {
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
-  Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'index']);
+  Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'semua']);
   Route::get('/jadwal/hari-ini', [JadwalKuliahMahasiswaController::class, 'hariIni']);
   Route::get('/jadwal/mendatang', [JadwalKuliahMahasiswaController::class, 'besok']);
   // Rute API mahasiswa lainnya
