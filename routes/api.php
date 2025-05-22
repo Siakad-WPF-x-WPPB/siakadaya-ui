@@ -80,25 +80,30 @@ Route::delete('/mahasiswa/destroy/{id}', [MahasiswaController::class, 'destroy']
 // TODO: implementasi API Dosen
 // *********************************************************************************
 
+// * API Dosen
+// TODO: implementasi API Dosen
+// *********************************************************************************
+
 Route::get('/dosen', function () {
   return new DosenCollection([]);
 });
 Route::get('/dosen/{id}', [DosenController::class, 'show']);
+Route::get('/dosen/{id}', [DosenController::class, 'show']);
 Route::post('/dosen/store', [DosenController::class, 'store']);
 Route::put('/dosen/update/{id}', [DosenController::class, 'update']);
-Route::delete('dosen/destroy/{id}', [DosenController::class, 'destroy']);
+Route::delete('/dosen/destroy/{id}', [DosenController::class, 'destroy']);
 
 // * API Mata Kuliah
 // TODO: implementasi API Mata Kuliah
 // *********************************************************************************
 
-Route::get('/matakuliah', function () {
+Route::get('/mata-kuliah', function () {
   return new MataKuliahCollection([]);
 });
-Route::get('/matakuliah/{id}', [MataKuliahController::class, 'show']);
-Route::post('/matakuliah/store', [MataKuliahController::class, 'store']);
-Route::put('/matakuliah/update/{id}', [MataKuliahController::class, 'update']);
-Route::delete('/matakuliah/destroy/{id}', [MataKuliahController::class, 'destroy']);
+Route::get('/mata-kuliah/{id}', [MataKuliahController::class, 'show']);
+Route::post('/mata-kuliah/store', [MataKuliahController::class, 'store']);
+Route::put('/mata-kuliah/update/{id}', [MataKuliahController::class, 'update']);
+Route::delete('/mata-kuliah/destroy/{id}', [MataKuliahController::class, 'destroy']);
 
 // * API Kelas
 // TODO: implementasi API Kelas
@@ -122,7 +127,7 @@ Route::get('/jadwal', function () {
 Route::get('/jadwal/{id}', [JadwalKuliahController::class, 'show']);
 Route::post('/jadwal/store', [JadwalKuliahController::class, 'store']);
 Route::put('/jadwal/update/{id}', [JadwalKuliahController::class, 'update']);
-Route::delete('jadwal/destroy/{id}', [JadwalKuliahController::class, 'destroy']);
+Route::delete('/jadwal/destroy/{id}', [JadwalKuliahController::class, 'destroy']);
 
 // * API Tahun Ajar
 // TODO: implementasi API Tahun Ajar

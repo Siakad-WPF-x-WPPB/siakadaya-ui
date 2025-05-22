@@ -35,6 +35,7 @@ class MataKuliahCollection extends ResourceCollection
             ->map(
                 function ($matakuliah) {
                     return [
+                        'id' => $matakuliah->id,
                         'program_studi' => $matakuliah->programStudi->nama,
                         'kode_matakuliah' => $matakuliah->kode,
                         'nama_matakuliah' => $matakuliah->nama,

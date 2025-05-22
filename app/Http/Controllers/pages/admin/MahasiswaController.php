@@ -81,25 +81,30 @@ class MahasiswaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+      $mahasiswa = Mahasiswa::findOrFail($id);
+
+      $program_studi = \App\Models\ProgramStudi::all();
+      $kelas = \App\Models\Kelas::all();
+
+      // Pass the mahasiswa data to the view
+      return view('pages.admin.mahasiswa.form', compact('mahasiswa', 'program_studi', 'kelas'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $mahasiswa = Mahasiswa::findOrFail($id);
 
-        $validated = $request->validate([
+        $rules = [
             'prodi_id' => 'required|exists:program_studi,id',
             'kelas_id' => 'required|exists:kelas,id',
-            'nrp' => 'required|unique:mahasiswa,nrp,',
+            'nrp' => 'required|unique:mahasiswa,nrp,'.$id,
             'nama' => 'required|string|max:255',
             'jenis_kelamin' => ['required', Rule::in(['L', 'P'])],
             'telepon' => 'required|numeric',
-            'email' => 'required|email|unique:mahasiswa,email,',
-            'password' => 'required|string|min:8',
+            'email' => 'required|email|unique:mahasiswa,email,'.$id,
             'agama' => 'required|string|max:255',
             'semester' => 'required|string|min:1',
             'tanggal_lahir' => 'required|date',
@@ -112,15 +117,24 @@ class MahasiswaController extends Controller
             'kelurahan' => 'required|string',
             'kecamatan' => 'required|string',
             'kota' => 'required|string',
-        ]);
+        ];
 
-        $validated['password'] = bcrypt($validated['password']);
+        if ($request->filled('password')) {
+            $rules['password'] = 'string|min:8';
+        }
+
+        $validated = $request->validate($rules);
+
+        if ($request->filled('password')) {
+            $validated['password'] = bcrypt($request->password);
+        } else {
+            // Pastikan password tidak diupdate jika tidak diisi
+            unset($validated['password']);
+        }
+
         $mahasiswa->update($validated);
 
-        return response()->json([
-            'message' => 'Data mahasiswa berhasil diperbarui.',
-            'data' => $mahasiswa
-        ]);
+        return redirect()->route('admin-mahasiswa-index')->with('success', 'Data mahasiswa berhasil diperbarui.');
     }
 
     /**

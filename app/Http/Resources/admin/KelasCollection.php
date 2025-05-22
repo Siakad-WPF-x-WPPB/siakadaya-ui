@@ -15,34 +15,72 @@ class KelasCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        $draw = $request->get('draw', 1); // DataTables draw counter
-        $start = $request->get('start', 0); // Starting record index
-        $length = $request->get('length', 10); // Number of records per page
-        $searchValue = $request->get('search')['value'] ?? ''; // Search value
+        // Get DataTables parameters
+        $draw = $request->get('draw', 1);
+        $start = $request->get('start', 0);
+        $length = $request->get('length', 10);
+        $searchValue = $request->get('search')['value'] ?? '';
 
-        // Simulate total records (e.g., from a database query)
-        $totalRecords = 10; // Example: Total number of records in the database
+        // Get sort parameters
+        $orderColumnIndex = $request->get('order')[0]['column'] ?? 2;
+        $orderDirection = $request->get('order')[0]['dir'] ?? 'asc';
 
-        // Simulate filtered records (e.g., based on search functionality)
-        $filteredRecords = $totalRecords; // Assume no filtering for now
+        // Map column index to actual column name
+        $columns = [
+            2 => 'pararel',
+            3 => 'nama_dosen',
+        ];
 
-        // Generate fake data for the current page
-        $data = Kelas::query()
-            ->offset($start)
-            ->limit($length)
-            ->get()
-            ->map(
-                function ($kelas) {
-                    return [
-                        'nama_dosen' => $kelas->dosen->nama,
-                        'pararel' => $kelas->pararel,
-                    ];
-                }
-            )
-            ->toArray();
+        $orderColumn = $columns[$orderColumnIndex] ?? 'pararel';
 
+        // Start query
+        $query = Kelas::query();
+
+        // Apply search if provided
+        if (!empty($searchValue)) {
+            $query->where(function($q) use ($searchValue) {
+                $q->where('pararel', 'like', "%{$searchValue}%")
+                  ->orWhereHas('dosen', function($q) use ($searchValue) {
+                      $q->where('nama', 'like', "%{$searchValue}%")
+                        ->orWhere('nip', 'like', "%{$searchValue}%");
+                  });
+            });
+        }
+
+        // Get total count of all records (before filtering)
+        $totalRecords = Kelas::count();
+
+        // Get filtered count
+        $filteredRecords = $query->count();
+
+        // Add sorting
+        if ($orderColumn === 'nama_dosen') {
+            // Handle relationship sorting
+            $query->join('dosen', 'kelas.dosen_id', '=', 'dosen.id')
+                  ->orderBy('dosen.nama', $orderDirection)
+                  ->select('kelas.*');
+        } else {
+            $query->orderBy($orderColumn, $orderDirection);
+        }
+
+        // Apply pagination
+        $data = $query->with(['dosen']) // Eager load relationships
+                      ->offset($start)
+                      ->limit($length)
+                      ->get()
+                      ->map(function ($kelas) {
+                          return [
+                              'id' => $kelas->id,
+                              'pararel' => $kelas->pararel,
+                              'dosen_id' => $kelas->dosen_id,
+                              'nama_dosen' => $kelas->dosen ? $kelas->dosen->nama : 'No Dosen Assigned',
+                          ];
+                      })
+                      ->toArray();
+
+        // Return formatted response for DataTables
         return [
-            'draw' => $draw,
+            'draw' => intval($draw),
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $filteredRecords,
             'data' => $data,
