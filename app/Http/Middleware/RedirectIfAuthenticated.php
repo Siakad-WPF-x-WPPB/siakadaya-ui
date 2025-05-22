@@ -40,6 +40,12 @@ class RedirectIfAuthenticated
                     }
                     // Contoh: return redirect('/dosen/home');
                 }
+                if ($guard === 'mahasiswa') {
+                    if (Route::has('mahasiswa-dashboard')) {
+                        return redirect(route('mahasiswa-dashboard'));
+                    }
+                    // Contoh: return redirect('/mahasiswa/home');
+                }
             }
         }
 

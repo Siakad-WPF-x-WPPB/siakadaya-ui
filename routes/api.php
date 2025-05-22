@@ -1,17 +1,17 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\MahasiswaAuthController;
 use App\Http\Controllers\authentications\AdminLoginController;
-use App\Http\Controllers\authentications\DosenLoginController;
 use App\Http\Controllers\pages\admin\DosenController;
 use App\Http\Controllers\pages\admin\JadwalKuliahController;
 use App\Http\Controllers\pages\admin\KelasController;
 use App\Http\Controllers\pages\admin\MahasiswaController;
 use App\Http\Controllers\pages\admin\MataKuliahController;
 use App\Http\Controllers\pages\admin\TahunAjarController;
-
+use App\Http\Controllers\pages\mahasiswa\JadwalKuliahMahasiswaController;
 use App\Http\Resources\admin\DosenCollection;
 use App\Http\Resources\admin\JadwalCollection;
 use App\Http\Resources\admin\KelasCollection;
@@ -25,6 +25,10 @@ use App\Http\Resources\admin\TahunAjarCollection;
 Route::get('/user', function (Request $request) {
   return $request->user();
 })->middleware('auth:sanctum');
+
+Route::get('/login', function () {
+    return response()->json(['message' => 'Please login'], 401);
+})->name('login');
 
 // Rute Autentikasi Admin
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -47,9 +51,12 @@ Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
 
 // Rute ini akan menggunakan 'auth:sanctum'.
 // Sanctum akan mengautentikasi token dan mengambil 'tokenable' model (yaitu Mahasiswa).
-Route::middleware('auth:sanctum')->prefix('mahasiswa')->group(function () {
+Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () {
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
+  Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'semua']);
+  Route::get('/jadwal/hari-ini', [JadwalKuliahMahasiswaController::class, 'hariIni']);
+  Route::get('/jadwal/mendatang', [JadwalKuliahMahasiswaController::class, 'besok']);
   // Rute API mahasiswa lainnya
   Route::get('/data-khusus', function (Request $request) {
     // $request->user() di sini adalah instance Mahasiswa
