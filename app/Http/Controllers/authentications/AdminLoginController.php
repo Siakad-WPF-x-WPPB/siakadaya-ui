@@ -16,7 +16,8 @@ class AdminLoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('auth.admin-login'); // Buat view: resources/views/auth/admin-login.blade.php
+        $pageConfigs = ['myLayout' => 'blank'];
+        return view('pages.login.login-admin', ['pageConfigs' => $pageConfigs]);
     }
 
     public function login(Request $request) // Ganti LoginRequest dengan Request atau buat LoginRequest khusus Admin
@@ -29,7 +30,7 @@ class AdminLoginController extends Controller
         // Coba login dengan guard 'admin'
         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('admin.dashboard')); // Arahkan ke dashboard admin
+            return redirect()->intended(route('admin-dashboard'));
         }
 
         return back()->withErrors([

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
 use App\Models\Dosen;
 use App\Models\Jadwal;
 use App\Models\Kelas;
@@ -11,6 +12,7 @@ use App\Models\ProgramStudi;
 use App\Models\Ruangan;
 use App\Models\TahunAjar;
 use App\Models\User;
+use Illuminate\Support\Str;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -50,6 +52,13 @@ class DatabaseSeeder extends Seeder
       'jabatan' => 'Dosen Tetap',
       'golongan_akhir' => 'III/a',
       'is_wali' => false
+  ]);
+
+  Admin::create([
+      'id' => (string) Str::uuid(),
+      'nama' => 'Admin',
+      'email' => 'raihan@gmail.com',
+      'password' => bcrypt('password'),
   ]);
 
   Mahasiswa::factory()->create([

@@ -60,6 +60,8 @@ class MahasiswaController extends Controller
             'kota' => 'required|string',
         ]);
 
+        
+
         $validated['password'] = bcrypt($validated['password']);
         $mahasiswa = Mahasiswa::create($validated);
 

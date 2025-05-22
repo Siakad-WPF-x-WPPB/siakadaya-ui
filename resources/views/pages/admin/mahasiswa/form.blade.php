@@ -4,26 +4,17 @@
 
 <!-- Vendor Styles -->
 @section('vendor-style')
-@vite([
-  'resources/assets/vendor/libs/flatpickr/flatpickr.scss',
-  'resources/assets/vendor/libs/select2/select2.scss'
-])
+    @vite(['resources/assets/vendor/libs/flatpickr/flatpickr.scss', 'resources/assets/vendor/libs/select2/select2.scss'])
 @endsection
 
 <!-- Vendor Scripts -->
 @section('vendor-script')
-@vite([
-  'resources/assets/vendor/libs/cleavejs/cleave.js',
-  'resources/assets/vendor/libs/cleavejs/cleave-phone.js',
-  'resources/assets/vendor/libs/moment/moment.js',
-  'resources/assets/vendor/libs/flatpickr/flatpickr.js',
-  'resources/assets/vendor/libs/select2/select2.js'
-])
+    @vite(['resources/assets/vendor/libs/cleavejs/cleave.js', 'resources/assets/vendor/libs/cleavejs/cleave-phone.js', 'resources/assets/vendor/libs/moment/moment.js', 'resources/assets/vendor/libs/flatpickr/flatpickr.js', 'resources/assets/vendor/libs/select2/select2.js'])
 @endsection
 
 <!-- Page Scripts -->
 @section('page-script')
-@vite(['resources/assets/js/form-layouts.js'])
+    @vite(['resources/assets/js/form-layouts.js'])
 @endsection
 
 @section('content')
