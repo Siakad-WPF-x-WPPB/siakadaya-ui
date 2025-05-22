@@ -20,7 +20,7 @@ $(function () {
   if (dt_basic_table.length) {
     dt_basic = dt_basic_table.DataTable({
       ajax: {
-        url: '/api/kelas',
+        url: '/api/jadwal',
         dataSrc: function (json) {
           console.log('Fetched data: ', json);
           return json.data;
@@ -28,9 +28,17 @@ $(function () {
       },
       columns: [
         { data: '' },
-        { data: 'pararel' },
-        { data: 'pararel' },
+        { data: 'kelas' },
+        { data: 'kelas' },
         { data: 'nama_dosen' },
+        { data: 'matakuliah' },
+        { data: 'ruangan' },
+        {
+          data: null,
+          render: function(data, type, row) {
+            return row.hari + ' ' + row.jam_mulai + '-' + row.jam_selesai;
+          }
+        },
         { data: '' }
       ],
       columnDefs: [
@@ -60,7 +68,7 @@ $(function () {
           }
         },
         {
-          // For Nama Kelas
+          // For Kelas
           targets: 2,
           searchable: true,
           orderable: true,
@@ -76,6 +84,27 @@ $(function () {
         //     // This ensures null/undefined values display as a dash
         //     return data || '-';
         //   }
+        },
+        {
+          // For Matakuliah
+          targets: 4,
+          searchable: true,
+          orderable: true,
+          responsivePriority: 5
+        },
+        {
+          // For Ruangan
+          targets: 5,
+          searchable: true,
+          orderable: true,
+          responsivePriority: 5
+        },
+        {
+          // For Hari, Jam Mulai, Jam Selesai
+          targets: 6,
+          searchable: true,
+          orderable: true,
+          responsivePriority: 5
         },
         {
           // Actions
@@ -95,7 +124,7 @@ $(function () {
               // '</ul>' +
               // '</div>' +
               '<div class="d-flex">' +
-              '<a href="/admin/kelas/' + full.id + '/edit" class="btn btn-sm btn-text-secondary rounded-pill btn-icon item-edit"><i class="ti ti-pencil ti-md"></i></a>' +
+              '<a href="/admin/jadwal-kuliah/' + full.id + '/edit" class="btn btn-sm btn-text-secondary rounded-pill btn-icon item-edit"><i class="ti ti-pencil ti-md"></i></a>' +
               '<a href="javascript:;" class="btn btn-sm btn-text-secondary rounded-pill btn-icon item-destroy"><i class="ti ti-trash ti-md"></i></a>' +
               '</div>'
             );
@@ -257,7 +286,7 @@ $(function () {
           text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add New Record</span>',
           className: 'create-new btn btn-primary waves-effect waves-light',
           action: function () {
-            window.location = '/admin/kelas/create';
+            window.location = '/admin/jadwal-kuliah/create';
           }
         }
       ],
@@ -309,7 +338,7 @@ $(function () {
     if (confirm('Are you sure you want to delete this record?')) {
       // Send DELETE request to the server
       $.ajax({
-        url: '/api/kelas/destroy/' + id,
+        url: '/api/jadwal/destroy/' + id,
         type: 'DELETE',
         success: function (response) {
           // Show success message
