@@ -13,13 +13,18 @@ return new class extends Migration
     {
         Schema::create('jadwal', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
+            // Foreign key constraints
             $table->foreignUuid('kelas_id')->constrained('kelas')->onDelete('cascade');
             $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
             $table->foreignUuid('mk_id')->constrained('matakuliah')->onDelete('cascade');
             $table->foreignUuid('ruangan_id')->constrained('ruangan')->onDelete('cascade');
+
+            // Jadwal details
             $table->time('jam_mulai');
             $table->time('jam_selesai');
-            $table->string('hari');
+            $table->string('hari', 10);
+
             $table->timestamps();
         });
     }

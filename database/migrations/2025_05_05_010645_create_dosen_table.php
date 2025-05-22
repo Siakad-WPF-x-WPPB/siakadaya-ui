@@ -13,17 +13,26 @@ return new class extends Migration
     {
         Schema::create('dosen', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nip')->unique();
+
+            // Foreign key constraints
             $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
-            $table->string('nama');
+
+            // Dosen details
+            $table->string('nip', 18)->unique();
+            $table->string('nama', 100)->index();
             $table->enum('jenis_kelamin', ['L', 'P']);
-            $table->char('telepon', length: 15);
+
+            // Contact details
+            $table->char('telepon', 15)->nullable();
             $table->string('email')->unique();
             $table->string('password');
+
+            // Personal information
             $table->date('tanggal_lahir');
-            $table->string('jabatan');
-            $table->string('golongan_akhir');
+            $table->string('jabatan', 50)->index();
+            $table->string('golongan_akhir', 10);
             $table->boolean('is_wali');
+
             $table->timestamps();
         });
     }

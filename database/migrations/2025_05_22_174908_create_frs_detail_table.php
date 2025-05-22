@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('program_studi', function (Blueprint $table) {
+        Schema::create('frs_detail', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-            // Program Studi details
-            $table->string('kode', 25)->unique();
-            $table->string('nama', 100);
-
+            $table->foreignUuid('frs_id')->constrained('frs')->onDelete('cascade');
+            $table->foreignUuid('jadwal_id')->constrained('jadwal')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('program_studi');
+        Schema::dropIfExists('frs_detail');
     }
 };

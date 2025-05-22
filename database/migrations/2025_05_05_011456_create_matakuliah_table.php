@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('matakuliah', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
+            // Foreign key constraints
             $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
+
+            // Matakuliah details
             $table->string('kode')->unique();
-            $table->string('nama');
-            $table->string('semester');
-            $table->string('sks');
-            $table->enum('tipe_matakuliah', ['MPK', 'MPI', 'MW']);
+            $table->string('nama', 100)->index();
+            $table->string('semester', 6);
+            $table->integer('sks');
+            $table->enum('tipe', ['MW', 'MPP', 'MPI', 'MPK', 'MBKM']);
+
             $table->timestamps();
         });
     }
