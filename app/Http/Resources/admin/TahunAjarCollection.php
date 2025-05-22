@@ -35,6 +35,7 @@ class TahunAjarCollection extends ResourceCollection
             ->map(
                 function ($tahunAjar) {
                     return [
+                        'id' => $tahunAjar->id,
                         'semester' => $tahunAjar->semester,
                         'tahun' => $tahunAjar->tahun,
                     ];
