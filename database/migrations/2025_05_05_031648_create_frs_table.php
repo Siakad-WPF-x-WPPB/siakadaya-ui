@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('frs', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignUuid('jadwal_id')->constrained('jadwal')->onDelete('cascade');
             $table->foreignUuid('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
             $table->date('tanggal_pengisian');
+            // $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
             $table->timestamps();
         });
     }

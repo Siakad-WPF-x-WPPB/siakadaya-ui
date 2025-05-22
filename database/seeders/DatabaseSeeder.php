@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Admin;
 use App\Models\Dosen;
+use App\Models\Frs;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
@@ -41,9 +42,9 @@ class DatabaseSeeder extends Seeder
     // ]);
     
     $dosen = Dosen::factory()->create([
-      'nip' => '1234567890',
-      'nama' => 'Dr. Andi Setiawan',
-      'email' => 'coba@gmail.com',
+      'nip' => '3123500056',
+      'nama' => 'Muhammad Raihan',
+      'email' => 'raihanm@gmail.com',
       'password' => bcrypt('password'),
       'telepon' => '081234567890',
       'tanggal_lahir' => '1980-05-15',
@@ -61,7 +62,14 @@ class DatabaseSeeder extends Seeder
       'password' => bcrypt('password'),
   ]);
 
-  Mahasiswa::factory()->create([
+    // Frs::create([
+    //   'mahasiswa_id' => Mahasiswa::inRandomOrder()->first()->id,
+    //   'jadwal_id' => Jadwal::inRandomOrder()->first()->id,
+    //   'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
+    //   'tanggal_pengisian' => now(),
+    // ]);
+
+    Mahasiswa::factory()->create([
       'nrp' => '1234567890',
       'nama' => 'Budi Santoso',
       'email' => 'budi@gmail.com',

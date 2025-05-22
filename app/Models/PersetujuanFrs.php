@@ -12,23 +12,10 @@ class PersetujuanFrs extends Model
 
     protected $table = 'persetujuan_frs';
 
-    protected $fillable = [
-        'frs_id',
-        'jadwal_id',
-        'status',
-        'tanggal_persetujuan',
-    ];
+    protected $fillable = ['id', 'frs_detail_id', 'status', 'tanggal_persetujuan'];
 
-    // Relasi ke FRS
-    public function frs()
+    public function frsDetail()
     {
-        return $this->belongsTo(Frs::class, 'frs_id');
+        return $this->belongsTo(FrsDetail::class);
     }
-
-    // Relasi ke Jadwal
-    public function jadwal()
-    {
-        return $this->belongsTo(Jadwal::class, 'jadwal_id');
-    }
-
 }

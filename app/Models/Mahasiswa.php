@@ -55,5 +55,10 @@ class Mahasiswa extends Authenticatable
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
+
+    public function frs()
+    {
+        return $this->hasMany(Frs::class);
+    }
 }
 

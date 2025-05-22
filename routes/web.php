@@ -20,6 +20,9 @@ use App\Http\Controllers\pages\admin\{
   TahunAjarController
 };
 use App\Http\Controllers\pages\dosen\DosenDashboardController;
+use App\Http\Controllers\pages\dosen\DosenJadwalKuliahController;
+use App\Http\Controllers\pages\dosen\DosenMahasiswaController;
+use App\Http\Controllers\pages\dosen\DosenNilaiController;
 
 // Main Page Route
 
@@ -106,6 +109,26 @@ Route::prefix('dosen')->group(
       function () {
         Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dosen-dashboard');
         Route::post('/logout', [DosenLoginController::class, 'logout'])->name('dosen-logout');
+        Route::get('/mahasiswa', [DosenMahasiswaController::class, 'index'])->name('dosen-mahasiswa-index');
+        Route::get('/jadwal-kuliah', [DosenJadwalKuliahController::class, 'index'])->name('dosen-jadwal-kuliah-index');
+        Route::resource('frs', JadwalKuliahController::class)->names([
+          'index'   => 'dosen-frs-index',
+          'create'  => 'dosen-frs-create',
+          'store'   => 'dosen-frs-store',
+          'show'    => 'dosen-frs-show',
+          'edit'    => 'dosen-frs-edit',
+          'update'  => 'dosen-frs-update',
+          'destroy' => 'dosen-frs-destroy',
+        ]);
+        Route::resource('nilai', DosenNilaiController::class)->names([
+          'index'   => 'dosen-nilai-index',
+          'create'  => 'dosen-nilai-create',
+          'store'   => 'dosen-nilai-store',
+          'show'    => 'dosen-nilai-show',
+          'edit'    => 'dosen-nilai-edit',
+          'update'  => 'dosen-nilai-update',
+          'destroy' => 'dosen-nilai-destroy',
+        ]);
       }
     );
   }
