@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             // Foreign key constraints
+            $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
             $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
 
             // Kelas details
