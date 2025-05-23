@@ -6,9 +6,51 @@ use App\Http\Controllers\Controller;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class MahasiswaController extends Controller
 {
+    private function validateMahasiswaData(Request $request, $id = null)
+    {
+      $nrpRule = $id ? "required|unique:mahasiswa,nrp,{$id}" : 'required|unique:mahasiswa,nrp';
+      $emailRule = $id ? "required|email|unique:mahasiswa,email,{$id}" : 'required|email|unique:mahasiswa,email';
+
+      return $request->validate([
+          'prodi_id' => 'required|uuid|exists:program_studi,id',
+          'kelas_id' => 'required|uuid|exists:kelas,id',
+          'nrp' => $nrpRule,
+          'nama' => 'required|string|max:100',
+          'jenis_kelamin' => ['required', Rule::in(['L', 'P'])],
+          'telepon' => 'nullable|string|max:15',
+          'email' => $emailRule,
+          'password' => $id ? 'nullable|string|min:8' : 'required|string|min:8',
+          'agama' => 'required|string|max:20',
+          'semester' => 'required|string|max:10',
+          'tanggal_lahir' => 'required|date|before:today',
+          'tanggal_masuk' => 'required|date|before_or_equal:today',
+          'status' => ['required', Rule::in(['Aktif', 'Cuti', 'Keluar'])],
+          'alamat_jalan' => 'nullable|string',
+          'provinsi' => 'required|string|max:50',
+          'kode_pos' => 'required|string|max:50',
+          'negara' => 'required|string|max:50',
+          'kelurahan' => 'required|string|max:50',
+          'kecamatan' => 'required|string|max:50',
+          'kota' => 'required|string|max:50',
+      ], [
+          'prodi_id.required' => 'Program studi harus dipilih.',
+          'prodi_id.exists' => 'Program studi tidak valid.',
+          'kelas_id.required' => 'Kelas harus dipilih.',
+          'kelas_id.exists' => 'Kelas tidak valid.',
+          'nrp.unique' => 'NRP sudah digunakan.',
+          'email.unique' => 'Email sudah digunakan.',
+          'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
+          'tanggal_masuk.before_or_equal' => 'Tanggal masuk tidak boleh di masa depan.',
+      ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -35,37 +77,50 @@ class MahasiswaController extends Controller
      */
     public function store(Request $request)
     {
+      try {
+        // Validate the request data
+        $validated = $this->validateMahasiswaData($request);
 
-        // validasi data mahasiswa
-        $validated = $request->validate([
-            'prodi_id' => 'required|exists:program_studi,id',
-            'kelas_id' => 'required|exists:kelas,id',
-            'nrp' => 'required|unique:mahasiswa,nrp',
-            'nama' => 'required|string|max:255',
-            'jenis_kelamin' => ['required', Rule::in(['L', 'P'])],
-            'telepon' => 'required|numeric',
-            'email' => 'required|email|unique:mahasiswa,email',
-            'password' => 'required|string|min:8',
-            'agama' => 'required|string|max:255',
-            'semester' => 'required|string|min:1',
-            'tanggal_lahir' => 'required|date',
-            'tanggal_masuk' => 'required|date',
-            'status' => ['required', Rule::in(['Aktif', 'Cuti', 'Keluar'])],
-            'alamat_jalan' => 'required|string',
-            'provinsi' => 'required|string',
-            'kode_pos' => 'required|string',
-            'negara' => 'required|string',
-            'kelurahan' => 'required|string',
-            'kecamatan' => 'required|string',
-            'kota' => 'required|string',
-        ]);
-
-        
-
+        // Hash the password
         $validated['password'] = bcrypt($validated['password']);
+
+        // Create a new Mahasiswa record
         $mahasiswa = Mahasiswa::create($validated);
 
-        return redirect()->route('admin-mahasiswa-index')->with('success', 'Data mahasiswa berhasil disimpan.');
+        // Handle different response types based on request
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data mahasiswa berhasil disimpan.',
+                'data' => $mahasiswa->load(['programStudi', 'kelas'])
+            ], 201);
+        }
+
+        return redirect()->route('admin-mahasiswa-index')
+            ->with('success', 'Data mahasiswa berhasil disimpan.');
+      } catch (ValidationException $e) {
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
+        throw $e;
+      } catch (Exception $e) {
+        Log::error('Error creating mahasiswa: ' . $e->getMessage());
+
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.'
+            ], 500);
+        }
+
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Terjadi kesalahan saat menyimpan data.');
+      }
     }
 
     /**
@@ -95,46 +150,64 @@ class MahasiswaController extends Controller
      */
     public function update(Request $request, $id)
     {
+      try {
         $mahasiswa = Mahasiswa::findOrFail($id);
 
-        $rules = [
-            'prodi_id' => 'required|exists:program_studi,id',
-            'kelas_id' => 'required|exists:kelas,id',
-            'nrp' => 'required|unique:mahasiswa,nrp,'.$id,
-            'nama' => 'required|string|max:255',
-            'jenis_kelamin' => ['required', Rule::in(['L', 'P'])],
-            'telepon' => 'required|numeric',
-            'email' => 'required|email|unique:mahasiswa,email,'.$id,
-            'agama' => 'required|string|max:255',
-            'semester' => 'required|string|min:1',
-            'tanggal_lahir' => 'required|date',
-            'tanggal_masuk' => 'required|date',
-            'status' => ['required', Rule::in(['Aktif', 'Cuti', 'Keluar'])],
-            'alamat_jalan' => 'required|string',
-            'provinsi' => 'required|string',
-            'kode_pos' => 'required|string',
-            'negara' => 'required|string',
-            'kelurahan' => 'required|string',
-            'kecamatan' => 'required|string',
-            'kota' => 'required|string',
-        ];
+        // Validate the request data
+        $validated = $this->validateMahasiswaData($request, $id);
 
+        // Only hash the password if it's provided
         if ($request->filled('password')) {
-            $rules['password'] = 'string|min:8';
-        }
-
-        $validated = $request->validate($rules);
-
-        if ($request->filled('password')) {
-            $validated['password'] = bcrypt($request->password);
+            $validated['password'] = bcrypt($validated['password']);
         } else {
-            // Pastikan password tidak diupdate jika tidak diisi
             unset($validated['password']);
         }
 
+        // Update the Mahasiswa record
         $mahasiswa->update($validated);
 
-        return redirect()->route('admin-mahasiswa-index')->with('success', 'Data mahasiswa berhasil diperbarui.');
+        // Handle different response types based on request
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data mahasiswa berhasil diperbarui.',
+                'data' => $mahasiswa->fresh()->load(['programStudi', 'kelas'])
+            ]);
+        }
+
+        return redirect()->route('admin-mahasiswa-index')
+            ->with('success', 'Data mahasiswa berhasil diperbarui.');
+      } catch (ModelNotFoundException $e) {
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data mahasiswa tidak ditemukan.'
+            ], 404);
+        }
+        abort(404);
+      } catch (ValidationException $e) {
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
+        throw $e;
+      } catch (Exception $e) {
+        Log::error('Error updating mahasiswa: ' . $e->getMessage());
+
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui data.'
+            ], 500);
+        }
+
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Terjadi kesalahan saat memperbarui data.');
+      }
     }
 
     /**
@@ -142,11 +215,40 @@ class MahasiswaController extends Controller
      */
     public function destroy(string $id)
     {
+      try {
         $mahasiswa = Mahasiswa::findOrFail($id);
         $mahasiswa->delete();
 
-        return response()->json([
-            'message' => 'Data mahasiswa berhasil dihapus.'
-        ]);
+        // Handle different response types based on request
+        if (request()->expectsJson() || request()->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data mahasiswa berhasil dihapus.'
+            ]);
+        }
+
+        return redirect()->route('admin-mahasiswa-index')
+            ->with('success', 'Data mahasiswa berhasil dihapus.');
+      } catch (ModelNotFoundException $e) {
+        if (request()->expectsJson() || request()->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data mahasiswa tidak ditemukan.'
+            ], 404);
+        }
+        abort(404);
+      } catch (Exception $e) {
+        Log::error('Error deleting mahasiswa: ' . $e->getMessage());
+
+        if (request()->expectsJson() || request()->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data.'
+            ], 500);
+        }
+
+        return redirect()->back()
+            ->with('error', 'Terjadi kesalahan saat menghapus data.');
+      }
     }
 }
