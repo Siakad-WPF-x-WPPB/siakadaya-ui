@@ -21,7 +21,7 @@ class TahunAjarController extends Controller
      */
     public function create()
     {
-        
+        return view('pages.admin.tahunAjar.form');
     }
 
     /**
@@ -32,15 +32,15 @@ class TahunAjarController extends Controller
         // validasi data
         $validated = $request->validate([
             'semester' => 'required|string|min:1',
-            'tahun' => 'required|numeric',
+            'tahun' => 'required|string|min:1',
         ]);
 
         $tahunAjar = TahunAjar::create($validated);
 
-        return response()->json([
-            'message' => 'Data tahun ajar berhasil ditambahkan',
+        return redirect()->route('admin-tahun-ajar-index')->with([
+            'message' => 'Data tahun ajar berhasil ditambahkan.',
             'data' => $tahunAjar
-        ], 201);
+        ]);
     }
 
     /**
@@ -56,7 +56,9 @@ class TahunAjarController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $tahunAjar = TahunAjar::findOrFail($id);
+
+        return view('pages.admin.tahunAjar.form', compact('tahunAjar'));
     }
 
     /**
@@ -64,17 +66,17 @@ class TahunAjarController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $tahunAjar = TahunAjar::findOrFail($id);
-
+        // validasi data
         $validated = $request->validate([
             'semester' => 'required|string|min:1',
-            'tahun' => 'required|numeric',
+            'tahun' => 'required|string|min:1',
         ]);
 
+        $tahunAjar = TahunAjar::findOrFail($id);
         $tahunAjar->update($validated);
 
-        return response()->json([
-            'message' => 'Data tahun ajar berhasil diperbarui.',
+        return redirect()->route('admin-tahun-ajar-index')->with([
+            'message' => 'Data tahun ajar berhasil diubah.',
             'data' => $tahunAjar
         ]);
     }

@@ -13,13 +13,18 @@ return new class extends Migration
     {
         Schema::create('nilai', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
+            // Foreign key constraints
             $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
             $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->foreignUuid('mk_id')->constrained('matakuliah')->onDelete('cascade');
             $table->foreignUuid('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
+
+            // Nilai details
             $table->enum('status', ['lulus', 'tidak lulus']);
             $table->enum('nilai_huruf', ['A', 'AB', 'B', 'BC', 'C', 'D', 'E']);
             $table->integer('nilai_angka');
+
             $table->timestamps();
         });
     }

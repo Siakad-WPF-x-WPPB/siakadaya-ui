@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('persetujuan_frs', function (Blueprint $table) {
+        Schema::create('frs_detail', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('frs_detail_id')->constrained('frs_detail')->onDelete('cascade');
-            $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
+            // Foreign key constraints
+            $table->foreignUuid('frs_id')->constrained('frs')->onDelete('cascade');
+            $table->foreignUuid('jadwal_id')->constrained('jadwal')->onDelete('cascade');
+            // FRS details
+            $table->enum('status', ['disetujui', 'ditolak', 'pending'])->default('pending');
             $table->date('tanggal_persetujuan')->nullable();
             $table->timestamps();
         });
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('persetujuan_frs');
+        Schema::dropIfExists('frs_detail');
     }
 };

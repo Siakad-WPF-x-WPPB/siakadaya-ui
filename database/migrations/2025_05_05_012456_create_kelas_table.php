@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('kelas', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
+            // Foreign key constraints
+            $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
             $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
-            $table->string('pararel');
+
+            // Kelas details
+            $table->string('pararel', 10)->index();
+
             $table->timestamps();
         });
     }

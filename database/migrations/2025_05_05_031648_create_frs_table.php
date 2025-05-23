@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('frs', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
+            // Foreign key constraints
             $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
             $table->foreignUuid('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
+
+            // FRS details
             $table->date('tanggal_pengisian');
-            // $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
+
             $table->timestamps();
         });
     }
