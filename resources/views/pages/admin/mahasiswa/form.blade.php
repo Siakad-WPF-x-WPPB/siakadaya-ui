@@ -17,7 +17,6 @@
     @vite(['resources/assets/js/form-layouts.js', 'resources/assets/js/admin/form-mahasiswa.js'])
     @if(isset($mahasiswa) && $mahasiswa->prodi_id)
         <script>
-            // Pass data to JavaScript
             var mahasiswaProdiId = '{{ $mahasiswa->prodi_id }}';
         </script>
     @endif
@@ -44,19 +43,26 @@
           <div class="col-md-6">
             <label class="form-label" for="email">Email</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="text" id="email" name="email" value="{{ $mahasiswa->email ?? old('email') }}" class="form-control" placeholder="adrian@it.student.pens.ac.id" aria-label="john.doe" aria-describedby="email2" />
-                {{-- <span class="input-group-text" id="multicol-email2">@example.com</span> --}}
-              </div>
+              <input type="text" id="email" name="email" value="{{ $mahasiswa->email ?? old('email') }}" class="form-control @error('email') is-invalid @enderror" placeholder="adrian@it.student.pens.ac.id" aria-label="john.doe" aria-describedby="email2" />
+              @error('email')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6">
             <label class="form-label" for="password">Password</label>
             <div class="col-sm-12">
               <div class="input-group input-group-merge">
-                <input type="password" id="password" name="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" {{ isset($mahasiswa) ? '' : 'required' }} />
+                <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" {{ isset($mahasiswa) ? '' : 'required' }} />
                 <span class="input-group-text cursor-pointer" id="password2"><i class="ti ti-eye-off"></i></span>
               </div>
+              @error('password')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
               @if(isset($mahasiswa))
                 <small class="text-muted">Leave blank to keep current password</small>
               @endif
@@ -69,13 +75,23 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="nrp">NRP</label>
             <div class="col-sm-12">
-              <input name="nrp" value="{{ $mahasiswa->nrp ?? old('nrp') }}" type="text" class="form-control" id="nrp" placeholder="3123500038" />
+              <input name="nrp" value="{{ $mahasiswa->nrp ?? old('nrp') }}" type="text" class="form-control @error('nrp') is-invalid @enderror" id="nrp" placeholder="3123500038" />
+              @error('nrp')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="nama">Nama</label>
             <div class="col-sm-12">
-              <input name="nama" value="{{ $mahasiswa->nama ?? old('nama') }}" type="text" class="form-control" id="nama" placeholder="Denis Beban" />
+              <input name="nama" value="{{ $mahasiswa->nama ?? old('nama') }}" type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" placeholder="Denis Beban" />
+              @error('nama')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -83,7 +99,7 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="prodi">Program Studi</label>
             <div class="col-sm-12">
-              <select name="prodi_id" id="prodi" class="select2 form-select" data-allow-clear="true">
+              <select name="prodi_id" id="prodi" class="select2 form-select @error('prodi_id') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 @foreach($program_studi as $prodi)
                   <option value="{{ $prodi->id }}"
@@ -92,17 +108,27 @@
                   </option>
                 @endforeach
               </select>
+              @error('prodi_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="kelas">Kelas</label>
             <div class="col-sm-12">
-              <select name="kelas_id" id="kelas" class="select2 form-select" data-allow-clear="true" disabled>
+              <select name="kelas_id" id="kelas" class="select2 form-select @error('kelas_id') is-invalid @enderror" data-allow-clear="true" disabled>
                   <option value="">Select value</option>
                   @if(isset($mahasiswa) && $mahasiswa->kelas_id)
                       <option value="{{ $mahasiswa->kelas->id }}" selected>{{ $mahasiswa->kelas->pararel }}</option>
                   @endif
               </select>
+              @error('kelas_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -110,17 +136,22 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="jenis-kelamin">Jenis Kelamin</label>
             <div class="col-sm-12">
-              <select name="jenis_kelamin" id="jenis-kelamin" class="select2 form-select" data-allow-clear="true">
+              <select name="jenis_kelamin" id="jenis-kelamin" class="select2 form-select @error('jenis_kelamin') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 <option value="L" {{ (isset($mahasiswa) && $mahasiswa->jenis_kelamin == 'L') ? 'selected' : '' }}>Laki-laki</option>
                 <option value="P" {{ (isset($mahasiswa) && $mahasiswa->jenis_kelamin == 'P') ? 'selected' : '' }}>Perempuan</option>
               </select>
+              @error('jenis_kelamin')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="agama">Agama</label>
             <div class="col-sm-12">
-              <select name="agama" id="agama" class="select2 form-select" data-allow-clear="true">
+              <select name="agama" id="agama" class="select2 form-select @error('agama') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Pilih Agama</option>
                 <option value="Islam" {{ (isset($mahasiswa) && $mahasiswa->agama == 'Islam') ? 'selected' : '' }}>Islam</option>
                 <option value="Kristen" {{ (isset($mahasiswa) && $mahasiswa->agama == 'Kristen') ? 'selected' : '' }}>Kristen</option>
@@ -129,6 +160,11 @@
                 <option value="Buddha" {{ (isset($mahasiswa) && $mahasiswa->agama == 'Buddha') ? 'selected' : '' }}>Buddha</option>
                 <option value="Konghuchu" {{ (isset($mahasiswa) && $mahasiswa->agama == 'Konghuchu') ? 'selected' : '' }}>Konghuchu</option>
               </select>
+              @error('agama')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -136,13 +172,23 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="telepon">Telepon</label>
             <div class="col-sm-12">
-              <input name="telepon" value="{{ $mahasiswa->telepon ?? old('telepon') }}" type="text" id="telepon" class="form-control phone-mask" placeholder="0895301391873" aria-label="0895301391873" aria-describedby="basic-default-phone" />
+              <input name="telepon" value="{{ $mahasiswa->telepon ?? old('telepon') }}" type="text" id="telepon" class="form-control phone-mask @error('telepon') is-invalid @enderror" placeholder="0895301391873" aria-label="0895301391873" aria-describedby="basic-default-phone" />
+              @error('telepon')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="semester">Semester</label>
             <div class="col-sm-12">
-              <input name="semester" value="{{ $mahasiswa->semester ?? old('semester') }}" type="number" class="form-control" id="semester" placeholder="1" />
+              <input name="semester" value="{{ $mahasiswa->semester ?? old('semester') }}" type="number" class="form-control @error('semester') is-invalid @enderror" id="semester" placeholder="1" />
+              @error('semester')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -150,13 +196,23 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="tanggal-lahir">Tanggal Lahir</label>
             <div class="col-sm-12">
-              <input name="tanggal_lahir" value="{{ $mahasiswa->tanggal_lahir ?? old('tanggal_lahir') }}" type="text" id="tanggal-lahir" class="form-control dob-picker" placeholder="YYYY-MM-DD" />
+              <input name="tanggal_lahir" value="{{ $mahasiswa->tanggal_lahir ?? old('tanggal_lahir') }}" type="text" id="tanggal-lahir" class="form-control dob-picker @error('tanggal_lahir') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('tanggal_lahir')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="tanggal-masuk">Tanggal Masuk</label>
             <div class="col-sm-12">
-              <input name="tanggal_masuk" value="{{ $mahasiswa->tanggal_masuk ?? old('tanggal_masuk') }}" type="text" id="tanggal-masuk" class="form-control dob-picker" placeholder="YYYY-MM-DD" />
+              <input name="tanggal_masuk" value="{{ $mahasiswa->tanggal_masuk ?? old('tanggal_masuk') }}" type="text" id="tanggal-masuk" class="form-control dob-picker @error('tanggal_masuk') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('tanggal_masuk')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -164,18 +220,28 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="status">Status</label>
             <div class="col-sm-12">
-              <select name="status" id="status" class="select2 form-select" data-allow-clear="true">
+              <select name="status" id="status" class="select2 form-select @error('status') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Pilih Status</option>
                 <option value="Aktif" {{ (isset($mahasiswa) && $mahasiswa->status == 'Aktif') ? 'selected' : '' }}>Aktif</option>
                 <option value="Cuti" {{ (isset($mahasiswa) && $mahasiswa->status == 'Cuti') ? 'selected' : '' }}>Cuti</option>
                 <option value="Keluar" {{ (isset($mahasiswa) && $mahasiswa->status == 'Keluar') ? 'selected' : '' }}>Keluar</option>
               </select>
+              @error('status')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="alamat-jalan">Alamat Jalan</label>
             <div class="col-sm-12">
-              <input name="alamat_jalan" value="{{ $mahasiswa->alamat_jalan ?? old('alamat_jalan') }}" type="text" class="form-control" id="alamat-jalan" placeholder="Jl. Raya Keputih" />
+              <input name="alamat_jalan" value="{{ $mahasiswa->alamat_jalan ?? old('alamat_jalan') }}" type="text" class="form-control @error('alamat_jalan') is-invalid @enderror" id="alamat-jalan" placeholder="Jl. Raya Keputih" />
+              @error('alamat_jalan')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -183,7 +249,7 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="provinsi">Provinsi</label>
             <div class="col-sm-12">
-              <select name="provinsi" id="provinsi" class="select2 form-select" data-allow-clear="true">
+              <select name="provinsi" id="provinsi" class="select2 form-select @error('provinsi') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 <option value="Jawa Timur" {{ (isset($mahasiswa) && $mahasiswa->provinsi == 'Jawa Timur') ? 'selected' : '' }}>Jawa Timur</option>
                 <option value="Jawa Tengah" {{ (isset($mahasiswa) && $mahasiswa->provinsi == 'Jawa Tengah') ? 'selected' : '' }}>Jawa Tengah</option>
@@ -207,12 +273,22 @@
                 <option value="Nusa Tenggara Barat" {{ (isset($mahasiswa) && $mahasiswa->provinsi == 'Nusa Tenggara Barat') ? 'selected' : '' }}>Nusa Tenggara Barat</option>
                 <option value="Nusa Tenggara Timur" {{ (isset($mahasiswa) && $mahasiswa->provinsi == 'Nusa Tenggara Timur') ? 'selected' : '' }}>Nusa Tenggara Barat</option>
               </select>
+              @error('provinsi')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="kode-pos">Kode Pos</label>
             <div class="col-sm-12">
-              <input name="kode_pos" value="{{ $mahasiswa->kode_pos ?? old('kode_pos') }}" type="text" class="form-control" id="kode-pos" placeholder="123456" />
+              <input name="kode_pos" value="{{ $mahasiswa->kode_pos ?? old('kode_pos') }}" type="text" class="form-control @error('kode_pos') is-invalid @enderror" id="kode-pos" placeholder="123456" />
+              @error('kode_pos')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -220,7 +296,7 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="negara">Country</label>
             <div class="col-sm-12">
-              <select name="negara" id="negara" class="select2 form-select" data-allow-clear="true">
+              <select name="negara" id="negara" class="select2 form-select @error('negara') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 <option value="Australia" {{ (isset($mahasiswa) && $mahasiswa->negara == 'Australia') ? 'selected' : '' }}>Australia</option>
                 <option value="Bangladesh" {{ (isset($mahasiswa) && $mahasiswa->negara == 'Bangladesh') ? 'selected' : '' }}>Bangladesh</option>
@@ -247,12 +323,22 @@
                 <option value="United Kingdom" {{ (isset($mahasiswa) && $mahasiswa->negara == 'United Kingdom') ? 'selected' : '' }}>United Kingdom</option>
                 <option value="United States" {{ (isset($mahasiswa) && $mahasiswa->negara == 'United States') ? 'selected' : '' }}>United States</option>
               </select>
+              @error('negara')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="kelurahan">Kelurahan</label>
             <div class="col-sm-12">
-              <input name="kelurahan" value="{{ $mahasiswa->kelurahan ?? old('kelurahan') }}" type="text" class="form-control" id="kelurahan" placeholder="Desa Keputih" />
+              <input name="kelurahan" value="{{ $mahasiswa->kelurahan ?? old('kelurahan') }}" type="text" class="form-control @error('kelurahan') is-invalid @enderror" id="kelurahan" placeholder="Desa Keputih" />
+              @error('kelurahan')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -260,13 +346,23 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="kecamatan">Kecamatan</label>
             <div class="col-sm-12">
-              <input name="kecamatan" value="{{ $mahasiswa->kecamatan ?? old('kecamatan') }}" type="text" class="form-control" id="kecamatan" placeholder="Sukolilo" />
+              <input name="kecamatan" value="{{ $mahasiswa->kecamatan ?? old('kecamatan') }}" type="text" class="form-control @error('kecamatan') is-invalid @enderror" id="kecamatan" placeholder="Sukolilo" />
+              @error('kecamatan')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="kota">Kota</label>
             <div class="col-sm-12">
-              <input name="kota" value="{{ $mahasiswa->kota ?? old('kota') }}" type="text" class="form-control" id="kota" placeholder="Surabaya" />
+              <input name="kota" value="{{ $mahasiswa->kota ?? old('kota') }}" type="text" class="form-control @error('kota') is-invalid @enderror" id="kota" placeholder="Surabaya" />
+              @error('kota')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>

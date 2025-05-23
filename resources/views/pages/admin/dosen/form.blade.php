@@ -47,18 +47,25 @@
           <div class="col-md-6">
             <label class="form-label" for="email">Email</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="text" id="email" name="email" value="{{ $dosen->email ?? old('email') }}" class="form-control" placeholder="adrian@it.student.pens.ac.id" aria-label="john.doe" aria-describedby="email2" />
-                {{-- <span class="input-group-text" id="multicol-email2">@example.com</span> --}}
-              </div>
+              <input type="text" id="email" name="email" value="{{ $dosen->email ?? old('email') }}" class="form-control @error('email') is-invalid @enderror" placeholder="adrian@it.student.pens.ac.id" aria-label="john.doe" aria-describedby="email2" />
+              @error('email')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6">
             <label class="form-label" for="password">Password</label>
             <div class="col-sm-12">
               <div class="input-group input-group-merge">
-                <input type="password" id="password" name="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" {{ isset($dosen) ? '' : 'required' }} />
+                <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" {{ isset($dosen) ? '' : 'required' }} />
                 <span class="input-group-text cursor-pointer" id="password2"><i class="ti ti-eye-off"></i></span>
+                @error('password')
+                  <div class="invalid-feedback d-block">
+                    {{ $message }}
+                  </div>
+                @enderror
               </div>
               @if(isset($dosen))
                 <small class="text-muted">Leave blank to keep current password</small>
@@ -72,13 +79,23 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="nip">NIP</label>
             <div class="col-sm-12">
-              <input name="nip" value="{{ $dosen->nip ?? old('nip') }}" type="text" class="form-control" id="nip" placeholder="19800515200501001" />
+              <input name="nip" value="{{ $dosen->nip ?? old('nip') }}" type="text" class="form-control @error('nip') is-invalid @enderror" id="nip" placeholder="19800515200501001" />
+              @error('nip')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="nama">Nama</label>
             <div class="col-sm-12">
-              <input name="nama" value="{{ $dosen->nama ?? old('nama') }}" type="text" class="form-control" id="nama" placeholder="Denis Beban" />
+              <input name="nama" value="{{ $dosen->nama ?? old('nama') }}" type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" placeholder="Denis Beban" />
+              @error('nama')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -86,7 +103,7 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="prodi">Program Studi</label>
             <div class="col-sm-12">
-              <select name="prodi_id" id="prodi" class="select2 form-select" data-allow-clear="true">
+              <select name="prodi_id" id="prodi" class="select2 form-select @error('prodi_id') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 @foreach($program_studi as $prodi)
                   <option value="{{ $prodi->id }}"
@@ -95,16 +112,26 @@
                   </option>
                 @endforeach
               </select>
+              @error('prodi_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="jenis-kelamin">Jenis Kelamin</label>
             <div class="col-sm-12">
-              <select name="jenis_kelamin" id="jenis-kelamin" class="select2 form-select" data-allow-clear="true">
+              <select name="jenis_kelamin" id="jenis-kelamin" class="select2 form-select @error('jenis_kelamin') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 <option value="L" {{ (isset($dosen) && $dosen->jenis_kelamin == 'L') ? 'selected' : '' }}>Laki-laki</option>
                 <option value="P" {{ (isset($dosen) && $dosen->jenis_kelamin == 'P') ? 'selected' : '' }}>Perempuan</option>
               </select>
+              @error('jenis_kelamin')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -112,13 +139,18 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="telepon">Telepon</label>
             <div class="col-sm-12">
-              <input name="telepon" value="{{ $dosen->telepon ?? old('telepon') }}" type="text" id="telepon" class="form-control phone-mask" placeholder="0895301391873" aria-label="0895301391873" aria-describedby="basic-default-phone" />
+              <input name="telepon" value="{{ $dosen->telepon ?? old('telepon') }}" type="text" id="telepon" class="form-control phone-mask @error('telepon') is-invalid @enderror" placeholder="0895301391873" aria-label="0895301391873" aria-describedby="basic-default-phone" />
+              @error('telepon')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6 mb-6">
             <label class="form-label" for="jabatan">Jabatan</label>
             <div class="col-sm-12">
-              <select name="jabatan" id="jabatan" class="select2 form-select" data-allow-clear="true">
+              <select name="jabatan" id="jabatan" class="select2 form-select @error('jabatan') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Pilih Jabatan</option>
                 <option value="Dosen" {{ (isset($dosen) && $dosen->jabatan == 'Dosen') ? 'selected' : '' }}>Dosen</option>
                 <option value="Asisten Ahli" {{ (isset($dosen) && $dosen->jabatan == 'Asisten Ahli') ? 'selected' : '' }}>Asisten Ahli</option>
@@ -135,6 +167,11 @@
                 <option value="Dosen Tetap" {{ (isset($dosen) && $dosen->jabatan == 'Dosen Tetap') ? 'selected' : '' }}>Dosen Tetap</option>
                 <option value="Dosen Tidak Tetap" {{ (isset($dosen) && $dosen->jabatan == 'Dosen Tidak Tetap') ? 'selected' : '' }}>Dosen Tidak Tetap</option>
               </select>
+              @error('jabatan')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -142,13 +179,18 @@
           <div class="col-md-4 mb-6">
             <label class="form-label" for="tanggal-lahir">Tanggal Lahir</label>
             <div class="col-sm-12">
-              <input name="tanggal_lahir" value="{{ $dosen->tanggal_lahir ?? old('tanggal_lahir') }}" type="text" id="tanggal-lahir" class="form-control dob-picker" placeholder="YYYY-MM-DD" />
+              <input name="tanggal_lahir" value="{{ $dosen->tanggal_lahir ?? old('tanggal_lahir') }}" type="text" id="tanggal-lahir" class="form-control dob-picker @error('tanggal_lahir') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('tanggal_lahir')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-4 mb-6">
             <label class="form-label" for="golongan_akhir">Golongan Akhir</label>
             <div class="col-sm-12">
-              <select name="golongan_akhir" id="golongan_akhir" class="select2 form-select" data-allow-clear="true">
+              <select name="golongan_akhir" id="golongan_akhir" class="select2 form-select @error('golongan_akhir') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Pilih Golongan Akhir</option>
                 <option value="II/a" {{ (isset($dosen) && $dosen->golongan_akhir == 'II/a') ? 'selected' : '' }}>II/a</option>
                 <option value="II/b" {{ (isset($dosen) && $dosen->golongan_akhir == 'II/b') ? 'selected' : '' }}>II/b</option>
@@ -165,16 +207,26 @@
                 <option value="IV/e" {{ (isset($dosen) && $dosen->golongan_akhir == 'IV/e') ? 'selected' : '' }}>IV/e</option>
                 <option value="Non-PNS" {{ (isset($dosen) && $dosen->golongan_akhir == 'Non-PNS') ? 'selected' : '' }}>Non-PNS</option>
               </select>
+              @error('golongan_akhir')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-4 mb-6">
             <label class="form-label" for="is_wali">Status Wali</label>
             <div class="col-sm-12">
-              <select name="is_wali" id="is_wali" class="select2 form-select" data-allow-clear="true">
+              <select name="is_wali" id="is_wali" class="select2 form-select @error('is_wali') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Wali atau Tidak</option>
                 <option value="1" {{ (isset($dosen) && $dosen->is_wali == 1) ? 'selected' : '' }}>Wali</option>
                 <option value="0" {{ (isset($dosen) && $dosen->is_wali == 0) ? 'selected' : '' }}>Tidak Wali</option>
               </select>
+              @error('is_wali')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
