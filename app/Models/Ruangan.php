@@ -18,7 +18,6 @@ class Ruangan extends Model
         'gedung'
     ];
 
-    // Relasi ke Jadwal (jika ruangan digunakan di jadwal kuliah)
     public function jadwal()
     {
         return $this->hasMany(Jadwal::class, 'jadwal_id');

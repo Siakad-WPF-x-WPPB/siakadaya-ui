@@ -16,8 +16,8 @@ class Dosen extends Authenticatable
     protected $table = 'dosen';
 
     protected $fillable = [
-        'nip',
         'prodi_id',
+        'nip',
         'nama',
         'jenis_kelamin',
         'telepon',
@@ -37,6 +37,21 @@ class Dosen extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function scopeJabatan($query, $jabatan)
+    {
+        return $query->where('jabatan', $jabatan);
+    }
+
+    public function scopeGolonganAkhir($query, $golongan_akhir)
+    {
+        return $query->where('golongan_akhir', $golongan_akhir);
+    }
+
+    public function scopeProdi($query, $prodi_id)
+    {
+        return $query->where('prodi_id', $prodi_id);
+    }
+
     public function programStudi()
     {
         return $this->belongsTo(ProgramStudi::class, 'prodi_id');
@@ -46,4 +61,15 @@ class Dosen extends Authenticatable
     {
         return $this->hasMany(Jadwal::class, 'jadwal_id');
     }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'dosen_id');
+    }
+
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'dosen_id');
+    }
+    
 }

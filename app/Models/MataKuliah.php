@@ -18,10 +18,9 @@ class Matakuliah extends Model
         'nama',
         'semester',
         'sks',
-        'tipe_matakuliah',
+        'tipe',
     ];
 
-    // Relasi ke Jurusan
     public function programStudi()
     {
         return $this->belongsTo(ProgramStudi::class, 'prodi_id');
@@ -29,6 +28,11 @@ class Matakuliah extends Model
 
     public function jadwal()
     {
-        return $this->hasMany(Jadwal::class, 'jadwal_id');
+        return $this->hasMany(Jadwal::class, 'mk_id');
+    }
+
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'mk_id');
     }
 }

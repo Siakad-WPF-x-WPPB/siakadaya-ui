@@ -12,20 +12,24 @@ class Frs extends Model
 
     protected $table = 'frs';
 
-    protected $fillable = ['id', 'mahasiswa_id', 'tahun_ajar_id', 'tanggal_pengisian'];
+    protected $fillable = [
+        'mahasiswa_id',
+        'tahun_ajar_id',
+        'tanggal_pengisian',
+    ];
 
-    public function frs_detail()
+    public function mahasiswa()
     {
         return $this->hasMany(FrsDetail::class);
     }
 
-    public function mahasiswa()
+    public function tahunAjar()
     {
         return $this->belongsTo(Mahasiswa::class);
     }
 
-    public function tahun_ajar()
+    public function frsDetail()
     {
-        return $this->belongsTo(TahunAjar::class);
+        return $this->hasMany(FrsDetail::class, 'frs_id');
     }
 }

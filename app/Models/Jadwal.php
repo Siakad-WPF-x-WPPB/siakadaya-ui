@@ -22,25 +22,21 @@ class Jadwal extends Model
         'hari',
     ];
 
-    // Relasi ke Kelas
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
-    // Relasi ke Matakuliah
     public function matakuliah()
     {
         return $this->belongsTo(Matakuliah::class, 'mk_id');
     }
 
-    // Relasi ke Dosen
     public function dosen()
     {
         return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 
-    // Relasi ke Ruangan
     public function ruangan()
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
@@ -51,4 +47,8 @@ class Jadwal extends Model
         return $this->hasMany(Frs::class, 'jadwal_id');
     }
 
+    public function frsDetail()
+    {
+        return $this->hasMany(FrsDetail::class, 'jadwal_id');
+    }
 }

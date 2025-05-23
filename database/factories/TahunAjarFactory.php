@@ -19,9 +19,14 @@ class TahunAjarFactory extends Factory
       $startYear = fake()->numberBetween(2000, date('Y'));
       $endYear = $startYear + 1;
 
+        $startYear = fake()->numberBetween(date('Y') - 10, date('Y') + 2);
+        $endYear = $startYear + 1;
+
         return [
             'semester' => fake()->randomElement(['Ganjil', 'Genap']),
-            'tahun' => $startYear . '/' . $endYear,
+            'tahun_mulai' => $startYear,
+            'tahun_berakhir' => $endYear,
+            'status' => fake()->randomElement(['Aktif', 'Tidak Aktif']),
         ];
     }
 }

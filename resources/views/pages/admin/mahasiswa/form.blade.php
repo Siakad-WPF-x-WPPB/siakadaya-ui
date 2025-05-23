@@ -14,7 +14,13 @@
 
 <!-- Page Scripts -->
 @section('page-script')
-    @vite(['resources/assets/js/form-layouts.js'])
+    @vite(['resources/assets/js/form-layouts.js', 'resources/assets/js/admin/form-mahasiswa.js'])
+    @if(isset($mahasiswa) && $mahasiswa->prodi_id)
+        <script>
+            // Pass data to JavaScript
+            var mahasiswaProdiId = '{{ $mahasiswa->prodi_id }}';
+        </script>
+    @endif
 @endsection
 
 @section('content')
@@ -91,14 +97,11 @@
           <div class="col-md-6 mb-6">
             <label class="form-label" for="kelas">Kelas</label>
             <div class="col-sm-12">
-              <select name="kelas_id" id="kelas" class="select2 form-select" data-allow-clear="true">
-                <option value="">Select</option>
-                @foreach($kelas as $k)
-                  <option value="{{ $k->id }}"
-                          {{ (isset($mahasiswa) && $mahasiswa->kelas_id == $k->id) ? 'selected' : '' }}>
-                    {{ $k->pararel }}
-                  </option>
-                @endforeach
+              <select name="kelas_id" id="kelas" class="select2 form-select" data-allow-clear="true" disabled>
+                  <option value="">Select value</option>
+                  @if(isset($mahasiswa) && $mahasiswa->kelas_id)
+                      <option value="{{ $mahasiswa->kelas->id }}" selected>{{ $mahasiswa->kelas->pararel }}</option>
+                  @endif
               </select>
             </div>
           </div>

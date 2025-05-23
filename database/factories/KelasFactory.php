@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Dosen;
+use App\Models\ProgramStudi;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +19,9 @@ class KelasFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'prodi_id' => ProgramStudi::inRandomOrder()->first()->id,
             'dosen_id' => Dosen::inRandomOrder()->first()->id,
-            'pararel' => fake()->randomLetter(),
+            'pararel' => fake()->randomElement(['A', 'B', 'C', 'D', 'E']),
         ];
     }
 }

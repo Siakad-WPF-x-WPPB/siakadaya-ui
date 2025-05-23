@@ -41,7 +41,7 @@ Route::post('/admin', [AdminLoginController::class, 'login'])->name('login-admin
 // * Admin Routes
 // TODO: implement admin authentication
 Route::prefix('admin')->group(function () {
-  Route::middleware('auth:admin')->group(function () { 
+  Route::middleware('auth:admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin-dashboard');
     Route::post('/logout', [AdminLoginController::class, 'logout'])->name('admin-logout');
     Route::resource('mahasiswa', MahasiswaController::class)->names([
@@ -53,6 +53,7 @@ Route::prefix('admin')->group(function () {
       'update'  => 'admin-mahasiswa-update',
       'destroy' => 'admin-mahasiswa-destroy',
     ]);
+    Route::get('/mahasiswa/kelas-by-prodi/{prodiId}', [MahasiswaController::class, 'getKelasByProdi'])->name('admin-mahasiswa-kelas-by-prodi');
     Route::resource('dosen', DosenController::class)->names([
       'index'   => 'admin-dosen-index',
       'create'  => 'admin-dosen-create',
