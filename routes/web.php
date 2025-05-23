@@ -20,6 +20,7 @@ use App\Http\Controllers\pages\admin\{
   TahunAjarController
 };
 use App\Http\Controllers\pages\dosen\DosenDashboardController;
+use App\Http\Controllers\pages\dosen\DosenFrsController;
 use App\Http\Controllers\pages\dosen\DosenJadwalKuliahController;
 use App\Http\Controllers\pages\dosen\DosenMahasiswaController;
 use App\Http\Controllers\pages\dosen\DosenNilaiController;
@@ -111,15 +112,9 @@ Route::prefix('dosen')->group(
         Route::post('/logout', [DosenLoginController::class, 'logout'])->name('dosen-logout');
         Route::get('/mahasiswa', [DosenMahasiswaController::class, 'index'])->name('dosen-mahasiswa-index');
         Route::get('/jadwal-kuliah', [DosenJadwalKuliahController::class, 'index'])->name('dosen-jadwal-kuliah-index');
-        Route::resource('frs', JadwalKuliahController::class)->names([
-          'index'   => 'dosen-frs-index',
-          'create'  => 'dosen-frs-create',
-          'store'   => 'dosen-frs-store',
-          'show'    => 'dosen-frs-show',
-          'edit'    => 'dosen-frs-edit',
-          'update'  => 'dosen-frs-update',
-          'destroy' => 'dosen-frs-destroy',
-        ]);
+        Route::get('/frs', [DosenFrsController::class, 'index'])->name('dosen-frs-index');
+        Route::get('/frs/{id}', [DosenFrsController::class, 'show'])->name('dosen.frs.show');
+        Route::put('/frs/persetujuan/{id}', [DosenFrsController::class, 'updateStatus'])->name('dosen.frs.update');
         Route::resource('nilai', DosenNilaiController::class)->names([
           'index'   => 'dosen-nilai-index',
           'create'  => 'dosen-nilai-create',

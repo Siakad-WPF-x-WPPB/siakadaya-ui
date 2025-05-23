@@ -14,7 +14,7 @@ class PersetujuanFrs extends Model
 
     protected $fillable = ['id', 'frs_detail_id', 'status', 'tanggal_persetujuan'];
 
-    public function frsDetail()
+    public function frs_detail()
     {
         return $this->belongsTo(FrsDetail::class);
     }

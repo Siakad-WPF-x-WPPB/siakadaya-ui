@@ -130,7 +130,7 @@ $(function () {
   if (dt_basic_table.length) {
     dt_basic = dt_basic_table.DataTable({
       ajax: {
-        url: '/api/dosen',
+        url: '/api/frs',
         dataSrc: function (json) {
           console.log('Fetched data: ', json);
           return json.data;

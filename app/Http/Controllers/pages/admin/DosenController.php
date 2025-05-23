@@ -21,7 +21,9 @@ class DosenController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.dosen.index');
+        $program_studi = \App\Models\ProgramStudi::all();
+
+        return view('pages.admin.dosen.form', compact('program_studi'));
     }
 
     /**
@@ -29,6 +31,10 @@ class DosenController extends Controller
      */
     public function store(Request $request)
     {
+      $request->merge(['is_wali' => filter_var($request->is_wali, FILTER_VALIDATE_BOOLEAN)]);
+
+      // dd($request->all());
+
         $validated = $request->validate([
             'nip' => 'required|unique:dosen,nip',
             'prodi_id' => 'required|exists:program_studi,id',
@@ -37,19 +43,16 @@ class DosenController extends Controller
             'telepon' => 'required|string',
             'email' => 'required|email|unique:dosen,email',
             'password' => 'required|string',
-            'tanggal_lahir' => 'required|date',
+            'tanggal_lahir' => 'required|date|before:today',
             'jabatan' => 'required|string',
             'golongan_akhir' => 'required|string',
-            'is_wali' => 'required|boolean',
+            'is_wali' => 'required|in:true,false,0,1',
         ]);
 
         $validated['password'] = bcrypt($validated['password']);
         $dosen = Dosen::create($validated);
 
-        return response()->json([
-            'message' => 'Dosen berhasil',
-            'data' => $dosen
-        ]);
+        return redirect()->route('admin-dosen-index')->with('success', 'Data dosen berhasil disimpan.');
     }
 
     /**
@@ -65,7 +68,10 @@ class DosenController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $dosen = Dosen::findOrFail($id);
+        $program_studi = \App\Models\ProgramStudi::all();
+
+        return view('pages.admin.dosen.form', compact('dosen', 'program_studi'));
     }
 
     /**
@@ -96,10 +102,7 @@ class DosenController extends Controller
 
         $dosen->update($validated);
 
-        return response()->json([
-            'message' => 'Dosen berhasil diupdate',
-            'data' => $dosen
-        ]);
+        return redirect()->route('admin-dosen-index')->with('success', 'Data dosen berhasil diperbarui.');
     }
 
     /**

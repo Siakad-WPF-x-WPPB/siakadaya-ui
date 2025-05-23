@@ -13,7 +13,7 @@ class KelasController extends Controller
      */
     public function index()
     {
-        return view('pages.admin.kelas.index');
+      return view('pages.admin.kelas.index');
     }
 
     /**
@@ -21,7 +21,9 @@ class KelasController extends Controller
      */
     public function create()
     {
-        //
+      $dosen = \App\Models\Dosen::all();
+
+      return view('pages.admin.kelas.form', compact('dosen'));
     }
 
     /**
@@ -36,8 +38,8 @@ class KelasController extends Controller
 
         $kelas = Kelas::create($validated);
 
-        return response()->json([
-            'message' => 'Kelas berhasil',
+        return redirect()->route('admin-kelas-index')->with([
+            'message' => 'kelas berhasil ditambahkan',
             'data' => $kelas
         ]);
     }
@@ -55,7 +57,10 @@ class KelasController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $kelas = Kelas::findOrFail($id);
+        $dosen = \App\Models\Dosen::all();
+
+        return view('pages.admin.kelas.form', compact('kelas', 'dosen'));
     }
 
     /**
@@ -72,8 +77,8 @@ class KelasController extends Controller
 
         $kelas->update($validated);
 
-        return response()->json([
-            'message' => 'kelas berhasil diupdate',
+        return redirect()->route('admin-kelas-index')->with([
+            'message' => 'kelas berhasil diubah',
             'data' => $kelas
         ]);
     }

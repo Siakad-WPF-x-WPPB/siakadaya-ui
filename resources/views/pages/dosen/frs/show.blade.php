@@ -42,21 +42,33 @@ $configData = Helper::appClasses();
       <table class="datatables-basic table">
         <thead>
           <tr>
-            <th>Nama Mahasiswa</th>
-            <th>Tanggal Pengsisian</th>
+            <th>Nama Matakuliah</th>
+            <th>Hari</th>
+            <th>Jam mulai - Jam Selesai</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          @foreach($frsList as $frs)
-          <tr>
-              <td>{{ $frs->mahasiswa->nama }}</td>
-              <td>{{ $frs->created_at->format('d-m-Y') }}</td>
-              <td>
-                  <a href="{{ route('dosen.frs.show', $frs->id) }}" class="btn btn-primary">Detail</a>
-              </td>
-          </tr>
-          @endforeach
+            @foreach($frs->frs_detail as $detail)
+            <tr>
+                <td>{{ $detail->jadwal->matakuliah->nama }}</td>
+                <td>{{ $detail->jadwal->hari }}</td>
+                <td>{{ $detail->jadwal->jam_mulai }} - {{ $detail->jadwal->jam_selesai }}</td>
+                <td>{{ $detail->persetujuan->status ?? 'pending' }}</td>
+                <td>
+                    <form action="{{ route('dosen.frs.update', $detail->persetujuan->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <select name="status">
+                            <option value="disetujui">Setujui</option>
+                            <option value="ditolak">Tolak</option>
+                        </select>
+                        <button type="submit">Simpan</button>
+                    </form>
+                </td>
+            </tr>
+            @endforeach
         </tbody>
       </table>
     </div>

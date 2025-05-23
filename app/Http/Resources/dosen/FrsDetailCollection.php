@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources\dosen;
 
-use App\Models\Frs;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Models\FrsDetail;
+use App\Models\PersetujuanFrs;
 
-class FrsCollection extends ResourceCollection
+class FrsDetailCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -27,17 +28,18 @@ class FrsCollection extends ResourceCollection
         $filteredRecords = $totalRecords; // Assume no filtering for now
 
         // Generate fake data for the current page
-        $data = Frs::query()
+        $data = PersetujuanFrs::query()
             ->offset($start)
             ->limit($length)
             ->get()
             ->map(
-                function ($frs) {
+                function ($frsPersetujuan) {
                     return [
-                        'nama_mahasiswa' => $frs->mahasiswa->nama,
-                        'tahun' => $frs->tahun_ajar->tahun,
-                        'semester' => $frs->tahun_ajar->semester,
-                        'tanggal_pengisian' => $frs->tanggal_pengisian,
+                        'nama_matakuliah' => $frsPersetujuan->frs_detail->jadwal->matakuliah->nama,
+                        'hari' => $frsPersetujuan->frs_detail->jadwal->hari,
+                        'jam_mulai' => $frsPersetujuan->frs_detail->jadwal->jam_mulai,
+                        'jam_selesai' => $frsPersetujuan->frs_detail->jadwal->jam_selesai,
+                        'status' => $frsPersetujuan->status,
                     ];
                 }
             )

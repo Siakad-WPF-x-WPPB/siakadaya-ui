@@ -20,6 +20,7 @@ use App\Http\Resources\admin\MahasiswaCollection;
 use App\Http\Resources\admin\MataKuliahCollection;
 use App\Http\Resources\admin\TahunAjarCollection;
 use App\Http\Resources\dosen\FrsCollection;
+use App\Http\Resources\dosen\FrsDetailCollection;
 
 // * API Auth
 // TODO: implementasi API Auth
@@ -66,13 +67,18 @@ Route::delete('/mahasiswa/destroy/{id}', [MahasiswaController::class, 'destroy']
 // TODO: implementasi API Dosen
 // *********************************************************************************
 
+// * API Dosen
+// TODO: implementasi API Dosen
+// *********************************************************************************
+
 Route::get('/dosen', function () {
   return new DosenCollection([]);
 });
 Route::get('/dosen/{id}', [DosenController::class, 'show']);
+Route::get('/dosen/{id}', [DosenController::class, 'show']);
 Route::post('/dosen/store', [DosenController::class, 'store']);
 Route::put('/dosen/update/{id}', [DosenController::class, 'update']);
-Route::delete('dosen/destroy/{id}', [DosenController::class, 'destroy']);
+Route::delete('/dosen/destroy/{id}', [DosenController::class, 'destroy']);
 
 // * API Mata Kuliah
 // TODO: implementasi API Mata Kuliah
@@ -105,10 +111,10 @@ Route::delete('/kelas/destroy/{id}', [KelasController::class, 'destroy']);
 Route::get('/jadwal-kuliah', function () {
   return new JadwalCollection([]);
 });
-Route::get('/jadwal-kuliah/{id}', [JadwalKuliahController::class, 'show']);
-Route::post('/jadwal-kuliah/store', [JadwalKuliahController::class, 'store']);
-Route::put('/jadwal-kuliah/update/{id}', [JadwalKuliahController::class, 'update']);
-Route::delete('jadwal-kuliah/destroy/{id}', [JadwalKuliahController::class, 'destroy']);
+Route::get('/jadwal/{id}', [JadwalKuliahController::class, 'show']);
+Route::post('/jadwal/store', [JadwalKuliahController::class, 'store']);
+Route::put('/jadwal/update/{id}', [JadwalKuliahController::class, 'update']);
+Route::delete('/jadwal/destroy/{id}', [JadwalKuliahController::class, 'destroy']);
 
 // * API Tahun Ajar
 // TODO: implementasi API Tahun Ajar
@@ -127,4 +133,8 @@ Route::delete('/tahun-ajar/destroy/{id}', [TahunAjarController::class, 'destroy'
 // *********************************************************************************
 Route::get('/frs', function () {
   return new FrsCollection([]);
+});
+
+Route::get('/frs/detail', function () {
+  return new FrsDetailCollection([]);
 });

@@ -23,4 +23,9 @@ class Frs extends Model
     {
         return $this->belongsTo(Mahasiswa::class);
     }
+
+    public function tahun_ajar()
+    {
+        return $this->belongsTo(TahunAjar::class);
+    }
 }
