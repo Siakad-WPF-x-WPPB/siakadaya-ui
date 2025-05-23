@@ -27,14 +27,15 @@ class KelasCollection extends ResourceCollection
 
         // Map column index to actual column name
         $columns = [
-            2 => 'pararel',
-            3 => 'nama_dosen',
+            2 => 'program_studi',
+            3 => 'pararel',
+            4 => 'nama_dosen',
         ];
 
         $orderColumn = $columns[$orderColumnIndex] ?? 'pararel';
 
         // Start query
-        $query = Kelas::query();
+        $query = Kelas::with(['dosen', 'programStudi']);
 
         // Apply search if provided
         if (!empty($searchValue)) {
@@ -43,6 +44,10 @@ class KelasCollection extends ResourceCollection
                   ->orWhereHas('dosen', function($q) use ($searchValue) {
                       $q->where('nama', 'like', "%{$searchValue}%")
                         ->orWhere('nip', 'like', "%{$searchValue}%");
+                  })
+                  ->orWhereHas('programStudi', function($q) use ($searchValue) {
+                      $q->where('nama', 'like', "%{$searchValue}%")
+                        ->orWhere('kode', 'like', "%{$searchValue}%");
                   });
             });
         }
@@ -59,6 +64,11 @@ class KelasCollection extends ResourceCollection
             $query->join('dosen', 'kelas.dosen_id', '=', 'dosen.id')
                   ->orderBy('dosen.nama', $orderDirection)
                   ->select('kelas.*');
+        } elseif ($orderColumn === 'program_studi') {
+            // Handle program studi relationship sorting
+            $query->join('program_studi', 'kelas.prodi_id', '=', 'program_studi.id')
+                  ->orderBy('program_studi.nama', $orderDirection)
+                  ->select('kelas.*');
         } else {
             $query->orderBy($orderColumn, $orderDirection);
         }
@@ -71,9 +81,13 @@ class KelasCollection extends ResourceCollection
                       ->map(function ($kelas) {
                           return [
                               'id' => $kelas->id,
+                              'prodi_id' => $kelas->prodi_id,
+                              'program_studi' => $kelas->programStudi ? $kelas->programStudi->nama : 'No Program Studi',
+                              'kode_prodi' => $kelas->programStudi ? $kelas->programStudi->kode : '',
                               'pararel' => $kelas->pararel,
                               'dosen_id' => $kelas->dosen_id,
                               'nama_dosen' => $kelas->dosen ? $kelas->dosen->nama : 'No Dosen Assigned',
+                              'nip_dosen' => $kelas->dosen ? $kelas->dosen->nip : '',
                           ];
                       })
                       ->toArray();

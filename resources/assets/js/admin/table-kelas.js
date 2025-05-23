@@ -29,6 +29,7 @@ $(function () {
       columns: [
         { data: '' },
         { data: 'pararel' },
+        { data: 'program_studi' },
         { data: 'pararel' },
         { data: 'nama_dosen' },
         { data: '' }
@@ -60,22 +61,25 @@ $(function () {
           }
         },
         {
-          // For Nama Kelas
+          // For Program Studi
           targets: 2,
           searchable: true,
           orderable: true,
           responsivePriority: 5
         },
         {
-          // For Nama Dosen
+          // For Nama Kelas
           targets: 3,
           searchable: true,
           orderable: true,
+          responsivePriority: 5
+        },
+        {
+          // For Nama Dosen
+          targets: 4,
+          searchable: true,
+          orderable: true,
           responsivePriority: 3,
-        //   render: function (data, type, full, meta) {
-        //     // This ensures null/undefined values display as a dash
-        //     return data || '-';
-        //   }
         },
         {
           // Actions

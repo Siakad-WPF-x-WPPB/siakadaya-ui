@@ -43,25 +43,51 @@
         @endif
 
         <div class="row">
-          <div class="col-md-6">
-            <label class="form-label" for="pararel">Pararel</label>
+          <div class="col-md-4">
+            <label class="form-label" for="prodi">Program Studi</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="text" id="pararel" name="pararel" value="{{ $kelas->pararel ?? old('pararel') }}" class="form-control" placeholder="IT-A" aria-label="IT-A" aria-describedby="pararel2" />
-              </div>
+              <select name="prodi_id" id="prodi" class="select2 form-select @error('prodi_id') is-invalid @enderror" data-allow-clear="true">
+                <option value="">Select</option>
+                @foreach($prodi as $p)
+                  <option value="{{ $p->id }}" {{ (isset($kelas) && $kelas->prodi_id == $p->id) || old('prodi_id') == $p->id ? 'selected' : '' }}>
+                    {{ $p->nama }}
+                  </option>
+                @endforeach
+              </select>
+              @error('prodi_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label" for="dosen-id">Dosen</label>
+          <div class="col-md-4">
+            <label class="form-label" for="pararel">Pararel</label>
             <div class="col-sm-12">
-              <select name="dosen_id" id="dosen-id" class="select2 form-select" data-allow-clear="true">
+              <input type="text" id="pararel" name="pararel" value="{{ $kelas->pararel ?? old('pararel') }}" class="form-control @error('pararel') is-invalid @enderror" placeholder="IT-A" aria-label="IT-A" aria-describedby="pararel2" />
+              @error('pararel')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="dosen">Dosen</label>
+            <div class="col-sm-12">
+              <select name="dosen_id" id="dosen" class="select2 form-select @error('dosen_id') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 @foreach($dosen as $d)
-                  <option value="{{ $d->id }}"{{ (isset($kelas) && $kelas->dosen_id == $d->id) ? 'selected' : '' }}>
+                  <option value="{{ $d->id }}"{{ (isset($kelas) && $kelas->dosen_id == $d->id) || old('dosen_id') == $d->id ? 'selected' : '' }}>
                     {{ $d->nama }} - {{ $d->nip }}
                   </option>
                 @endforeach
               </select>
+              @error('dosen_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>

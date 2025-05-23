@@ -45,8 +45,8 @@ $configData = Helper::appClasses();
           <tr>
             <th></th>
             <th></th>
-            <th>Mata Kuliah</th>
-            <th>Ruangan</th>
+            <th>Program Studi</th>
+            <th>Pararel</th>
             <th>Dosen</th>
             <th>Action</th>
           </tr>
