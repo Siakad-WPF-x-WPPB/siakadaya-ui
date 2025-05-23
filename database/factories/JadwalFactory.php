@@ -20,14 +20,29 @@ class JadwalFactory extends Factory
      */
     public function definition(): array
     {
+        $daysOfWeek = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+        $timeSlots = [
+            ['07:00:00', '08:40:00'],
+            ['08:40:00', '10:20:00'],
+            ['10:30:00', '12:10:00'],
+            ['12:10:00', '13:50:00'],
+            ['13:50:00', '15:30:00'],
+            ['15:40:00', '17:20:00'],
+            ['18:30:00', '20:10:00'],
+        ];
+
+        $selectedSlot = fake()->randomElement($timeSlots);
+
         return [
             'kelas_id' => Kelas::inRandomOrder()->first()->id,
             'dosen_id' => Dosen::inRandomOrder()->first()->id,
             'mk_id' => Matakuliah::inRandomOrder()->first()->id,
             'ruangan_id' => Ruangan::inRandomOrder()->first()->id,
-            'jam_mulai' => fake()->time(),
-            'jam_selesai' => fake()->time(),
-            'hari' => fake()->date(),
+
+            'jam_mulai' => $selectedSlot[0],
+            'jam_selesai' => $selectedSlot[1],
+            'hari' => fake()->randomElement($daysOfWeek),
         ];
     }
 }

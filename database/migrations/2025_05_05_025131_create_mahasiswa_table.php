@@ -30,7 +30,7 @@ return new class extends Migration
 
       // Personal information
       $table->string('agama', 20);
-      $table->string('semester', 6);
+      $table->string('semester', 10);
       $table->date('tanggal_lahir');
       $table->date('tanggal_masuk');
       $table->enum('status', ['Aktif', 'Cuti', 'Keluar'])->default('Aktif')->index();
