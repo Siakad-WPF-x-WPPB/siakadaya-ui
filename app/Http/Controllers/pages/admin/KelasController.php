@@ -3,11 +3,48 @@
 namespace App\Http\Controllers\pages\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use Exception;
+
+use App\Models\Kelas;
+use App\Models\ProgramStudi;
+use App\Models\Dosen;
 
 class KelasController extends Controller
 {
+    private function validateKelasData(Request $request, $id = null)
+    {
+      // create unique rule pararel with the same program studi
+      $pararelRule = $id ? "required|string|max:10" : 'required|string|max:10';
+
+      return $request->validate([
+        'prodi_id' => 'required|exists:program_studi,id',
+        'dosen_id' => 'required|exists:dosen,id',
+        'pararel' => [
+            'required',
+            'string',
+            'max:10',
+            // Ensure pararel is unique within the same program studi
+            Rule::unique('kelas')->where(function ($query) use ($request) {
+                return $query->where('prodi_id', $request->prodi_id);
+            })->ignore($id)
+        ],
+      ], [
+          'prodi_id.required' => 'Program studi harus dipilih.',
+          'prodi_id.exists' => 'Program studi yang dipilih tidak valid.',
+          'dosen_id.required' => 'Dosen wali harus dipilih.',
+          'dosen_id.exists' => 'Dosen yang dipilih tidak valid.',
+          'pararel.required' => 'Nama kelas/pararel wajib diisi.',
+          'pararel.string' => 'Nama kelas/pararel harus berupa teks.',
+          'pararel.max' => 'Nama kelas/pararel maksimal 10 karakter.',
+          'pararel.unique' => 'Nama kelas/pararel sudah ada untuk program studi ini.',
+      ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,9 +58,10 @@ class KelasController extends Controller
      */
     public function create()
     {
-      $dosen = \App\Models\Dosen::all();
+      $dosen = Dosen::all();
+      $prodi = ProgramStudi::all();
 
-      return view('pages.admin.kelas.form', compact('dosen'));
+      return view('pages.admin.kelas.form', compact('dosen', 'prodi'));
     }
 
     /**
@@ -31,17 +69,49 @@ class KelasController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'dosen_id' => 'required|exists:dosen,id',
-            'pararel' => 'required|string',
-        ]);
+      try {
+        // validate the request data
+        $validated = $this->validateKelasData($request);
 
+        // create a new kelas record
         $kelas = Kelas::create($validated);
 
-        return redirect()->route('admin-kelas-index')->with([
-            'message' => 'kelas berhasil ditambahkan',
-            'data' => $kelas
-        ]);
+        // handle different response based on request type
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data kelas berhasil disimpan.',
+                'data' => $kelas
+            ], 201);
+        }
+
+        return redirect()->route('admin-kelas-index')->with('success', 'Data kelas berhasil disimpan.');
+      } catch (ValidationException $e) {
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
+
+        return redirect()->back()
+            ->withErrors($e->errors())
+            ->withInput();
+      } catch (Exception $e) {
+        Log::error('Error creating kelas: ' . $e->getMessage());
+
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.'
+            ], 500);
+        }
+
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Terjadi kesalahan saat menyimpan data.');
+      }
     }
 
     /**
@@ -58,9 +128,10 @@ class KelasController extends Controller
     public function edit(string $id)
     {
         $kelas = Kelas::findOrFail($id);
-        $dosen = \App\Models\Dosen::all();
+        $dosen = Dosen::all();
+        $prodi = ProgramStudi::all();
 
-        return view('pages.admin.kelas.form', compact('kelas', 'dosen'));
+        return view('pages.admin.kelas.form', compact('kelas', 'dosen', 'prodi'));
     }
 
     /**
@@ -68,19 +139,62 @@ class KelasController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $kelas = Kelas::findOrFail($id);
+        try {
+            // validate the request data
+            $validated = $this->validateKelasData($request, $id);
 
-        $validated = $request->validate([
-            'dosen_id' => 'required|exists:dosen,id',
-            'pararel' => 'required|string',
-        ]);
+            // find the existing kelas record
+            $kelas = Kelas::findOrFail($id);
 
-        $kelas->update($validated);
+            // update the kelas record
+            $kelas->update($validated);
 
-        return redirect()->route('admin-kelas-index')->with([
-            'message' => 'kelas berhasil diubah',
-            'data' => $kelas
-        ]);
+            // handle different response based on request type
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data kelas berhasil diperbarui.',
+                    'data' => $kelas
+                ], 200);
+            }
+
+            return redirect()->route('admin-kelas-index')->with('success', 'Data kelas berhasil diperbarui.');
+        } catch (ValidationException $e) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+        } catch (ModelNotFoundException $e) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kelas tidak ditemukan.'
+                ], 404);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Kelas tidak ditemukan.');
+        } catch (Exception $e) {
+            Log::error('Error updating kelas: ' . $e->getMessage());
+
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat memperbarui data.'
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan saat memperbarui data.');
+        }
     }
 
     /**
