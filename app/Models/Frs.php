@@ -14,25 +14,22 @@ class Frs extends Model
 
     protected $fillable = [
         'mahasiswa_id',
-        'jadwal_id',
         'tahun_ajar_id',
         'tanggal_pengisian',
     ];
 
-    // Relasi ke Mahasiswa
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 
-    // Relasi ke Tahun Ajar
     public function tahunAjar()
     {
         return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
     }
 
-    public function jadwal()
+    public function frsDetail()
     {
-        return $this->belongsTo(Jadwal::class, 'jadwal_id');
+        return $this->hasMany(FrsDetail::class, 'frs_id');
     }
 }

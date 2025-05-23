@@ -14,10 +14,11 @@ class TahunAjar extends Model
 
     protected $fillable = [
         'semester',
-        'tahun'
+        'tahun_mulai',
+        'tahun_akhir',
+        'status'
     ];
 
-    // Relasi ke FRS (jika ada banyak FRS untuk 1 tahun ajar)
     public function frs()
     {
         return $this->hasMany(Frs::class, 'tahun_ajar_id');

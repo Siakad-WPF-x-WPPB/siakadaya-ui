@@ -38,13 +38,36 @@ class Mahasiswa extends Authenticatable
         'kota'
     ];
 
-    protected $hidden = ['password'];
+    protected $hidden = [
+      'password',
+      'remember_token',
+    ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
         'tanggal_masuk' => 'date',
         'password' => 'hashed'
     ];
+
+    public function getActiveAttribute()
+    {
+        return $this->status === 'Aktif';
+    }
+
+    public function getFullAddressAttribute()
+    {
+        return "{$this->alamat_jalan}, {$this->kelurahan}, {$this->kecamatan}, {$this->kota}, {$this->provinsi}, {$this->kode_pos}, {$this->negara}";
+    }
+
+    public function scopeByProdi($query, $prodiId)
+    {
+        return $query->where('prodi_id', $prodiId);
+    }
+
+    public function scopeByKelas($query, $kelasId)
+    {
+        return $query->where('kelas_id', $kelasId);
+    }
 
     public function programStudi()
     {
@@ -54,6 +77,21 @@ class Mahasiswa extends Authenticatable
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    public function detailJadwal()
+    {
+        return $this->hasMany(DetailJadwal::class, 'mahasiswa_id');
+    }
+
+    public function frs()
+    {
+        return $this->hasMany(Frs::class, 'mahasiswa_id');
+    }
+
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'mahasiswa_id');
     }
 }
 

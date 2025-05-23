@@ -16,10 +16,26 @@ class ProgramStudiFactory extends Factory
      */
     public function definition(): array
     {
+        $departments = [
+            ['kode' => 'IT', 'nama' => 'Teknik Informatika'],
+            ['kode' => 'ELKA', 'nama' => 'Teknik Elektronika'],
+            ['kode' => 'ELIN', 'nama' => 'Teknik Listrik'],
+            ['kode' => 'SI', 'nama' => 'Sistem Informasi'],
+            ['kode' => 'TK', 'nama' => 'Teknik Komputer'],
+            ['kode' => 'TRM', 'nama' => 'Teknik Rekayasa Multimedia'],
+            ['kode' => 'DS', 'nama' => 'Data Sains Terapan'],
+            ['kode' => 'MI', 'nama' => 'Manajemen Informatika'],
+            ['kode' => 'TTE', 'nama' => 'Teknik Telekomunikasi'],
+            ['kode' => 'RPL', 'nama' => 'Rekayasa Perangkat Lunak'],
+        ];
+
+        static $counter = 0;
+        $department = $departments[$counter % count($departments)];
+        $counter++;
+
         return [
-            //
-            'kode' => fake()->unique()->numerify('###'),
-            'nama' => fake()->jobTitle(),
+            'kode' => $department['kode'],
+            'nama' => $department['nama'],
         ];
     }
 }

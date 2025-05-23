@@ -13,26 +13,37 @@ return new class extends Migration
   {
     Schema::create('mahasiswa', function (Blueprint $table) {
       $table->uuid('id')->primary();
+
+      // Foreign key constraints
       $table->foreignUuid('prodi_id')->constrained('program_studi')->onDelete('cascade');
       $table->foreignUuid('kelas_id')->constrained('kelas')->onDelete('cascade');
-      $table->string('nrp')->unique();
-      $table->string('nama');
+
+      // Student details
+      $table->string('nrp', 12)->unique();
+      $table->string('nama', 100)->index();
       $table->enum('jenis_kelamin', ['L', 'P']);
-      $table->char('telepon', length: 15);
+
+      // Contact details
+      $table->char('telepon', 15)->nullable();
       $table->string('email')->unique();
       $table->string('password');
-      $table->string('agama');
-      $table->string('semester');
+
+      // Personal information
+      $table->string('agama', 20);
+      $table->string('semester', 10);
       $table->date('tanggal_lahir');
       $table->date('tanggal_masuk');
-      $table->enum('status', ['Aktif', 'Cuti', 'Keluar']);
+      $table->enum('status', ['Aktif', 'Cuti', 'Keluar'])->default('Aktif')->index();
+
+      // Address details
       $table->text('alamat_jalan')->nullable();
-      $table->string('provinsi');
-      $table->string('kode_pos');
-      $table->string('negara');
-      $table->string('kelurahan');
-      $table->string('kecamatan');
-      $table->string('kota');
+      $table->string('provinsi', 50);
+      $table->string('kode_pos', 50);
+      $table->string('negara', 50)->default('Indonesia');
+      $table->string('kelurahan', 50);
+      $table->string('kecamatan', 50);
+      $table->string('kota', 50);
+
       $table->timestamps();
     });
   }
