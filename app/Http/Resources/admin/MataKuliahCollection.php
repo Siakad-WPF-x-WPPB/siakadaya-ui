@@ -41,7 +41,7 @@ class MataKuliahCollection extends ResourceCollection
                         'nama_matakuliah' => $matakuliah->nama,
                         'semester' => $matakuliah->semester,
                         'sks' => $matakuliah->sks,
-                        'tipe_matakuliah' => $matakuliah->tipe_matakuliah,
+                        'tipe' => $matakuliah->tipe,
                     ];
                 }
             )

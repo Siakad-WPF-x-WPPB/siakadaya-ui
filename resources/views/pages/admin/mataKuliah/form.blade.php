@@ -46,25 +46,30 @@
           <div class="col-md-6">
             <label class="form-label" for="kode">Kode Mata Kuliah</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="text" id="kode" name="kode" value="{{ $matakuliah->kode ?? old('kode') }}" class="form-control" placeholder="IT1203" aria-label="IT-A" aria-describedby="kode2" />
-              </div>
+              <input type="text" id="kode" name="kode" value="{{ $matakuliah->kode ?? old('kode') }}" class="form-control @error('kode') is-invalid @enderror" placeholder="IT1203" aria-label="IT-A" aria-describedby="kode2" />
+              @error('kode')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6">
             <label class="form-label" for="prodi">Program Studi</label>
             <div class="col-sm-12">
-              <select name="prodi_id" id="prodi" class="select2 form-select" data-allow-clear="true">
+              <select name="prodi_id" id="prodi" class="select2 form-select @error('prodi_id') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 @foreach($program_studi as $pstudi)
                   <option value="{{ $pstudi->id }}"{{ (isset($matakuliah) && $matakuliah->prodi_id == $pstudi->id) ? 'selected' : '' }}>
                     {{ $pstudi->nama }} - {{ $pstudi->kode }}
                   </option>
                 @endforeach
-                  {{-- <option value="{{ $d->id }}"{{ (isset($matakuliah) && $matakuliah->prodi_id == $d->id) ? 'selected' : '' }}>
-                    {{ $d->nama }} - {{ $d->nip }}
-                  </option> --}}
               </select>
+              @error('prodi_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -72,17 +77,23 @@
           <div class="col-md-6">
             <label class="form-label" for="nama">Nama Mata Kuliah</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="text" id="nama" name="nama" value="{{ $matakuliah->nama ?? old('nama') }}" class="form-control" placeholder="IT1203" aria-label="IT-A" aria-describedby="nama2" />
-              </div>
+              <input type="text" id="nama" name="nama" value="{{ $matakuliah->nama ?? old('nama') }}" class="form-control @error('nama') is-invalid @enderror" placeholder="IT1203" aria-label="IT-A" aria-describedby="nama2" />
+              @error('nama')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6">
             <label class="form-label" for="semester">Semester</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="text" id="semester" name="semester" value="{{ $matakuliah->semester ?? old('semester') }}" class="form-control" placeholder="1" aria-label="1" aria-describedby="semester2" />
-              </div>
+              <input type="text" id="semester" name="semester" value="{{ $matakuliah->semester ?? old('semester') }}" class="form-control @error('semester') is-invalid @enderror" placeholder="1" aria-label="1" aria-describedby="semester2" />
+              @error('semester')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
@@ -90,26 +101,40 @@
           <div class="col-md-6">
             <label class="form-label" for="sks">SKS</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="number" id="sks" name="sks" value="{{ $matakuliah->sks ?? old('sks') }}" class="form-control" placeholder="2" aria-label="2" aria-describedby="sks2" />
-              </div>
+              <input type="number" id="sks" name="sks" value="{{ $matakuliah->sks ?? old('sks') }}" class="form-control @error('sks') is-invalid @enderror" placeholder="2" aria-label="2" aria-describedby="sks2" />
+              @error('sks')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6">
-            <label class="form-label" for="tipe-matakuliah">Tipe Mata Kuliah</label>
+            <label class="form-label" for="tipe">Tipe Mata Kuliah</label>
             <div class="col-sm-12">
-              <select name="tipe_matakuliah" id="tipe-matakuliah" class="select2 form-select" data-allow-clear="true">
+              <select name="tipe" id="tipe" class="select2 form-select @error('tipe') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
-                <option value="MW"{{ (isset($matakuliah) && $matakuliah->tipe_matakuliah == 'MW') ? 'selected' : '' }}>
+                <option value="MW"{{ (isset($matakuliah) && $matakuliah->tipe == 'MW') ? 'selected' : '' }}>
                   Mata Kuliah Wajib
                 </option>
-                <option value="MPK"{{ (isset($matakuliah) && $matakuliah->tipe_matakuliah == 'MPK') ? 'selected' : '' }}>
+                <option value="MPP"{{ (isset($matakuliah) && $matakuliah->tipe == 'MPP') ? 'selected' : '' }}>
+                  Mata Kuliah Pilihan Prodi
+                </option>
+                <option value="MPK"{{ (isset($matakuliah) && $matakuliah->tipe == 'MPK') ? 'selected' : '' }}>
                   Mata Kuliah Pilihan
                 </option>
-                <option value="MPI"{{ (isset($matakuliah) && $matakuliah->tipe_matakuliah == 'MPI') ? 'selected' : '' }}>
+                <option value="MPI"{{ (isset($matakuliah) && $matakuliah->tipe == 'MPI') ? 'selected' : '' }}>
                   Mata Kuliah Pilihan Institusi
                 </option>
+                <option value="MBKM"{{ (isset($matakuliah) && $matakuliah->tipe == 'MBKM') ? 'selected' : '' }}>
+                  Mata Kuliah Merdeka Belajar Kampus Merdeka
+                </option>
               </select>
+              @error('tipe')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>

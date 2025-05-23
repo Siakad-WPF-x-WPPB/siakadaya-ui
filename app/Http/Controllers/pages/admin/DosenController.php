@@ -157,7 +157,7 @@ class DosenController extends Controller
         $dosen = Dosen::findOrFail($id);
 
         // Use the existing validation method with custom error messages
-        $validated = $this->validateDosenData($request, $dosen->id);
+        $validated = $this->validateDosenData($request, $id);
 
         // Handle password update
         if ($request->filled('password')) {
