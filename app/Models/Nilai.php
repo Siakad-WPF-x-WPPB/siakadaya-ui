@@ -22,25 +22,26 @@ class Nilai extends Model
         'nilai_angka',
     ];
 
-    // Relasi ke Dosen
+    protected $casts = [
+        'nilai_huruf' => 'string',
+        'nilai_angka' => 'float',
+    ];
+
     public function dosen()
     {
         return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 
-    // Relasi ke Mahasiswa
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 
-    // Relasi ke Matakuliah
     public function matakuliah()
     {
         return $this->belongsTo(Matakuliah::class, 'mk_id');
     }
 
-    // Relasi ke Tahun Ajar
     public function tahunAjar()
     {
         return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');

@@ -17,13 +17,11 @@ class DetailJadwal extends Model
         'mahasiswa_id',
     ];
 
-    // Relasi ke jadwal
     public function jadwal()
     {
         return $this->belongsTo(Jadwal::class, 'jadwal_id');
     }
 
-    // Relasi ke mahasiswa
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');

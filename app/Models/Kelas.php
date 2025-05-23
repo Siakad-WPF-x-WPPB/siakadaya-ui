@@ -13,17 +13,21 @@ class Kelas extends Model
     protected $table = 'kelas';
 
     protected $fillable = [
+        'prodi_id',
         'dosen_id',
         'pararel',
     ];
 
-    // Relasi ke Dosen (satu kelas dimiliki oleh satu dosen)
+    public function programStudi()
+    {
+        return $this->belongsTo(ProgramStudi::class, 'prodi_id');
+    }
+
     public function dosen()
     {
         return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 
-    // Relasi ke Mahasiswa (satu kelas memiliki banyak mahasiswa)
     public function mahasiswa()
     {
         return $this->hasMany(Mahasiswa::class, 'kelas_id');

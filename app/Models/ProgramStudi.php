@@ -17,15 +17,23 @@ class ProgramStudi extends Model
         'kode'
     ];
 
-    // Relasi ke Mahasiswa (satu jurusan punya banyak mahasiswa)
     public function mahasiswa()
     {
         return $this->hasMany(Mahasiswa::class, 'prodi_id');
     }
 
-    // Relasi ke Dosen (satu jurusan punya banyak dosen)
     public function dosen()
     {
         return $this->hasMany(Dosen::class, 'prodi_id');
+    }
+
+    public function kelas()
+    {
+        return $this->hasMany(Kelas::class, 'prodi_id');
+    }
+
+    public function matakuliah()
+    {
+        return $this->hasMany(Matakuliah::class, 'prodi_id');
     }
 }
