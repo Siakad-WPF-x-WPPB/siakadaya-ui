@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\pages\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Exception;
+
+use App\Models\Mahasiswa;
+use App\Models\Kelas;
+use App\Models\ProgramStudi;
 
 class MahasiswaController extends Controller
 {
@@ -51,6 +54,23 @@ class MahasiswaController extends Controller
       ]);
     }
 
+    public function getKelasByProdi($prodiId)
+    {
+      try {
+          $kelas = Kelas::where('prodi_id', $prodiId)->get();
+
+          return response()->json([
+              'success' => true,
+              'data' => $kelas
+          ]);
+      } catch (Exception $e) {
+          return response()->json([
+              'success' => false,
+              'message' => 'Gagal mengambil data kelas'
+          ], 500);
+      }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -65,8 +85,8 @@ class MahasiswaController extends Controller
     public function create()
     {
         // ambil data program studi dan kelas
-        $program_studi = \App\Models\ProgramStudi::all();
-        $kelas = \App\Models\Kelas::all();
+        $program_studi = ProgramStudi::all();
+        $kelas = Kelas::all();
 
         // kirim data ke view
         return view('pages.admin.mahasiswa.form', compact('program_studi', 'kelas'));
@@ -138,8 +158,8 @@ class MahasiswaController extends Controller
     {
       $mahasiswa = Mahasiswa::findOrFail($id);
 
-      $program_studi = \App\Models\ProgramStudi::all();
-      $kelas = \App\Models\Kelas::all();
+      $program_studi = ProgramStudi::all();
+      $kelas = Kelas::all();
 
       // Pass the mahasiswa data to the view
       return view('pages.admin.mahasiswa.form', compact('mahasiswa', 'program_studi', 'kelas'));
