@@ -22,7 +22,9 @@ class MataKuliahController extends Controller
      */
     public function create()
     {
-        //
+      $program_studi = \App\Models\ProgramStudi::all();
+
+      return view('pages.admin.mataKuliah.form', compact('program_studi'));
     }
 
     /**
@@ -41,10 +43,10 @@ class MataKuliahController extends Controller
 
         $matakuliah = Matakuliah::create($validated);
 
-        return response()->json([
-            'message' => 'Data matakuliah berhasil disimpan.',
+        return redirect()->route('admin-mata-kuliah-index')->with([
+            'message' => 'Data matakuliah berhasil ditambahkan.',
             'data' => $matakuliah
-        ], 201);
+        ]);
     }
 
     /**
@@ -60,7 +62,10 @@ class MataKuliahController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $matakuliah = Matakuliah::findOrFail($id);
+        $program_studi = \App\Models\ProgramStudi::all();
+
+        return view('pages.admin.mataKuliah.form', compact('matakuliah', 'program_studi'));
     }
 
     /**
@@ -68,6 +73,8 @@ class MataKuliahController extends Controller
      */
     public function update(Request $request, string $id)
     {
+      // dd($request->all());
+
         $matakuliah = Matakuliah::findOrFail($id);
 
         $validated = $request->validate([
@@ -81,7 +88,7 @@ class MataKuliahController extends Controller
 
         $matakuliah->update($validated);
 
-        return response()->json([
+        return redirect()->route('admin-mata-kuliah-index')->with([
             'message' => 'Data matakuliah berhasil diperbarui.',
             'data' => $matakuliah
         ]);

@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('program_studi', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('kode')->unique();
-            $table->string('nama');
+
+            // Program Studi details
+            $table->string('kode', 25)->unique();
+            $table->string('nama', 100);
+
             $table->timestamps();
         });
     }

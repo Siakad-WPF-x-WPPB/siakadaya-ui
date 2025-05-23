@@ -5,116 +5,6 @@
 'use strict';
 
 let fv, offCanvasEl;
-// * Form Add New Record
-// TODO: Add your custom code here
-document.addEventListener('DOMContentLoaded', function (e) {
-  (function () {
-    const formAddNewRecord = document.getElementById('form-add-new-record');
-
-    setTimeout(() => {
-      const newRecord = document.querySelector('.create-new'),
-        offCanvasElement = document.querySelector('#add-new-record');
-
-      // To open offCanvas, to add new record
-      if (newRecord) {
-        newRecord.addEventListener('click', function () {
-          offCanvasEl = new bootstrap.Offcanvas(offCanvasElement);
-          // Empty fields on offCanvas open
-          (offCanvasElement.querySelector('.dt-full-name').value = ''),
-            (offCanvasElement.querySelector('.dt-post').value = ''),
-            (offCanvasElement.querySelector('.dt-email').value = ''),
-            (offCanvasElement.querySelector('.dt-date').value = ''),
-            (offCanvasElement.querySelector('.dt-salary').value = '');
-          // Open offCanvas with form
-          offCanvasEl.show();
-        });
-      }
-    }, 200);
-
-    // Form validation for Add new record
-    fv = FormValidation.formValidation(formAddNewRecord, {
-      fields: {
-        basicFullname: {
-          validators: {
-            notEmpty: {
-              message: 'The name is required'
-            }
-          }
-        },
-        basicPost: {
-          validators: {
-            notEmpty: {
-              message: 'Post field is required'
-            }
-          }
-        },
-        basicEmail: {
-          validators: {
-            notEmpty: {
-              message: 'The Email is required'
-            },
-            emailAddress: {
-              message: 'The value is not a valid email address'
-            }
-          }
-        },
-        basicDate: {
-          validators: {
-            notEmpty: {
-              message: 'Joining Date is required'
-            },
-            date: {
-              format: 'MM/DD/YYYY',
-              message: 'The value is not a valid date'
-            }
-          }
-        },
-        basicSalary: {
-          validators: {
-            notEmpty: {
-              message: 'Basic Salary is required'
-            }
-          }
-        }
-      },
-      plugins: {
-        trigger: new FormValidation.plugins.Trigger(),
-        bootstrap5: new FormValidation.plugins.Bootstrap5({
-          // Use this for enabling/changing valid/invalid class
-          // eleInvalidClass: '',
-          eleValidClass: '',
-          rowSelector: '.col-sm-12'
-        }),
-        submitButton: new FormValidation.plugins.SubmitButton(),
-        // defaultSubmit: new FormValidation.plugins.DefaultSubmit(),
-        autoFocus: new FormValidation.plugins.AutoFocus()
-      },
-      init: instance => {
-        instance.on('plugins.message.placed', function (e) {
-          if (e.element.parentElement.classList.contains('input-group')) {
-            e.element.parentElement.insertAdjacentElement('afterend', e.messageElement);
-          }
-        });
-      }
-    });
-
-    // FlatPickr Initialization & Validation
-    const flatpickrDate = document.querySelector('[name="basicDate"]');
-
-    if (flatpickrDate) {
-      flatpickrDate.flatpickr({
-        enableTime: false,
-        // See https://flatpickr.js.org/formatting/
-        dateFormat: 'm/d/Y',
-        // After selecting a date, we need to revalidate the field
-        onChange: function () {
-          fv.revalidateField('basicDate');
-        }
-      });
-    }
-  })();
-});
-// * End Form Add New Record
 
 // datatable (jquery)
 $(function () {
@@ -130,7 +20,7 @@ $(function () {
   if (dt_basic_table.length) {
     dt_basic = dt_basic_table.DataTable({
       ajax: {
-        url: '/api/matakuliah',
+        url: '/api/mata-kuliah',
         dataSrc: function (json) {
           console.log('Fetched data: ', json);
           return json.data;
@@ -254,16 +144,19 @@ $(function () {
           searchable: false,
           render: function (data, type, full, meta) {
             return (
-              '<div class="d-inline-block">' +
-              '<a href="javascript:;" class="btn btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></a>' +
-              '<ul class="dropdown-menu dropdown-menu-end m-0">' +
-              '<li><a href="javascript:;" class="dropdown-item">Details</a></li>' +
-              '<li><a href="javascript:;" class="dropdown-item">Archive</a></li>' +
-              '<div class="dropdown-divider"></div>' +
-              '<li><a href="javascript:;" class="dropdown-item text-danger delete-record">Delete</a></li>' +
-              '</ul>' +
-              '</div>' +
-              '<a href="javascript:;" class="btn btn-sm btn-text-secondary rounded-pill btn-icon item-edit"><i class="ti ti-pencil ti-md"></i></a>'
+              // '<div class="d-inline-block">' +
+              // '<a href="javascript:;" class="btn btn-sm btn-text-secondary rounded-pill btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical ti-md"></i></a>' +
+              // '<ul class="dropdown-menu dropdown-menu-end m-0">' +
+              // '<li><a href="javascript:;" class="dropdown-item">Details</a></li>' +
+              // '<li><a href="javascript:;" class="dropdown-item">Archive</a></li>' +
+              // '<div class="dropdown-divider"></div>' +
+              // '<li><a href="javascript:;" class="dropdown-item text-danger delete-record">Delete</a></li>' +
+              // '</ul>' +
+              // '</div>' +
+              '<div class="d-flex">' +
+              '<a href="/admin/mata-kuliah/' + full.id + '/edit" class="btn btn-sm btn-text-secondary rounded-pill btn-icon item-edit"><i class="ti ti-pencil ti-md"></i></a>' +
+              '<a href="javascript:;" class="btn btn-sm btn-text-secondary rounded-pill btn-icon item-destroy"><i class="ti ti-trash ti-md"></i></a>' +
+              '</div>'
             );
           }
         }
@@ -421,7 +314,10 @@ $(function () {
         },
         {
           text: '<i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add New Record</span>',
-          className: 'create-new btn btn-primary waves-effect waves-light'
+          className: 'create-new btn btn-primary waves-effect waves-light',
+          action: function () {
+            window.location = '/admin/mata-kuliah/create';
+          }
         }
       ],
       responsive: {
@@ -463,38 +359,31 @@ $(function () {
     $('div.head-label').html('<h5 class="card-title mb-0">DataTable with Buttons</h5>');
   }
 
-  // Add New record
-  // ? Remove/Update this code as per your requirements
-  var count = 101;
-  // On form submit, if form is valid
-  fv.on('core.form.valid', function () {
-    var $new_name = $('.add-new-record .dt-full-name').val(),
-      $new_post = $('.add-new-record .dt-post').val(),
-      $new_email = $('.add-new-record .dt-email').val(),
-      $new_date = $('.add-new-record .dt-date').val(),
-      $new_salary = $('.add-new-record .dt-salary').val();
+  // Delete record with route destroy
+  $('.datatables-basic tbody').on('click', '.item-destroy', function () {
+    var data = dt_basic.row($(this).parents('tr')).data();
+    var id = data.id; // Get the ID of the record to delete
 
-    if ($new_name != '') {
-      dt_basic.row
-        .add({
-          id: count,
-          full_name: $new_name,
-          post: $new_post,
-          email: $new_email,
-          start_date: $new_date,
-          salary: '$' + $new_salary,
-          status: 5
-        })
-        .draw();
-      count++;
+    // Show confirmation dialog
+    if (confirm('Are you sure you want to delete this record?')) {
+      // Send DELETE request to the server
+      $.ajax({
+        url: '/api/mata-kuliah/destroy/' + id,
+        type: 'DELETE',
+        success: function (response) {
+          // Show success message
+          // toastr.success(response.message || 'Data mahasiswa berhasil dihapus.');
+          alert(response.message || 'Data mahasiswa berhasil dihapus.');
 
-      // Hide offcanvas using javascript method
-      offCanvasEl.hide();
+          // Refresh the DataTable
+          dt_basic.ajax.reload(null, false);
+        },
+        error: function (xhr) {
+          // Show error message
+          // toastr.error(xhr.responseJSON?.message || 'Failed to delete record');
+          alert('Failed to delete record: ' + (xhr.responseJSON?.message || error));
+        }
+      });
     }
-  });
-
-  // Delete Record
-  $('.datatables-basic tbody').on('click', '.delete-record', function () {
-    dt_basic.row($(this).parents('tr')).remove().draw();
   });
 });

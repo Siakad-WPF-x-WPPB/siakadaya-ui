@@ -34,6 +34,7 @@ class JadwalCollection extends ResourceCollection
             ->map(
                 function ($jadwal) {
                     return [
+                        'id' => $jadwal->id,
                         'kelas' => $jadwal->kelas->pararel,
                         'nama_dosen' => $jadwal->dosen->nama,
                         'matakuliah' => $jadwal->matakuliah->nama,

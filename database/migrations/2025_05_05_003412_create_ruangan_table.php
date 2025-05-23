@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('ruangan', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('kode')->unique();
-            $table->string('nama');
-            $table->string('gedung');
+
+            // Ruangan details
+            $table->string('kode', 25)->unique();
+            $table->string('nama', 50);
+            $table->string('gedung', 50);
+
             $table->timestamps();
         });
     }
