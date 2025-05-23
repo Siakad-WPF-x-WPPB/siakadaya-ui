@@ -34,7 +34,7 @@ $(function () {
         { data: 'program_studi' },
         { data: 'sks' },
         { data: 'semester' },
-        { data: 'tipe_matakuliah' },
+        { data: 'tipe' },
         { data: '' }
       ],
       columnDefs: [
@@ -83,26 +83,6 @@ $(function () {
           searchable: true,
           orderable: true,
           responsivePriority: 3,
-          render: function (data, type, full, meta) {
-            var $kode_jurusan = full['kode_jurusan'];
-            var $kode_jurusan_label = {
-              TI: { title: 'Teknik Informatika', class: 'bg-label-primary' },
-              SI: { title: 'Sistem Informasi', class: 'bg-label-success' },
-              TRM: { title: 'Teknik Rekayasa Multimedia', class: 'bg-label-danger' },
-              TK: { title: 'Teknik Komputer', class: 'bg-label-warning' },
-              DS: { title: 'Data Sains', class: 'bg-label-info' }
-            };
-            if (typeof $kode_jurusan_label[$kode_jurusan] === 'undefined') {
-              return data;
-            }
-            return (
-              '<span class="badge ' +
-              $kode_jurusan_label[$kode_jurusan].class +
-              '">' +
-              $kode_jurusan_label[$kode_jurusan].title +
-              '</span>'
-            );
-          }
         },
         {
           // For SKS
@@ -125,10 +105,33 @@ $(function () {
           orderable: true,
           responsivePriority: 7,
           render: function (data, type, full, meta) {
-            var $type = full['tipe_mk'];
+            var $type = full['tipe'];
             var $type_label = {
-              MW: { title: 'Wajib', class: 'bg-label-primary' },
-              MPK: { title: 'Pilihan', class: 'bg-label-success' }
+              'MW': {
+                title: 'Mata Kuliah Wajib',
+                short: 'Wajib',
+                class: 'bg-label-primary'
+              },
+              'MPP': {
+                title: 'Mata Kuliah Pilihan Program',
+                short: 'Pilihan Program',
+                class: 'bg-label-success'
+              },
+              'MPI': {
+                title: 'Mata Kuliah Pilihan Institusi',
+                short: 'Pilihan Institusi',
+                class: 'bg-label-info'
+              },
+              'MPK': {
+                title: 'Mata Kuliah Pengembangan Kepribadian',
+                short: 'Pengembangan Kepribadian',
+                class: 'bg-label-warning'
+              },
+              'MBKM': {
+                title: 'Merdeka Belajar Kampus Merdeka',
+                short: 'MBKM',
+                class: 'bg-label-secondary'
+              }
             };
             if (typeof $type_label[$type] === 'undefined') {
               return data;
