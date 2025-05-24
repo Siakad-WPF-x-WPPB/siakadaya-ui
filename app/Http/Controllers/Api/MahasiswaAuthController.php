@@ -44,7 +44,7 @@ class MahasiswaAuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email', // atau 'nim' => 'required|string'
+            'email' => 'required|email',
             'password' => 'required',
         ]);
 
@@ -52,21 +52,46 @@ class MahasiswaAuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Cari mahasiswa berdasarkan email (atau NIM)
         $mahasiswa = Mahasiswa::where('email', $request->email)->first();
 
         if (!$mahasiswa || !Hash::check($request->password, $mahasiswa->password)) {
             return response()->json(['message' => 'Email/NRP atau password salah'], 401);
         }
 
-        // Buat token untuk mahasiswa yang berhasil diautentikasi
         $token = $mahasiswa->createToken('mahasiswa-app-token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login mahasiswa berhasil',
-            'user' => $mahasiswa,
+            'user' => [
+                'id' => $mahasiswa->id,
+                'prodi_id' => $mahasiswa->prodi_id,
+                'kelas_id' => $mahasiswa->kelas_id,
+                'nama_prodi' => $mahasiswa->programStudi->nama ?? null,
+                'nama_kelas' => $mahasiswa->kelas->pararel ?? null,
+                'nrp' => $mahasiswa->nrp,
+                'nama' => $mahasiswa->nama,
+                'jenis_kelamin' => $mahasiswa->jenis_kelamin,
+                'telepon' => $mahasiswa->telepon,
+                'email' => $mahasiswa->email,
+                'agama' => $mahasiswa->agama,
+                'semester' => $mahasiswa->semester,
+                'tanggal_lahir' => $mahasiswa->tanggal_lahir,
+                'tanggal_masuk' => $mahasiswa->tanggal_masuk,
+                'status' => $mahasiswa->status,
+                'alamat_jalan' => $mahasiswa->alamat_jalan,
+                'provinsi' => $mahasiswa->provinsi,
+                'kode_pos' => $mahasiswa->kode_pos,
+                'negara' => $mahasiswa->negara,
+                'kelurahan' => $mahasiswa->kelurahan,
+                'kecamatan' => $mahasiswa->kecamatan,
+                'kota' => $mahasiswa->kota,
+                'created_at' => $mahasiswa->created_at,
+                'updated_at' => $mahasiswa->updated_at,
+                // tambahkan field lain sesuai kebutuhan
+            ],
             'token' => $token
         ]);
+
     }
 
     public function profile(Request $request)
