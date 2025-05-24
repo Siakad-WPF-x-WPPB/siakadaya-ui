@@ -11,6 +11,7 @@ use App\Http\Controllers\pages\admin\KelasController;
 use App\Http\Controllers\pages\admin\MahasiswaController;
 use App\Http\Controllers\pages\admin\MataKuliahController;
 use App\Http\Controllers\pages\admin\TahunAjarController;
+use App\Http\Controllers\pages\mahasiswa\FrsMahasiswaController;
 use App\Http\Controllers\pages\mahasiswa\JadwalKuliahMahasiswaController;
 use App\Http\Resources\admin\DosenCollection;
 use App\Http\Resources\admin\JadwalCollection;
@@ -18,6 +19,9 @@ use App\Http\Resources\admin\KelasCollection;
 use App\Http\Resources\admin\MahasiswaCollection;
 use App\Http\Resources\admin\MataKuliahCollection;
 use App\Http\Resources\admin\TahunAjarCollection;
+use App\Http\Resources\dosen\FrsCollection;
+use App\Http\Resources\dosen\FrsDetailCollection;
+use App\Http\Resources\dosen\NilaiCollection;
 
 // * API Auth
 // TODO: implementasi API Auth
@@ -30,29 +34,13 @@ Route::get('/login', function () {
     return response()->json(['message' => 'Please login'], 401);
 })->name('login');
 
-// Rute Autentikasi Admin
-Route::prefix('admin')->name('admin.')->group(function () {
-  Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login');
-  Route::post('/login', [AdminLoginController::class, 'login']);
-  Route::post('/logout', [AdminLoginController::class, 'logout'])->name('logout');
-
-  // Rute Admin yang dilindungi
-  Route::middleware('auth:admin')->group(function () { // Menggunakan middleware 'auth:nama_guard'
-    Route::get('/dashboard', function () {
-      // Pastikan Auth::user() mengembalikan instance Admin
-      // dd(Auth::user());
-      return view('admin.dashboard'); // resources/views/admin/dashboard.blade.php
-    })->name('dashboard');
-    // Rute admin lainnya
-  });
-});
-
 Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
 
 // Rute ini akan menggunakan 'auth:sanctum'.
 // Sanctum akan mengautentikasi token dan mengambil 'tokenable' model (yaitu Mahasiswa).
 Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () {
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
+  Route::post('/frs/store', [FrsMahasiswaController::class, 'store']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
   Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'semua']);
   Route::get('/jadwal/hari-ini', [JadwalKuliahMahasiswaController::class, 'hariIni']);
@@ -121,7 +109,7 @@ Route::delete('/kelas/destroy/{id}', [KelasController::class, 'destroy']);
 // TODO: implementasi API Jadwal Kuliah
 // *********************************************************************************
 
-Route::get('/jadwal', function () {
+Route::get('/jadwal-kuliah', function () {
   return new JadwalCollection([]);
 });
 Route::get('/jadwal/{id}', [JadwalKuliahController::class, 'show']);
@@ -140,3 +128,15 @@ Route::get('/tahun-ajar/{id}', [TahunAjarController::class, 'show']);
 Route::post('/tahun-ajar/store', [TahunAjarController::class, 'store']);
 Route::put('/tahun-ajar/update/{id}', [TahunAjarController::class, 'update']);
 Route::delete('/tahun-ajar/destroy/{id}', [TahunAjarController::class, 'destroy']);
+
+// * API FRS
+// TODO: implementasi API FRS
+// *********************************************************************************
+Route::get('/frs', function () {
+  return new FrsCollection([]);
+});
+
+Route::get('/frs/detail', function () {
+  return new FrsDetailCollection([]);
+});
+

@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Admin;
 use App\Models\Dosen;
+use App\Models\Frs;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\Matakuliah;
+use App\Models\Nilai;
 use App\Models\ProgramStudi;
 use App\Models\Ruangan;
 use App\Models\TahunAjar;
@@ -33,6 +35,7 @@ class DatabaseSeeder extends Seeder
     Ruangan::factory(10)->create();
     Matakuliah::factory(10)->create();
     Jadwal::factory(10)->create();
+    Nilai::factory(10)->create();
     // User::factory(10)->create();
 
     // User::factory()->create([
@@ -41,9 +44,9 @@ class DatabaseSeeder extends Seeder
     // ]);
     
     $dosen = Dosen::factory()->create([
-      'nip' => '1234567890',
-      'nama' => 'Dr. Andi Setiawan',
-      'email' => 'coba@gmail.com',
+      'nip' => '3123500056',
+      'nama' => 'Muhammad Raihan',
+      'email' => 'raihanm@gmail.com',
       'password' => bcrypt('password'),
       'telepon' => '081234567890',
       'tanggal_lahir' => '1980-05-15',
@@ -54,6 +57,16 @@ class DatabaseSeeder extends Seeder
       'is_wali' => false
   ]);
 
+  Nilai::factory()->create([
+      'mahasiswa_id' => Mahasiswa::inRandomOrder()->first()->id,
+      'mk_id' => Matakuliah::inRandomOrder()->first()->id,
+      'dosen_id' => $dosen->id, // <- ini penting
+      'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
+      'status' => 'lulus',
+      'nilai_huruf' => 'A',
+      'nilai_angka' => 90,
+  ]);
+
   Admin::create([
       'id' => (string) Str::uuid(),
       'nama' => 'Admin',
@@ -61,7 +74,14 @@ class DatabaseSeeder extends Seeder
       'password' => bcrypt('password'),
   ]);
 
-  Mahasiswa::factory()->create([
+    // Frs::create([
+    //   'mahasiswa_id' => Mahasiswa::inRandomOrder()->first()->id,
+    //   'jadwal_id' => Jadwal::inRandomOrder()->first()->id,
+    //   'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
+    //   'tanggal_pengisian' => now(),
+    // ]);
+
+    Mahasiswa::factory()->create([
       'nrp' => '1234567890',
       'nama' => 'Budi Santoso',
       'email' => 'budi@gmail.com',

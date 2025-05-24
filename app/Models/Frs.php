@@ -20,12 +20,12 @@ class Frs extends Model
 
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
+        return $this->belongsTo(Mahasiswa::class);
     }
 
     public function tahunAjar()
     {
-        return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
+        return $this->belongsTo(TahunAjar::class);
     }
 
     public function frsDetail()

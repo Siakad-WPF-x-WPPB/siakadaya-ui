@@ -1,5 +1,5 @@
 {
-  "menu": [
+  "menuAdmin": [
     {
       "url": "/admin/dashboard",
       "name": "Home",
@@ -41,6 +41,32 @@
       "name": "Tahun Ajar",
       "icon": "menu-icon tf-icons ti ti-calendar-clock",
       "slug": "admin-tahun-ajar-index"
+    }
+  ],
+  "menuDosen": [
+    {
+      "url": "/dosen/dashboard",
+      "name": "Home",
+      "icon": "menu-icon tf-icons ti ti-smart-home",
+      "slug": "dosen-dashboard"
+    },
+    {
+      "url": "dosen/mahasiswa",
+      "name": "Mahasiswa",
+      "icon": "menu-icon tf-icons ti ti-user",
+      "slug": "dosen-mahasiswa-index"
+    },
+    {
+      "url": "dosen/jadwal-kuliah",
+      "name": "Jadwal Kuliah",
+      "icon": "menu-icon tf-icons ti ti-alarm",
+      "slug": "dosen-jadwal-kuliah-index"
+    },
+    {
+      "url": "dosen/frs",
+      "name": "FRS",
+      "icon": "menu-icon tf-icons ti ti-books",
+      "slug": "dosen-frs-index"
     }
   ]
 }
