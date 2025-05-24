@@ -170,22 +170,6 @@ class JadwalCollection extends ResourceCollection
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $filteredRecords,
             'data' => $data,
-            // Add debug info
-            'debug' => [
-                'start' => $start,
-                'length' => $length,
-                'total_in_db' => Jadwal::count(),
-                'data_count' => count($data),
-                'search' => $searchValue,
-                'order_column' => $orderColumn,
-                'order_direction' => $orderDirection,
-                'current_page' => ($start / $length) + 1,
-                'total_pages' => ceil(Jadwal::count() / $length),
-                'showing_from' => $start + 1,
-                'showing_to' => min($start + $length, Jadwal::count()),
-                'sql_query' => $baseQuery->toSql(),
-                'sql_bindings' => $baseQuery->getBindings()
-            ]
         ];
     }
 }
