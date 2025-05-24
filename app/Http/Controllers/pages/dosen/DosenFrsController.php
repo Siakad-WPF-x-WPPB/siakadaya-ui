@@ -4,6 +4,7 @@ namespace App\Http\Controllers\pages\dosen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Frs;
+use App\Models\FrsDetail;
 use App\Models\Jadwal;
 use App\Models\PersetujuanFrs;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class DosenFrsController extends Controller
 
     public function show($id)
     {
-        $frs = Frs::with(['mahasiswa', 'frs_detail.jadwal.matakuliah', 'frs_detail.persetujuan'])->findOrFail($id);
+        $frs = Frs::with(['mahasiswa', 'frsDetail.jadwal.matakuliah'])->findOrFail($id);
         return view('pages.dosen.frs.show', compact('frs'));
     }
 
@@ -28,7 +29,7 @@ class DosenFrsController extends Controller
             'status' => 'required|in:disetujui,ditolak'
         ]);
 
-        $persetujuan = PersetujuanFrs::findOrFail($id);
+        $persetujuan = FrsDetail::findOrFail($id);
         $persetujuan->update([
             'status' => $request->status,
             'tanggal_persetujuan' => now()

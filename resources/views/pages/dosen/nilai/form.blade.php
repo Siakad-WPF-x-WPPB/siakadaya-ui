@@ -33,29 +33,59 @@ $configData = Helper::appClasses();
 
 <!-- Page Scripts -->
 @section('page-script')
-@vite(['resources/assets/js/admin/table-dosen.js'])
+@vite(['resources/assets/js/dosen/table-nilai.js'])
 @endsection
 
 @section('content')
   <!-- DataTable with Buttons -->
   <div class="card">
-    <div class="card-datatable table-responsive pt-0">
-      <table class="datatables-basic table">
-        <thead>
-          <tr>
-            <th></th>
-            <th></th>
-            <th>NIP</th>
-            <th>Nama</th>
-            <th>Telepon</th>
-            <th>Program Studi</th>
-            <th>Jenis Kelamin</th>
-            <th>Jabatan</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-      </table>
-    </div>
+    <div class="container">
+      <h2>Input Nilai untuk {{ $mahasiswa->nama}} ({{ $mahasiswa->nrp}})</h2>
+      <p>
+          <strong>Mata Kuliah:</strong> {{ $jadwal->matakuliah->nama}} <br>
+          <strong>Kelas:</strong> {{ $jadwal->kelas->pararel }}
+      </p>
+  
+      @if (session('error'))
+          <div class="alert alert-danger">
+              {{ session('error') }}
+          </div>
+      @endif
+      @if ($errors->any())
+          <div class="alert alert-danger">
+              <ul>
+                  @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
+          </div>
+      @endif
+  
+      <form method="POST" action="{{ route('dosen.nilai.store', ['jadwal' => $jadwal->id, 'mahasiswa' => $mahasiswa->id]) }}">
+          @csrf
+          <div class="mb-3">
+              <label for="nilai_angka" class="form-label">Nilai Angka (0-100)</label>
+              <input type="number" class="form-control @error('nilai_angka') is-invalid @enderror" id="nilai_angka" name="nilai_angka" value="{{ old('nilai_angka', $nilai->nilai_angka) }}" required min="0" max="100">
+              @error('nilai_angka')
+                  <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
+          </div>
+  
+          @if($nilai->exists)
+          <div class="mb-3">
+              <label class="form-label">Nilai Huruf (Otomatis)</label>
+              <input type="text" class="form-control" value="{{ $nilai->nilai_huruf }}" readonly>
+          </div>
+          <div class="mb-3">
+              <label class="form-label">Status Kelulusan (Otomatis)</label>
+              <input type="text" class="form-control" value="{{ ucfirst($nilai->status) }}" readonly>
+          </div>
+          @endif
+  
+          <button type="submit" class="btn btn-primary">Simpan Nilai</button>
+          <a href="{{ route('dosen.jadwal.mahasiswa', $jadwal->id) }}" class="btn btn-secondary">Batal</a>
+      </form>
+  </div>
   </div>
   <!-- Modal to add new record -->
   <div class="offcanvas offcanvas-end" id="add-new-record">

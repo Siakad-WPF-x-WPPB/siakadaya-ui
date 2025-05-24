@@ -50,21 +50,23 @@ $configData = Helper::appClasses();
           </tr>
         </thead>
         <tbody>
-            @foreach($frs->frs_detail as $detail)
+            @foreach($frs->frsDetail as $detail)
             <tr>
                 <td>{{ $detail->jadwal->matakuliah->nama }}</td>
                 <td>{{ $detail->jadwal->hari }}</td>
                 <td>{{ $detail->jadwal->jam_mulai }} - {{ $detail->jadwal->jam_selesai }}</td>
-                <td>{{ $detail->persetujuan->status ?? 'pending' }}</td>
+                <td>{{ $detail->status ?? 'pending' }}</td>
                 <td>
-                    <form action="{{ route('dosen.frs.update', $detail->persetujuan->id) }}" method="POST">
+                    <form action="{{ route('dosen.frs.update', $detail->id) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <select name="status">
+                        <div class="row">
+                          <select name="status" class="form-select">
                             <option value="disetujui">Setujui</option>
                             <option value="ditolak">Tolak</option>
                         </select>
-                        <button type="submit">Simpan</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
                     </form>
                 </td>
             </tr>

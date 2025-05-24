@@ -21,6 +21,7 @@ use App\Http\Resources\admin\MataKuliahCollection;
 use App\Http\Resources\admin\TahunAjarCollection;
 use App\Http\Resources\dosen\FrsCollection;
 use App\Http\Resources\dosen\FrsDetailCollection;
+use App\Http\Resources\dosen\NilaiCollection;
 
 // * API Auth
 // TODO: implementasi API Auth
@@ -138,3 +139,4 @@ Route::get('/frs', function () {
 Route::get('/frs/detail', function () {
   return new FrsDetailCollection([]);
 });
+

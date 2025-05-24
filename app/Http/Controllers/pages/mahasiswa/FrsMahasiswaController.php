@@ -34,21 +34,19 @@ class FrsMahasiswaController extends Controller
             'mahasiswa_id' => $mahasiswa->id,
             'tahun_ajar_id' => $request->tahun_ajar_id,
             'tanggal_pengisian' => now(),
-            'status' => 'pending'
         ]);
 
         foreach ($request->jadwal_ids as $jadwalId) {
-            $detail = FrsDetail::create([
+            FrsDetail::create([
                 'id' => Str::uuid(),
                 'frs_id' => $frs->id,
-                'jadwal_id' => $jadwalId
-            ]);
-
-            PersetujuanFrs::create([
-                'id' => Str::uuid(),
-                'frs_detail_id' => $detail->id,
-                'status' => 'pending'
+                'jadwal_id' => $jadwalId,
+                'status' => 'pending',
             ]);
         }
+        return response()->json([
+            'message' => 'Data FRS berhasil disimpan',
+            'data' => $frs,
+        ], 201);
     }
 }

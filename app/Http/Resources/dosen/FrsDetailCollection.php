@@ -28,18 +28,19 @@ class FrsDetailCollection extends ResourceCollection
         $filteredRecords = $totalRecords; // Assume no filtering for now
 
         // Generate fake data for the current page
-        $data = PersetujuanFrs::query()
+        $data = FrsDetail::query()
             ->offset($start)
             ->limit($length)
             ->get()
             ->map(
-                function ($frsPersetujuan) {
+                function ($detailFrs) {
                     return [
-                        'nama_matakuliah' => $frsPersetujuan->frs_detail->jadwal->matakuliah->nama,
-                        'hari' => $frsPersetujuan->frs_detail->jadwal->hari,
-                        'jam_mulai' => $frsPersetujuan->frs_detail->jadwal->jam_mulai,
-                        'jam_selesai' => $frsPersetujuan->frs_detail->jadwal->jam_selesai,
-                        'status' => $frsPersetujuan->status,
+                        'id' => $detailFrs->id,
+                        'nama_matakuliah' => $detailFrs->jadwal->matakuliah->nama,
+                        'hari' => $detailFrs->jadwal->hari,
+                        'jam_mulai' => $detailFrs->jadwal->jam_mulai,
+                        'jam_selesai' => $detailFrs->jadwal->jam_selesai,
+                        'status' => $detailFrs->status,
                     ];
                 }
             )

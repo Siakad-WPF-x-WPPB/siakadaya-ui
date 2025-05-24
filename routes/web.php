@@ -24,6 +24,8 @@ use App\Http\Controllers\pages\dosen\DosenFrsController;
 use App\Http\Controllers\pages\dosen\DosenJadwalKuliahController;
 use App\Http\Controllers\pages\dosen\DosenMahasiswaController;
 use App\Http\Controllers\pages\dosen\DosenNilaiController;
+use App\Http\Resources\dosen\NilaiCollection;
+use App\Models\Nilai;
 
 // Main Page Route
 
@@ -113,18 +115,20 @@ Route::prefix('dosen')->group(
         Route::post('/logout', [DosenLoginController::class, 'logout'])->name('dosen-logout');
         Route::get('/mahasiswa', [DosenMahasiswaController::class, 'index'])->name('dosen-mahasiswa-index');
         Route::get('/jadwal-kuliah', [DosenJadwalKuliahController::class, 'index'])->name('dosen-jadwal-kuliah-index');
+        Route::get('/jadwal-kuliah/{jadwal}/mahasiswa', [DosenJadwalKuliahController::class, 'listMahasiswa'])->name('dosen.jadwal.mahasiswa');
+        
+        Route::get('/jadwal-kuliah/{jadwal}/nilai/{mahasiswa}', [DosenNilaiController::class, 'create'])->name('dosen.nilai.create');
+        Route::post('/jadwal-kuliah/{jadwal}/nilai/{mahasiswa}', [DosenNilaiController::class, 'store'])->name('dosen.nilai.store');
+
+        // Route FRS
         Route::get('/frs', [DosenFrsController::class, 'index'])->name('dosen-frs-index');
         Route::get('/frs/{id}', [DosenFrsController::class, 'show'])->name('dosen.frs.show');
         Route::put('/frs/persetujuan/{id}', [DosenFrsController::class, 'updateStatus'])->name('dosen.frs.update');
-        Route::resource('nilai', DosenNilaiController::class)->names([
-          'index'   => 'dosen-nilai-index',
-          'create'  => 'dosen-nilai-create',
-          'store'   => 'dosen-nilai-store',
-          'show'    => 'dosen-nilai-show',
-          'edit'    => 'dosen-nilai-edit',
-          'update'  => 'dosen-nilai-update',
-          'destroy' => 'dosen-nilai-destroy',
-        ]);
+
+        // Route Nilai
+        Route::get('/api/nilai', function () { 
+          return new NilaiCollection(Nilai::query());
+        })->name('dosen.api.nilai');
       }
     );
   }

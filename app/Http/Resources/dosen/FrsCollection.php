@@ -34,9 +34,11 @@ class FrsCollection extends ResourceCollection
             ->map(
                 function ($frs) {
                     return [
+                        'id' => $frs->id,
                         'nama_mahasiswa' => $frs->mahasiswa->nama,
-                        'tahun' => $frs->tahun_ajar->tahun,
-                        'semester' => $frs->tahun_ajar->semester,
+                        'tahun_mulai' => $frs->tahunAjar->tahun_mulai,
+                        'tahun_berakhir' => $frs->tahunAjar->tahun_berakhir,
+                        'semester' => $frs->tahunAjar->semester,
                         'tanggal_pengisian' => $frs->tanggal_pengisian,
                     ];
                 }

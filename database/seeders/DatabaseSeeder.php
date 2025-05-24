@@ -9,6 +9,7 @@ use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\Matakuliah;
+use App\Models\Nilai;
 use App\Models\ProgramStudi;
 use App\Models\Ruangan;
 use App\Models\TahunAjar;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
     Ruangan::factory(10)->create();
     Matakuliah::factory(10)->create();
     Jadwal::factory(10)->create();
+    Nilai::factory(10)->create();
     // User::factory(10)->create();
 
     // User::factory()->create([
@@ -53,6 +55,16 @@ class DatabaseSeeder extends Seeder
       'jabatan' => 'Dosen Tetap',
       'golongan_akhir' => 'III/a',
       'is_wali' => false
+  ]);
+
+  Nilai::factory()->create([
+      'mahasiswa_id' => Mahasiswa::inRandomOrder()->first()->id,
+      'mk_id' => Matakuliah::inRandomOrder()->first()->id,
+      'dosen_id' => $dosen->id, // <- ini penting
+      'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
+      'status' => 'lulus',
+      'nilai_huruf' => 'A',
+      'nilai_angka' => 90,
   ]);
 
   Admin::create([
