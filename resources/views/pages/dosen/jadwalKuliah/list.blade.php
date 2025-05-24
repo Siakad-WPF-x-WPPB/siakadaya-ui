@@ -22,41 +22,44 @@
 @endsection
 
 @section('content')
-    <!-- DataTable with Buttons -->
     <div class="card">
-        <h2>Mahasiswa Terdaftar untuk Jadwal:</h2>
-        <p>
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0"> Mahasiswa Terdaftar untuk Jadwal:</h5>
+        </div>
+        <div class="card-body">
+        <h6>
             <strong>Mata Kuliah:</strong> {{ $jadwal->matakuliah->nama ?? 'N/A' }} <br>
             <strong>Kelas:</strong> {{ $jadwal->kelas->pararel ?? 'N/A' }} <br>
             <strong>Hari:</strong> {{ $jadwal->hari }}, {{ \Carbon\Carbon::parse($jadwal->jam_mulai)->format('H:i') }} -
             {{ \Carbon\Carbon::parse($jadwal->jam_selesai)->format('H:i') }}
-        </p>
+        </h6>
+        </div>
         <div class="card-datatable table-responsive pt-0">
+            @if ($mahasiswas->isEmpty())
+            <h5 class="text-center">Tidak ada mahasiswa yang mengambil jadwal ini atau FRS belum disetujui.</h5>
+            @else
             <table class="datatables-basic table">
                 <thead>
                     <tr>
-                        <th>NIM</th>
+                        <th>NRP</th>
                         <th>Nama Mahasiswa</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                @if ($mahasiswas->isEmpty())
-                    <p>Tidak ada mahasiswa yang mengambil jadwal ini atau FRS belum disetujui.</p>
-                @else
+             
                     <tbody>
                         @foreach ($mahasiswas as $mahasiswa)
                             <tr>
                                 <td>{{ $mahasiswa->nrp ?? 'N/A' }}</td>
-                                <td>{{ $mahasiswa->nama ?? 'N/A' }}</td> 
+                                <td>{{ $mahasiswa->nama ?? 'N/A' }}</td>
                                 <td>
-                                    {{-- The link will go to the input nilai form, passing jadwal_id and mahasiswa_id --}}
                                     <a href="{{ route('dosen.nilai.create', ['jadwal' => $jadwal->id, 'mahasiswa' => $mahasiswa->id]) }}"
-                                        class="btn btn-sm btn-success">Input Nilai</a>
+                                        class="btn btn-md btn-success">Input Nilai</a>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
-                    @endif
+                @endif
             </table>
         </div>
     </div>

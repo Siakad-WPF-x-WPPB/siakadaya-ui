@@ -33,7 +33,7 @@ $configData = Helper::appClasses();
 
 <!-- Page Scripts -->
 @section('page-script')
-{{-- @vite(['resources/assets/js/dosen/table-jadwal.js']) --}}
+@vite(['resources/assets/js/dosen/table-jadwal.js'])
 @endsection
 
 @section('content')
@@ -43,30 +43,17 @@ $configData = Helper::appClasses();
       <table class="datatables-basic table">
         <thead>
           <tr>
+            <th></th>
             <th>Hari</th>
             <th>Jam Mulai</th>
             <th>Jam Selesai</th>
             <th>Kelas</th>
             <th>Matakuliah</th>
+            <th>Program Studi</th>
             <th>Ruangan</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          @foreach($jadwals as $jadwal)
-          <tr>
-              <td>{{ $jadwal->hari }}</td>
-              <td>{{ $jadwal->jam_mulai ?? 'N/A' }}</td> 
-              <td>{{ $jadwal->jam_selesai ?? 'N/A' }}</td> 
-              <td>{{ $jadwal->kelas->pararel ?? 'N/A' }}</td>
-              <td>{{ $jadwal->matakuliah->nama ?? 'N/A' }}</td> 
-              <td>{{ $jadwal->ruangan->nama ?? 'N/A' }}</td> 
-              <td>
-                  <a href="{{ route('dosen.jadwal.mahasiswa', $jadwal->id) }}" class="btn btn-sm btn-primary">Lihat Mahasiswa</a>
-              </td>
-          </tr>
-          @endforeach
-      </tbody>
       </table>
     </div>
   </div>
