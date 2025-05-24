@@ -16,8 +16,7 @@ class TahunAjarController extends Controller
 {
     private function validateTahunAjarData(Request $request, $id = null)
     {
-      // Log::info('Validating tahun ajar data', $request->all());
-      // dd($request->all());
+// Removed unnecessary debug statements.
 
       return $request->validate([
           'semester' => [
