@@ -120,6 +120,6 @@ class DosenNilaiController extends Controller
         );
 
         return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
-            ->with('success', 'Nilai untuk mahasiswa ' . ($mahasiswa->nama_mahasiswa ?? $mahasiswa->id) . ' berhasil disimpan.');
+            ->with('success', 'Nilai untuk mahasiswa ' . ($mahasiswa->nama ?? $mahasiswa->id) . ' berhasil disimpan.');
     }
 }
