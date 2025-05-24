@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin;
 use App\Models\Dosen;
 use App\Models\Frs;
+use App\Models\FrsDetail;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
@@ -103,6 +104,29 @@ class DatabaseSeeder extends Seeder
       'kecamatan' => 'Kecamatan 1',
       'kota' => 'Kota 1'
   ]);
+
+  $jadwal = Jadwal::factory()->create([
+    'kelas_id' => Kelas::inRandomOrder()->first()->id,
+    'dosen_id' => $dosen->id,
+    'mk_id' => Matakuliah::inRandomOrder()->first()->id,
+    'ruangan_id' => Ruangan::inRandomOrder()->first()->id,
+    'hari' => 'Senin',
+    'jam_mulai' => '08:00:00',
+    'jam_selesai' => '10:00:00',
+  ]);
+
+    Frs::create([
+      'mahasiswa_id' => Mahasiswa::inRandomOrder()->first()->id,
+      'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
+      'tanggal_pengisian' => now(),
+    ]);
+
+    FrsDetail::create([
+      'frs_id' => Frs::inRandomOrder()->first()->id,
+      'jadwal_id' => $jadwal->id,
+      'status' => 'pending',
+      'tanggal_persetujuan' => now(),
+    ]);
 
   // Kelas::factory()->create([
   //   'nama_kelas' => 'D3 IT B',

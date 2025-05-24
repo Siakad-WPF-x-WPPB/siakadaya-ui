@@ -29,7 +29,7 @@ $(function () {
       processing: true,
       serverSide: true,
       ajax: {
-        url: '/api/jadwal-kuliah',
+        url: '/dosen/api/jadwal-kuliah',
         dataSrc: function (json) {
           console.log('Fetched data: ', json);
           return json.data;
@@ -37,13 +37,14 @@ $(function () {
       },
       columns: [
         { data: '' },
-        { data: 'kelas' },
-        { data: 'nama_dosen' },
-        { data: 'matakuliah' },
-        { data: 'ruangan' },
+        { data: 'hari' },
         { data: 'jam_mulai' },
         { data: 'jam_selesai' },
-        { data: 'hari' }
+        { data: 'kelas' },
+        { data: 'matakuliah' },
+        { data: 'program_studi' },
+        { data: 'ruangan' },
+        { data: '' }
       ],
       columnDefs: [
         {
@@ -58,53 +59,68 @@ $(function () {
           }
         },
         {
-          // For Kelas
+          // For Hari
           targets: 1,
           searchable: false,
           orderable: false,
           responsivePriority: 5
         },
         {
-          // For Nama Dosen
+          // For Jam Mulai
           targets: 2,
           searchable: true,
           orderable: true,
           responsivePriority: 3
         },
         {
-          // For Matakuliah
+          // For Jam Selesai
           targets: 3,
           searchable: true,
           orderable: true,
           responsivePriority: 5
         },
         {
-          // For Ruangan
+          // For Kelas
           targets: 4,
           searchable: false,
           orderable: true,
           responsivePriority: 6
         },
         {
-          // For Jam Mulai
+          // For Matakuliah
           targets: 5,
           searchable: false,
           orderable: true,
           responsivePriority: 7
         },
         {
-          // For Jam Selesai
+          // For Program Studi
           targets: 6,
           searchable: false,
           orderable: true,
           responsivePriority: 8
         },
         {
-          // For Jam hari
+          // For Ruangan
           targets: 7,
           searchable: false,
           orderable: true,
           responsivePriority: 8
+        },
+        {
+          // Actions
+          targets: -1,
+          title: 'Actions',
+          orderable: false,
+          searchable: false,
+          render: function (data, type, full, meta) {
+            return (
+              '<div class="d-flex">' +
+              '<a href="/dosen/jadwal-kuliah/' +
+              full.id +
+              '/mahasiswa"class="btn btn-md btn-primary btn-text-secondary">Detail</a>'
+            );
+          }
         }
       ],
       order: [[2, 'desc']],

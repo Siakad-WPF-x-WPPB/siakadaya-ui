@@ -4,7 +4,7 @@ $configData = Helper::appClasses();
 
 @extends('layouts/layoutMaster')
 
-@section('title', 'Jadwal Kuliah')
+@section('title', 'Dosen')
 
 <!-- Vendor Styles -->
 @section('vendor-style')
@@ -33,6 +33,7 @@ $configData = Helper::appClasses();
 
 <!-- Page Scripts -->
 @section('page-script')
+@vite(['resources/assets/js/dosen/table-frs.js'])
 @endsection
 
 @section('content')
@@ -42,22 +43,13 @@ $configData = Helper::appClasses();
       <table class="datatables-basic table">
         <thead>
           <tr>
+            <th></th>
+            <th>NRP</th>
             <th>Nama Mahasiswa</th>
-            <th>Tanggal Pengsisian</th>
+            <th>Tanggal Pengisian</th>
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          @foreach($frsList as $frs)
-          <tr>
-              <td>{{ $frs->mahasiswa->nama }}</td>
-              <td>{{ $frs->created_at->format('d-m-Y') }}</td>
-              <td>
-                  <a href="{{ route('dosen.frs.show', $frs->id) }}" class="btn btn-primary">Detail</a>
-              </td>
-          </tr>
-          @endforeach
-        </tbody>
       </table>
     </div>
   </div>
@@ -110,7 +102,7 @@ $configData = Helper::appClasses();
         <div class="col-sm-12">
           <button type="submit" class="btn btn-primary data-submit me-sm-4 me-1">Submit</button>
           <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
-        </div>
+        </div>  
       </form>
 
     </div>
