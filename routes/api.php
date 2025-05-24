@@ -117,7 +117,7 @@ Route::delete('/kelas/destroy/{id}', [KelasController::class, 'destroy']);
 // TODO: implementasi API Jadwal Kuliah
 // *********************************************************************************
 
-Route::get('/jadwal-kuliah', function () {
+Route::get('/jadwal', function () {
   return new JadwalCollection([]);
 });
 Route::get('/jadwal/{id}', [JadwalKuliahController::class, 'show']);

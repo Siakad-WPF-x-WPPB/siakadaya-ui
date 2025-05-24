@@ -7,6 +7,9 @@
       "slug": "admin-dashboard"
     },
     {
+      "menuHeader": "Manajemen Pengguna"
+    },
+    {
       "url": "admin/mahasiswa",
       "name": "Mahasiswa",
       "icon": "menu-icon tf-icons ti ti-user",
@@ -17,6 +20,9 @@
       "name": "Dosen",
       "icon": "menu-icon tf-icons ti ti-user-square",
       "slug": "admin-dosen-index"
+    },
+    {
+      "menuHeader": "Akademik"
     },
     {
       "url": "admin/mata-kuliah",
