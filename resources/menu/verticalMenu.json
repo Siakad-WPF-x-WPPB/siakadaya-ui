@@ -41,6 +41,12 @@
       "name": "Tahun Ajar",
       "icon": "menu-icon tf-icons ti ti-calendar-clock",
       "slug": "admin-tahun-ajar-index"
+    },
+    {
+      "url": "admin/program-studi",
+      "name": "Program Studi",
+      "icon": "menu-icon tf-icons ti ti-building",
+      "slug": "admin-program-studi-index"
     }
   ],
   "menuDosen": [
