@@ -25,7 +25,7 @@ class TahunAjarFactory extends Factory
         return [
             'semester' => fake()->randomElement(['Ganjil', 'Genap']),
             'tahun_mulai' => $startYear,
-            'tahun_berakhir' => $endYear,
+            'tahun_akhir' => $endYear,
             'status' => fake()->randomElement(['Aktif', 'Tidak Aktif']),
         ];
     }
