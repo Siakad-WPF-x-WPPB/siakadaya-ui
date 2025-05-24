@@ -43,21 +43,56 @@
         @endif
 
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-3">
             <label class="form-label" for="semester">Semester</label>
             <div class="col-sm-12">
-              <select class="select2 form-select" id="semester" name="semester">
+              <select class="select2 form-select @error('semester') is-invalid @enderror" id="semester" name="semester">
+                <option value="">Select</option>
                 <option value="Ganjil" {{ (isset($tahunAjar) && $tahunAjar->semester == 'Ganjil') ? 'selected' : '' }}>Ganjil</option>
                 <option value="Genap" {{ (isset($tahunAjar) && $tahunAjar->semester == 'Genap') ? 'selected' : '' }}>Genap</option>
               </select>
+              @error('semester')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label" for="tahun">Tahun</label>
+          <div class="col-md-3">
+            <label class="form-label" for="tahun-mulai">Tahun Mulai</label>
             <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                <input type="text" id="tahun" name="tahun" value="{{ $tahunAjar->tahun ?? old('tahun') }}" class="form-control flatpickr-basic" placeholder="2024/2025" aria-label="2024/2025" aria-describedby="basic-icon-default-fullname2" />
-              </div>
+              <input type="text" id="tahun-mulai" name="tahun_mulai" value="{{ $tahunAjar->tahun_mulai ?? old('tahun_mulai') }}" class="form-control flatpickr-basic @error('tahun_mulai') is-invalid @enderror" placeholder="2024" aria-label="2024" min="1900" max="{{ date('Y') + 10 }}" aria-describedby="basic-icon-default-fullname2" />
+              @error('tahun_mulai')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="tahun-berakhir">Tahun Berakhir</label>
+            <div class="col-sm-12">
+              <input type="text" id="tahun-berakhir" name="tahun_akhir" value="{{ $tahunAjar->tahun_akhir ?? old('tahun_akhir') }}" class="form-control flatpickr-basic @error('tahun_akhir') is-invalid @enderror" placeholder="2025" aria-label="2025" min="1900" max="{{ date('Y') + 10 }}" aria-describedby="basic-icon-default-fullname2" />
+              @error('tahun_akhir')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="status">Status</label>
+            <div class="col-sm-12">
+              <select class="select2 form-select @error('status') is-invalid @enderror" id="status" name="status">
+                <option value="">Select value</option>
+                <option value="Aktif" {{ (isset($tahunAjar) && $tahunAjar->status == 'Aktif') || old('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                <option value="Tidak Aktif" {{ (isset($tahunAjar) && $tahunAjar->status == 'Tidak Aktif') || old('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+              </select>
+              @error('status')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>

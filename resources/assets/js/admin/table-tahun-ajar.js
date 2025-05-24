@@ -30,7 +30,8 @@ $(function () {
         { data: '' },
         { data: 'id' },
         { data: 'semester' },
-        { data: 'tahun' },
+        { data: 'tahun_ajaran' },
+        { data: 'status' },
         { data: '' }
       ],
       columnDefs: [
@@ -67,11 +68,37 @@ $(function () {
           responsivePriority: 5
         },
         {
-          // For Tahun Ajar
+          // For Tahun Ajaran
           targets: 3,
           searchable: true,
           orderable: true,
           responsivePriority: 3,
+          render: function (data, type, full, meta) {
+            // For sorting, return the tahun_mulai value
+            if (type === 'sort') {
+              return full.tahun_mulai;
+            }
+            // For display, return the formatted tahun_ajaran
+            return data;
+          }
+        },
+        {
+          // For Status
+          targets: 4,
+          searchable: true,
+          orderable: true,
+          responsivePriority: 3,
+          render: function (data, type, full, meta) {
+            var status = full.status || data;
+
+            if (status === 'Aktif') {
+              return '<span class="badge bg-label-success">Aktif</span>';
+            } else if (status === 'Tidak Aktif') {
+              return '<span class="badge bg-label-danger">Tidak Aktif</span>';
+            } else {
+              return '<span class="badge bg-label-secpndary">Unknown</span>';
+            }
+          }
         },
         {
           // Actions
@@ -98,7 +125,7 @@ $(function () {
           }
         }
       ],
-      order: [[2, 'desc']],
+      order: [[3, 'desc']],
       dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-6 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-n6 mt-md-0"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
       displayLength: 7,
       lengthMenu: [7, 10, 25, 50, 75, 100],

@@ -17,7 +17,7 @@ return new class extends Migration
             // Tahun Ajar details
             $table->string('semester', 6);
             $table->integer('tahun_mulai');
-            $table->integer('tahun_berakhir');
+            $table->integer('tahun_akhir');
             $table->enum('status', ['Aktif', 'Tidak Aktif'])->default('Aktif')->index();
 
             $table->timestamps();

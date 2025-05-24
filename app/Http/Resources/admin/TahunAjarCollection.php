@@ -15,33 +15,69 @@ class TahunAjarCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        // Simulate server-side processing
-        $draw = $request->get('draw', 1); // DataTables draw counter
-        $start = $request->get('start', 0); // Starting record index
-        $length = $request->get('length', 20); // Number of records per page
-        $searchValue = $request->get('search')['value'] ?? ''; // Search value
+        // Get DataTables parameters
+        $draw = $request->get('draw', 1);
+        $start = $request->get('start', 0);
+        $length = $request->get('length', 20);
+        $searchValue = $request->get('search')['value'] ?? '';
 
-        // Simulate total records (e.g., from a database query)
-        $totalRecords = 20; // Example: Total number of records in the database
+        // Get sort parameters
+        $orderColumnIndex = $request->get('order')[0]['column'] ?? 3; // Default to tahun_ajaran column
+        $orderDirection = $request->get('order')[0]['dir'] ?? 'desc'; // Default to newest first
 
-        // Simulate filtered records (e.g., based on search functionality)
-        $filteredRecords = $totalRecords; // Assume no filtering for now
+        // Map column index to actual column name
+        $columns = [
+            2 => 'semester',
+            3 => 'tahun_mulai', // Sort by tahun_mulai for tahun_ajaran
+            4 => 'status',
+        ];
 
-        // Generate fake data for the current page
-        $data = TahunAjar::query()
-            ->offset($start)
-            ->limit($length)
-            ->get()
-            ->map(
-                function ($tahunAjar) {
-                    return [
-                        'id' => $tahunAjar->id,
-                        'semester' => $tahunAjar->semester,
-                        'tahun' => $tahunAjar->tahun,
-                    ];
-                }
-            )
-            ->toArray();
+        $orderColumn = $columns[$orderColumnIndex] ?? 'tahun_mulai';
+
+        // Start query
+        $query = TahunAjar::query();
+
+        // Apply search if provided
+        if (!empty($searchValue)) {
+            $query->where(function($q) use ($searchValue) {
+                $q->where('semester', 'like', "%{$searchValue}%")
+                  ->orWhere('tahun_mulai', 'like', "%{$searchValue}%")
+                  ->orWhere('tahun_akhir', 'like', "%{$searchValue}%")
+                  ->orWhere('status', 'like', "%{$searchValue}%")
+                  // Search in combined tahun_ajaran format
+                  ->orWhereRaw("CONCAT(tahun_mulai, '/', tahun_akhir) LIKE ?", ["%{$searchValue}%"]);
+            });
+        }
+
+        // Get total count of all records (before filtering)
+        $totalRecords = TahunAjar::count();
+
+        // Get filtered count
+        $filteredRecords = $query->count();
+
+        // Apply sorting - for newest tahun ajaran, sort by tahun_mulai descending by default
+        if ($orderColumn === 'tahun_mulai') {
+            $query->orderBy('tahun_mulai', $orderDirection)
+                  ->orderBy('tahun_akhir', $orderDirection);
+        } else {
+            $query->orderBy($orderColumn, $orderDirection);
+        }
+
+        // Apply pagination and get data
+        $data = $query->offset($start)
+                      ->limit($length)
+                      ->get()
+                      ->map(function ($tahunAjar) {
+                          return [
+                              'id' => $tahunAjar->id,
+                              'semester' => $tahunAjar->semester,
+                              'tahun_ajaran' => $tahunAjar->tahun_mulai . '/' . $tahunAjar->tahun_akhir,
+                              'tahun_mulai' => $tahunAjar->tahun_mulai, // Add for sorting reference
+                              'tahun_akhir' => $tahunAjar->tahun_akhir, // Add for sorting reference
+                              'status' => $tahunAjar->status,
+                          ];
+                      })
+                      ->toArray();
 
         return [
             'draw' => intval($draw),

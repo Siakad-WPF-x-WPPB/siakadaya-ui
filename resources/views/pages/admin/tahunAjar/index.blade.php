@@ -46,7 +46,8 @@ $configData = Helper::appClasses();
             <th></th>
             <th></th>
             <th>Semester</th>
-            <th>Tahun Ajar</th>
+            <th>Tahun Ajaran</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
