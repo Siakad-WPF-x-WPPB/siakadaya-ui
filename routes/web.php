@@ -92,6 +92,8 @@ Route::prefix('admin')->group(function () {
       'update'  => 'admin-tahun-ajar-update',
       'destroy' => 'admin-tahun-ajar-destroy',
     ]);
+    Route::get('/jadwal-kuliah/kelas-by-prodi/{prodiId}', [JadwalKuliahController::class, 'getKelasByProdi'])->name('admin-jadwal-kuliah-kelas-by-prodi');
+    Route::get('/jadwal-kuliah/matakuliah-by-prodi/{prodiId}', [JadwalKuliahController::class, 'getMatakuliahByProdi'])->name('admin-jadwal-kuliah-matakuliah-by-prodi');
     Route::resource('jadwal-kuliah', JadwalKuliahController::class)->names([
       'index'   => 'admin-jadwal-kuliah-index',
       'create'  => 'admin-jadwal-kuliah-create',

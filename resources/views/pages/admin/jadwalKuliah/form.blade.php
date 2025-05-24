@@ -23,7 +23,14 @@
 
 <!-- Page Scripts -->
 @section('page-script')
-@vite(['resources/assets/js/form-layouts.js'])
+@vite(['resources/assets/js/form-layouts.js', 'resources/assets/js/admin/form-jadwal.js'])
+  @if(isset($jadwal) && $jadwal->kelas && $jadwal->kelas->prodi_id)
+    <script>
+        var jadwalProdiId = '{{ $jadwal->kelas->prodi_id }}';
+        var jadwalKelasId = '{{ $jadwal->kelas->id }}';
+        var jadwalMatakuliahId = '{{ $jadwal->mk_id }}';
+    </script>
+  @endif
 @endsection
 
 @section('content')
@@ -42,88 +49,148 @@
             @method('PUT')
         @endif
 
-        <div class="row">
+        <div class="row mb-6">
           <div class="col-md-6">
-            <label class="form-label" for="kelas">Kelas</label>
+            <label class="form-label" for="prodi">Program Studi</label>
             <div class="col-sm-12">
-              <select name="kelas_id" id="kelas" class="select2 form-select" data-allow-clear="true">
-                <option value="">Select</option>
-                @foreach($kelas as $k)
-                  <option value="{{ $k->id }}"{{ (isset($jadwal) && $jadwal->kelas_id == $k->id) ? 'selected' : '' }}>
-                    {{ $k->pararel }}
+              <select name="prodi_id" id="prodi" class="select2 form-select @error('prodi_id') is-invalid @enderror" data-allow-clear="true">
+                <option value="">Pilih Program Studi</option>
+                @foreach($prodi as $ps)
+                  <option value="{{ $ps->id }}"
+                          {{ (isset($jadwal) && $jadwal->kelas && $jadwal->kelas->prodi_id == $ps->id) || old('prodi_id') == $ps->id ? 'selected' : '' }}>
+                    {{ $ps->nama }}
                   </option>
                 @endforeach
               </select>
+              @error('prodi_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-6">
+            <label class="form-label" for="kelas">Kelas</label>
+            <div class="col-sm-12">
+              <select name="kelas_id" id="kelas" class="select2 form-select @error('kelas_id') is-invalid @enderror" data-allow-clear="true" disabled>
+                <option value="">Select value</option>
+                @if(isset($jadwal) && $jadwal->kelas)
+                  <option value="{{ $jadwal->kelas->id }}" selected>
+                    {{ $jadwal->kelas->pararel }}
+                  </option>
+                @endif
+              </select>
+              @error('kelas_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+            </div>
+          </div>
+        </div>
+        <div class="row mb-6">
+          <div class="col-md-4">
             <label class="form-label" for="dosen-id">Dosen</label>
             <div class="col-sm-12">
-              <select name="dosen_id" id="dosen-id" class="select2 form-select" data-allow-clear="true">
+              <select name="dosen_id" id="dosen-id" class="select2 form-select @error('dosen_id') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 @foreach($dosen as $d)
-                  <option value="{{ $d->id }}"{{ (isset($jadwal) && $jadwal->dosen_id == $d->id) ? 'selected' : '' }}>
+                  <option value="{{ $d->id }}"
+                          {{ (isset($jadwal) && $jadwal->dosen_id == $d->id) || old('dosen_id') == $d->id ? 'selected' : '' }}>
                     {{ $d->nama }} - {{ $d->nip }}
                   </option>
                 @endforeach
               </select>
+              @error('dosen_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label class="form-label" for="matakuliah">Mata Kuliah</label>
             <div class="col-sm-12">
-              <select name="mk_id" id="matakuliah" class="select2 form-select" data-allow-clear="true">
-                <option value="">Select</option>
-                @foreach($matakuliah as $mk)
-                  <option value="{{ $mk->id }}"{{ (isset($jadwal) && $jadwal->mk_id == $mk->id) ? 'selected' : '' }}>
-                    {{ $mk->nama }} - {{ $mk->kode }}
-                  </option>
-                @endforeach
+              <select name="mk_id"
+                id="matakuliah"
+                class="select2 form-select @error('mk_id') is-invalid @enderror"
+                data-allow-clear="true"
+                disabled>
+                  <option value="">Select value</option>
+                  @if(isset($jadwal) && $jadwal->matakuliah)
+                      <option value="{{ $jadwal->matakuliah->id }}" selected>
+                          {{ $jadwal->matakuliah->nama }} - {{ $jadwal->matakuliah->kode }}
+                      </option>
+                  @endif
               </select>
+              @error('mk_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label class="form-label" for="ruangan">Ruangan</label>
             <div class="col-sm-12">
-              <select name="ruangan_id" id="ruangan" class="select2 form-select" data-allow-clear="true">
+              <select name="ruangan_id" id="ruangan" class="select2 form-select @error('ruangan_id') is-invalid @enderror" data-allow-clear="true">
                 <option value="">Select</option>
                 @foreach($ruangan as $r)
-                  <option value="{{ $r->id }}"{{ (isset($jadwal) && $jadwal->ruangan_id == $r->id) ? 'selected' : '' }}>
+                  <option value="{{ $r->id }}"
+                          {{ (isset($jadwal) && $jadwal->ruangan_id == $r->id) || old('ruangan_id') == $r->id ? 'selected' : '' }}>
                     {{ $r->nama }} - {{ $r->kode }} - {{ $r->gedung }}
                   </option>
                 @endforeach
               </select>
+              @error('ruangan_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row mb-6">
           <div class="col-md-4">
             <label class="form-label" for="hari">Hari</label>
             <div class="col-sm-12">
-              <select name="hari" id="hari" class="select2 form-select" data-allow-clear="true">
-                <option value="">Select</option>
-                <option value="senin"{{ (isset($jadwal) && $jadwal->hari == 'senin') ? 'selected' : '' }}>Senin</option>
-                <option value="selasa"{{ (isset($jadwal) && $jadwal->hari == 'selasa') ? 'selected' : '' }}>Selasa</option>
-                <option value="rabu"{{ (isset($jadwal) && $jadwal->hari == 'rabu') ? 'selected' : '' }}>Rabu</option>
-                <option value="kamis"{{ (isset($jadwal) && $jadwal->hari == 'kamis') ? 'selected' : '' }}>Kamis</option>
-                <option value="jumat"{{ (isset($jadwal) && $jadwal->hari == 'jumat') ? 'selected' : '' }}>Jumat</option>
-                <option value="sabtu"{{ (isset($jadwal) && $jadwal->hari == 'sabtu') ? 'selected' : '' }}>Sabtu</option>
-                <option value="minggu"{{ (isset($jadwal) && $jadwal->hari == 'minggu') ? 'selected' : '' }}>Minggu</option>
+              <select name="hari" id="hari" class="select2 form-select @error('hari') is-invalid @enderror" data-allow-clear="true">
+                  <option value="">Pilih Hari</option>
+                  <option value="Senin" {{ (isset($jadwal) && $jadwal->hari == 'Senin') || old('hari') == 'Senin' ? 'selected' : '' }}>Senin</option>
+                  <option value="Selasa" {{ (isset($jadwal) && $jadwal->hari == 'Selasa') || old('hari') == 'Selasa' ? 'selected' : '' }}>Selasa</option>
+                  <option value="Rabu" {{ (isset($jadwal) && $jadwal->hari == 'Rabu') || old('hari') == 'Rabu' ? 'selected' : '' }}>Rabu</option>
+                  <option value="Kamis" {{ (isset($jadwal) && $jadwal->hari == 'Kamis') || old('hari') == 'Kamis' ? 'selected' : '' }}>Kamis</option>
+                  <option value="Jumat" {{ (isset($jadwal) && $jadwal->hari == 'Jumat') || old('hari') == 'Jumat' ? 'selected' : '' }}>Jumat</option>
+                  <option value="Sabtu" {{ (isset($jadwal) && $jadwal->hari == 'Sabtu') || old('hari') == 'Sabtu' ? 'selected' : '' }}>Sabtu</option>
+                  <option value="Minggu" {{ (isset($jadwal) && $jadwal->hari == 'Minggu') || old('hari') == 'Minggu' ? 'selected' : '' }}>Minggu</option>
               </select>
+              @error('hari')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-4">
             <label class="form-label" for="jam-mulai">Jam Mulai</label>
             <div class="col-sm-12">
-              <input type="time" id="jam-mulai" name="jam_mulai" value="{{ $jadwal->jam_mulai ?? old('jam_mulai') }}" class="form-control flatpickr-basic" placeholder="Jam Mulai" />
+              <input type="time" id="jam-mulai" name="jam_mulai" value="{{ $jadwal->jam_mulai ?? old('jam_mulai') }}" class="form-control flatpickr-basic @error('jam_mulai') is-invalid @enderror" placeholder="Jam Mulai" />
+              @error('jam_mulai')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
           <div class="col-md-4">
-            <label class="form-label" for="jam-selesai">Jam Selesai</label>
+            <label class="form-label" for="jam-akhir">Jam Akhir</label>
             <div class="col-sm-12">
-              <input type="time" id="jam-selesai" name="jam_selesai" value="{{ $jadwal->jam_selesai ?? old('jam_selesai') }}" class="form-control flatpickr-basic" placeholder="Jam Mulai" />
+              <input type="time" id="jam-akhir" name="jam_akhir" value="{{ $jadwal->jam_akhir ?? old('jam_akhir') }}" class="form-control flatpickr-basic @error('jam_akhir') is-invalid @enderror" placeholder="Jam Mulai" />
+              @error('jam_akhir')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
             </div>
           </div>
         </div>

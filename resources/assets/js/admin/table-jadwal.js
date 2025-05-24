@@ -19,24 +19,26 @@ $(function () {
 
   if (dt_basic_table.length) {
     dt_basic = dt_basic_table.DataTable({
+      processing: true,
+      serverSide: true,
       ajax: {
         url: '/api/jadwal',
         dataSrc: function (json) {
-          console.log('Fetched data: ', json);
+          // console.log('Fetched data: ', json);
           return json.data;
         }
       },
       columns: [
         { data: '' },
-        { data: 'kelas' },
-        { data: 'kelas' },
-        { data: 'nama_dosen' },
+        { data: 'id' },
+        { data: 'kelas_display' },
+        { data: 'dosen' },
         { data: 'matakuliah' },
         { data: 'ruangan' },
         {
           data: null,
           render: function(data, type, row) {
-            return row.hari + ' ' + row.jam_mulai + '-' + row.jam_selesai;
+            return row.hari + ' ' + row.waktu;
           }
         },
         { data: '' }
@@ -80,10 +82,6 @@ $(function () {
           searchable: true,
           orderable: true,
           responsivePriority: 3,
-        //   render: function (data, type, full, meta) {
-        //     // This ensures null/undefined values display as a dash
-        //     return data || '-';
-        //   }
         },
         {
           // For Matakuliah
@@ -133,8 +131,8 @@ $(function () {
       ],
       order: [[2, 'desc']],
       dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-6 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-n6 mt-md-0"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
-      displayLength: 7,
-      lengthMenu: [7, 10, 25, 50, 75, 100],
+      displayLength: 10,
+      lengthMenu: [10, 25, 50, 75, 100],
       language: {
         paginate: {
           next: '<i class="ti ti-chevron-right ti-sm"></i>',
@@ -152,7 +150,7 @@ $(function () {
               text: '<i class="ti ti-printer me-1" ></i>Print',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [3, 4, 5, 6, 7],
+                columns: [2, 3, 4, 5, 6, 7],
                 // prevent avatar to be display
                 format: {
                   body: function (inner, coldex, rowdex) {
@@ -189,7 +187,7 @@ $(function () {
               text: '<i class="ti ti-file-text me-1" ></i>Csv',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [3, 4, 5, 6, 7],
+                columns: [2, 3, 4, 5, 6, 7],
                 // prevent avatar to be display
                 format: {
                   body: function (inner, coldex, rowdex) {
@@ -213,7 +211,7 @@ $(function () {
               text: '<i class="ti ti-file-spreadsheet me-1"></i>Excel',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [3, 4, 5, 6, 7],
+                columns: [2, 3, 4, 5, 6, 7],
                 // prevent avatar to be display
                 format: {
                   body: function (inner, coldex, rowdex) {
@@ -237,7 +235,7 @@ $(function () {
               text: '<i class="ti ti-file-description me-1"></i>Pdf',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [3, 4, 5, 6, 7],
+                columns: [2, 3, 4, 5, 6, 7],
                 // prevent avatar to be display
                 format: {
                   body: function (inner, coldex, rowdex) {
@@ -261,7 +259,7 @@ $(function () {
               text: '<i class="ti ti-copy me-1" ></i>Copy',
               className: 'dropdown-item',
               exportOptions: {
-                columns: [3, 4, 5, 6, 7],
+                columns: [2, 3, 4, 5, 6, 7],
                 // prevent avatar to be display
                 format: {
                   body: function (inner, coldex, rowdex) {
@@ -324,6 +322,8 @@ $(function () {
       },
       initComplete: function (settings, json) {
         $('.card-header').after('<hr class="my-0">');
+        $('.dt-action-buttons').addClass('pt-0');
+        $('.dataTables_filter').addClass('me-3 ps-0');
       }
     });
     $('div.head-label').html('<h5 class="card-title mb-0">DataTable with Buttons</h5>');

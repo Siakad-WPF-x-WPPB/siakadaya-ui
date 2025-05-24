@@ -3,17 +3,245 @@
 namespace App\Http\Controllers\pages\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Exception;
 
+use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Dosen;
 use App\Models\Matakuliah;
 use App\Models\Ruangan;
+use App\Models\ProgramStudi;
 
 class JadwalKuliahController extends Controller
 {
+    private function validateJadwalData(Request $request, $id = null)
+    {
+      $rules = [
+          'kelas_id' => 'required|exists:kelas,id',
+          'dosen_id' => 'required|exists:dosen,id',
+          'mk_id' => 'required|exists:matakuliah,id',
+          'ruangan_id' => 'required|exists:ruangan,id',
+          'hari' => [
+              'required',
+              'string',
+              'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu'
+          ],
+          'jam_mulai' => [
+              'required',
+              'date_format:H:i',
+              function ($attribute, $value, $fail) use ($request) {
+                  // validate time range
+                  $time = strtotime($value);
+                  $minTime = strtotime('07:00');
+                  $maxTime = strtotime('20:00');
+
+                  if ($time < $minTime || $time > $maxTime) {
+                      $fail('Jam mulai harus antara 07:00 dan 20:00.');
+                  }
+              }
+          ],
+          'jam_selesai' => [
+              'required',
+              'date_format:H:i',
+              'after:jam_mulai',
+              function ($attribute, $value, $fail) use ($request) {
+                  // Validate time range
+                  $time = strtotime($value);
+                  $minTime = strtotime('07:00');
+                  $maxTime = strtotime('21:00');
+
+                  if ($time < $minTime || $time > $maxTime) {
+                      $fail('Jam selesai harus antara 07:00 - 21:00');
+                  }
+
+                  // Validate minimum duration (e.g., 50 minutes)
+                  if ($request->jam_mulai) {
+                      $startTime = strtotime($request->jam_mulai);
+                      $endTime = strtotime($value);
+                      $duration = ($endTime - $startTime) / 60; // in minutes
+
+                      if ($duration < 50) {
+                          $fail('Durasi kuliah minimal 50 menit');
+                      }
+
+                      if ($duration > 300) {
+                          $fail('Durasi kuliah maksimal 5 jam');
+                      }
+                  }
+              }
+          ],
+      ];
+
+      $messages = [
+        'kelas_id.required' => 'Kelas harus dipilih',
+        'kelas_id.exists' => 'Kelas yang dipilih tidak valid',
+        'dosen_id.required' => 'Dosen harus dipilih',
+        'dosen_id.exists' => 'Dosen yang dipilih tidak valid',
+        'mk_id.required' => 'Mata kuliah harus dipilih',
+        'mk_id.exists' => 'Mata kuliah yang dipilih tidak valid',
+        'ruangan_id.required' => 'Ruangan harus dipilih',
+        'ruangan_id.exists' => 'Ruangan yang dipilih tidak valid',
+        'jam_mulai.required' => 'Jam mulai harus diisi',
+        'jam_mulai.date_format' => 'Format jam mulai tidak valid (HH:MM)',
+        'jam_selesai.required' => 'Jam selesai harus diisi',
+        'jam_selesai.date_format' => 'Format jam selesai tidak valid (HH:MM)',
+        'jam_selesai.after' => 'Jam selesai harus lebih besar dari jam mulai',
+        'hari.required' => 'Hari harus dipilih',
+        'hari.in' => 'Hari yang dipilih tidak valid',
+      ];
+
+      $validated = $request->validate($rules, $messages);
+
+      // Additional business logic validation
+      $this->validateScheduleConflicts($validated, $id);
+
+      return $validated;
+    }
+
+    // Bussiness logic to check for schedule conflicts
+    private function validateScheduleConflicts($data, $excludeId = null)
+    {
+        $conflicts = [];
+
+        // Check dosen conflict
+        $dosenConflict = Jadwal::where('dosen_id', $data['dosen_id'])
+            ->where('hari', $data['hari'])
+            ->when($excludeId, function($query, $excludeId) {
+                return $query->where('id', '!=', $excludeId);
+            })
+            ->where(function($query) use ($data) {
+                $query->whereBetween('jam_mulai', [$data['jam_mulai'], $data['jam_selesai']])
+                      ->orWhereBetween('jam_selesai', [$data['jam_mulai'], $data['jam_selesai']])
+                      ->orWhere(function($q) use ($data) {
+                          $q->where('jam_mulai', '<=', $data['jam_mulai'])
+                            ->where('jam_selesai', '>=', $data['jam_selesai']);
+                      });
+            })
+            ->with(['kelas.programStudi', 'matakuliah'])
+            ->first();
+
+        if ($dosenConflict) {
+            $conflicts['dosen_id'] = "Dosen sudah memiliki jadwal pada {$data['hari']} jam {$dosenConflict->jam_mulai}-{$dosenConflict->jam_selesai} untuk mata kuliah {$dosenConflict->matakuliah->nama}";
+        }
+
+        // Check ruangan conflict
+        $ruanganConflict = Jadwal::where('ruangan_id', $data['ruangan_id'])
+            ->where('hari', $data['hari'])
+            ->when($excludeId, function($query, $excludeId) {
+                return $query->where('id', '!=', $excludeId);
+            })
+            ->where(function($query) use ($data) {
+                $query->whereBetween('jam_mulai', [$data['jam_mulai'], $data['jam_selesai']])
+                      ->orWhereBetween('jam_selesai', [$data['jam_mulai'], $data['jam_selesai']])
+                      ->orWhere(function($q) use ($data) {
+                          $q->where('jam_mulai', '<=', $data['jam_mulai'])
+                            ->where('jam_selesai', '>=', $data['jam_selesai']);
+                      });
+            })
+            ->with(['dosen', 'matakuliah'])
+            ->first();
+
+        if ($ruanganConflict) {
+            $conflicts['ruangan_id'] = "Ruangan sudah digunakan pada {$data['hari']} jam {$ruanganConflict->jam_mulai}-{$ruanganConflict->jam_selesai} untuk mata kuliah {$ruanganConflict->matakuliah->nama}";
+        }
+
+        // Check kelas conflict
+        $kelasConflict = Jadwal::where('kelas_id', $data['kelas_id'])
+            ->where('hari', $data['hari'])
+            ->when($excludeId, function($query, $excludeId) {
+                return $query->where('id', '!=', $excludeId);
+            })
+            ->where(function($query) use ($data) {
+                $query->whereBetween('jam_mulai', [$data['jam_mulai'], $data['jam_selesai']])
+                      ->orWhereBetween('jam_selesai', [$data['jam_mulai'], $data['jam_selesai']])
+                      ->orWhere(function($q) use ($data) {
+                          $q->where('jam_mulai', '<=', $data['jam_mulai'])
+                            ->where('jam_selesai', '>=', $data['jam_selesai']);
+                      });
+            })
+            ->with(['dosen', 'matakuliah'])
+            ->first();
+
+        if ($kelasConflict) {
+            $conflicts['kelas_id'] = "Kelas sudah memiliki jadwal pada {$data['hari']} jam {$kelasConflict->jam_mulai}-{$kelasConflict->jam_selesai} untuk mata kuliah {$kelasConflict->matakuliah->nama}";
+        }
+
+        if (!empty($conflicts)) {
+            throw ValidationException::withMessages($conflicts);
+        }
+    }
+
+    public function getKelasByProdi($prodiId)
+    {
+      try {
+          $kelas = Kelas::where('prodi_id', $prodiId)
+                      ->with('programStudi')
+                      ->get()
+                      ->map(function($k) {
+                          return [
+                              'id' => $k->id,
+                              'pararel' => $k->pararel,
+                              'display_name' => $k->programStudi->kode . '-' . $k->pararel
+                          ];
+                      });
+
+          return response()->json([
+              'success' => true,
+              'data' => $kelas
+          ]);
+      } catch (\Exception $e) {
+          return response()->json([
+              'success' => false,
+              'message' => 'Error fetching kelas: ' . $e->getMessage()
+          ], 500);
+      }
+    }
+
+    public function getMatakuliahByProdi($prodiId)
+{
+    try {
+        // Validate prodi exists
+        $prodi = ProgramStudi::findOrFail($prodiId);
+
+        $matakuliah = Matakuliah::where('prodi_id', $prodiId)
+                                ->orderBy('nama')
+                                ->get()
+                                ->map(function($mk) {
+                                    return [
+                                        'id' => $mk->id,
+                                        'nama' => $mk->nama,
+                                        'kode' => $mk->kode,
+                                        'sks' => $mk->sks,
+                                        'display_name' => $mk->nama . ' (' . $mk->kode . ') - ' . $mk->sks . ' SKS'
+                                    ];
+                                });
+
+        return response()->json([
+            'success' => true,
+            'data' => $matakuliah,
+            'message' => "Found {$matakuliah->count()} mata kuliah for {$prodi->nama}"
+        ]);
+      } catch (ModelNotFoundException $e) {
+          return response()->json([
+              'success' => false,
+              'message' => 'Program Studi tidak ditemukan'
+          ], 404);
+      } catch (Exception $e) {
+          Log::error('Error fetching matakuliah by prodi: ' . $e->getMessage());
+          return response()->json([
+              'success' => false,
+              'message' => 'Terjadi kesalahan saat mengambil data mata kuliah'
+          ], 500);
+      }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -27,12 +255,18 @@ class JadwalKuliahController extends Controller
      */
     public function create()
     {
-        $kelas = Kelas::all();
-        $dosen = Dosen::all();
-        $matakuliah = Matakuliah::all();
-        $ruangan = Ruangan::all();
+      try {
+          $kelas = Kelas::with('programStudi')->orderBy('pararel')->get();
+          $dosen = Dosen::orderBy('nama')->get();
+          $matakuliah = Matakuliah::orderBy('nama')->get();
+          $ruangan = Ruangan::orderBy('nama')->get();
+          $prodi = ProgramStudi::orderBy('nama')->get();
 
-        return view('pages.admin.jadwalKuliah.form', compact('kelas', 'dosen', 'matakuliah', 'ruangan'));
+          return view('pages.admin.jadwalKuliah.form', compact('kelas', 'dosen', 'matakuliah', 'ruangan', 'prodi'));
+      } catch (Exception $e) {
+          Log::error('Error loading create form: ' . $e->getMessage());
+          return redirect()->route('admin-jadwal-kuliah-index')->with('error', 'Terjadi kesalahan saat memuat form');
+      }
     }
 
     /**
@@ -40,43 +274,62 @@ class JadwalKuliahController extends Controller
      */
     public function store(Request $request)
     {
-      // dd($request->all());
-      $validator = Validator::make($request->all(), [
-            'kelas_id' => 'required|exists:kelas,id',
-            'dosen_id' => 'required|exists:dosen,id',
-            'mk_id' => 'required|exists:matakuliah,id',
-            'ruangan_id' => 'required|exists:ruangan,id',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'hari' => 'required|string'
-        ], [
-          // Custom error messages (optional)
-          'kelas_id.required' => 'Kelas harus dipilih',
-          'dosen_id.required' => 'Dosen harus dipilih',
-          'jam_selesai.after' => 'Jam selesai harus lebih besar dari jam mulai',
-        ]);
+      try {
+          // Start a database transaction
+          DB::beginTransaction();
 
-        if ($validator->fails()) {
-              if ($validator->fails()) {
+          // validate the request data
+          $validated = $this->validateJadwalData($request);
+
+          // create a new Jadwal record
+          $jadwal = Jadwal::create($validated);
+
+          // Commit the transaction
+          DB::commit();
+
+          // Handle different response types based on request
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => true,
+                  'message' => 'Jadwal berhasil ditambahkan',
+                  'data' => $jadwal->load(['kelas.programStudi', 'dosen', 'matakuliah', 'ruangan'])
+              ], 201);
+          }
+
+          return redirect()->route('admin-jadwal-kuliah-index')
+                          ->with('success', 'Jadwal berhasil ditambahkan');
+
+      } catch (ValidationException $e) {
+          // Rollback the transaction if validation fails
+          DB::rollBack();
+
+          if ($request->expectsJson() || $request->is('api/*')) {
               return response()->json([
                   'success' => false,
                   'message' => 'Validasi gagal',
-                  'errors' => $validator->errors()
+                  'errors' => $e->errors()
               ], 422);
           }
-        }
 
-        try {
-            $jadwal = Jadwal::create($validator->validated());
+          return redirect()->back()
+                          ->withErrors($e->errors())
+                          ->withInput();
+      } catch (Exception $e) {
+          // Rollback the transaction if any other error occurs
+          DB::rollBack();
+          Log::error('Error creating jadwal: ' . $e->getMessage());
 
-            return redirect()->route('admin-jadwal-kuliah-index')->with('success', 'Jadwal berhasil ditambahkan');
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => false,
+                  'message' => 'Terjadi kesalahan saat menyimpan data'
+              ], 500);
+          }
+
+          return redirect()->back()
+                          ->withInput()
+                          ->with('error', 'Terjadi kesalahan saat menyimpan data');
+      }
     }
 
     /**
@@ -92,13 +345,23 @@ class JadwalKuliahController extends Controller
      */
     public function edit(string $id)
     {
-        $jadwal = Jadwal::findOrFail($id);
-        $kelas = Kelas::all();
-        $dosen = Dosen::all();
-        $matakuliah = Matakuliah::all();
-        $ruangan = Ruangan::all();
+      try {
+          $jadwal = Jadwal::with(['kelas.programStudi'])->findOrFail($id);
+          $kelas = Kelas::with('programStudi')->orderBy('pararel')->get();
+          $dosen = Dosen::orderBy('nama')->get();
+          $matakuliah = Matakuliah::orderBy('nama')->get();
+          $ruangan = Ruangan::orderBy('nama')->get();
+          $prodi = ProgramStudi::orderBy('nama')->get();
 
-        return view('pages.admin.jadwalKuliah.form', compact('jadwal', 'kelas', 'dosen', 'matakuliah', 'ruangan'));
+          return view('pages.admin.jadwalKuliah.form', compact('jadwal', 'kelas', 'dosen', 'matakuliah', 'ruangan', 'prodi'));
+      } catch (ModelNotFoundException $e) {
+          return redirect()->route('admin-jadwal-kuliah-index')
+                          ->with('error', 'Jadwal tidak ditemukan');
+      } catch (Exception $e) {
+          Log::error('Error loading edit form: ' . $e->getMessage());
+          return redirect()->route('admin-jadwal-kuliah-index')
+                          ->with('error', 'Terjadi kesalahan saat memuat form');
+      }
     }
 
     /**
@@ -106,53 +369,70 @@ class JadwalKuliahController extends Controller
      */
     public function update(Request $request, string $id)
     {
-          $data = $request->all();
-          // Format times if needed
-          if (isset($data['jam_mulai'])) {
-              $data['jam_mulai'] = date('H:i', strtotime($data['jam_mulai']));
+      try {
+          DB::beginTransaction();
+
+          $jadwal = Jadwal::findOrFail($id);
+          $validated = $this->validateJadwalData($request, $jadwal->id);
+
+          $jadwal->update($validated);
+
+          DB::commit();
+
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => true,
+                  'message' => 'Jadwal berhasil diperbarui',
+                  'data' => $jadwal->load(['kelas.programStudi', 'dosen', 'matakuliah', 'ruangan'])
+              ]);
           }
 
-          if (isset($data['jam_selesai'])) {
-              $data['jam_selesai'] = date('H:i', strtotime($data['jam_selesai']));
-          }
+          return redirect()->route('admin-jadwal-kuliah-index')
+                          ->with('success', 'Jadwal berhasil diperbarui');
 
-          // dd($data);
+      } catch (ValidationException $e) {
+          DB::rollBack();
 
-        $validator = Validator::make($data, [
-            'kelas_id' => 'required|exists:kelas,id',
-            'dosen_id' => 'required|exists:dosen,id',
-            'mk_id' => 'required|exists:matakuliah,id',
-            'ruangan_id' => 'required|exists:ruangan,id',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'hari' => 'required|string'
-        ], [
-          // Custom error messages (optional)
-          'kelas_id.required' => 'Kelas harus dipilih',
-          'dosen_id.required' => 'Dosen harus dipilih',
-          'jam_selesai.after' => 'Jam selesai harus lebih besar dari jam mulai',
-        ]);
-
-        if ($validator->fails()) {
+          if ($request->expectsJson() || $request->is('api/*')) {
               return response()->json([
                   'success' => false,
                   'message' => 'Validasi gagal',
-                  'errors' => $validator->errors()
+                  'errors' => $e->errors()
               ], 422);
           }
 
-        try {
-            $jadwal = Jadwal::findOrFail($id);
-            $jadwal->update($validator->validated());
+          return redirect()->back()
+                          ->withErrors($e->errors())
+                          ->withInput();
 
-            return redirect()->route('admin-jadwal-kuliah-index')->with('success', 'Jadwal berhasil diubah');
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+      } catch (ModelNotFoundException $e) {
+          DB::rollBack();
+
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => false,
+                  'message' => 'Jadwal tidak ditemukan'
+              ], 404);
+          }
+
+          return redirect()->route('admin-jadwal-kuliah-index')
+                          ->with('error', 'Jadwal tidak ditemukan');
+
+      } catch (Exception $e) {
+          DB::rollBack();
+          Log::error('Error updating jadwal: ' . $e->getMessage());
+
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => false,
+                  'message' => 'Terjadi kesalahan saat memperbarui data'
+              ], 500);
+          }
+
+          return redirect()->back()
+                          ->withInput()
+                          ->with('error', 'Terjadi kesalahan saat memperbarui data');
+      }
     }
 
     /**
@@ -160,11 +440,34 @@ class JadwalKuliahController extends Controller
      */
     public function destroy(string $id)
     {
-        $jadwal = Jadwal::findOrFail($id);
-        $jadwal->delete();
+      try {
+          DB::beginTransaction();
 
-        return response()->json([
-            'message' => 'jadwal berhasil dihapus'
-        ]);
+          $jadwal = Jadwal::findOrFail($id);
+          $jadwal->delete();
+
+          DB::commit();
+
+          return response()->json([
+              'success' => true,
+              'message' => 'Jadwal berhasil dihapus'
+          ]);
+
+      } catch (ModelNotFoundException $e) {
+          DB::rollBack();
+          return response()->json([
+              'success' => false,
+              'message' => 'Jadwal tidak ditemukan'
+          ], 404);
+
+      } catch (Exception $e) {
+          DB::rollBack();
+          Log::error('Error deleting jadwal: ' . $e->getMessage());
+
+          return response()->json([
+              'success' => false,
+              'message' => 'Terjadi kesalahan saat menghapus data'
+          ], 500);
+      }
     }
 }
