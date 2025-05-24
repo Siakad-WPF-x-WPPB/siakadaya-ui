@@ -40,7 +40,7 @@ class RuanganFactory extends Factory
 
         return [
             'kode' => $roomCode,
-            'nama' => fake()->randomElement($rootName) . ' ' . $roomCode,
+            'nama' => fake()->randomElement($rootName),
             'gedung' => fake()->randomElement($buildings),
         ];
     }

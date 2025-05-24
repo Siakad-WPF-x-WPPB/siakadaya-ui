@@ -18,7 +18,8 @@ use App\Http\Controllers\pages\admin\{
   MahasiswaController,
   MataKuliahController,
   TahunAjarController,
-  ProgramStudiController
+  ProgramStudiController,
+  RuanganController,
 };
 use App\Http\Controllers\pages\dosen\DosenDashboardController;
 use App\Http\Controllers\pages\dosen\DosenFrsController;
@@ -114,6 +115,15 @@ Route::prefix('admin')->group(function () {
       'edit'    => 'admin-program-studi-edit',
       'update'  => 'admin-program-studi-update',
       'destroy' => 'admin-program-studi-destroy',
+    ]);
+    Route::resource('ruangan', RuanganController::class)->names([
+      'index'   => 'admin-ruangan-index',
+      'create'  => 'admin-ruangan-create',
+      'store'   => 'admin-ruangan-store',
+      'show'    => 'admin-ruangan-show',
+      'edit'    => 'admin-ruangan-edit',
+      'update'  => 'admin-ruangan-update',
+      'destroy' => 'admin-ruangan-destroy',
     ]);
   });
 });
