@@ -19,6 +19,7 @@ use App\Http\Resources\admin\KelasCollection;
 use App\Http\Resources\admin\MahasiswaCollection;
 use App\Http\Resources\admin\MataKuliahCollection;
 use App\Http\Resources\admin\TahunAjarCollection;
+use App\Http\Resources\dosen\DosenJadwalKuliahCollection;
 use App\Http\Resources\dosen\FrsCollection;
 use App\Http\Resources\dosen\FrsDetailCollection;
 use App\Http\Resources\dosen\NilaiCollection;
@@ -117,6 +118,13 @@ Route::post('/jadwal/store', [JadwalKuliahController::class, 'store']);
 Route::put('/jadwal/update/{id}', [JadwalKuliahController::class, 'update']);
 Route::delete('/jadwal/destroy/{id}', [JadwalKuliahController::class, 'destroy']);
 
+// * API Dosen Jadwal Kuliah
+// TODO: implementasi API Dosen Jadwal Kuliah
+// *********************************************************************************
+Route::get('/dosen/jadwal-kuliah', function () {
+  return new DosenJadwalKuliahCollection([]);
+});
+
 // * API Tahun Ajar
 // TODO: implementasi API Tahun Ajar
 // *********************************************************************************
@@ -139,4 +147,6 @@ Route::get('/frs', function () {
 Route::get('/frs/detail', function () {
   return new FrsDetailCollection([]);
 });
+
+
 

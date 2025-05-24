@@ -24,7 +24,9 @@ use App\Http\Controllers\pages\dosen\DosenFrsController;
 use App\Http\Controllers\pages\dosen\DosenJadwalKuliahController;
 use App\Http\Controllers\pages\dosen\DosenMahasiswaController;
 use App\Http\Controllers\pages\dosen\DosenNilaiController;
+use App\Http\Resources\dosen\DosenJadwalKuliahCollection;
 use App\Http\Resources\dosen\NilaiCollection;
+use App\Models\Jadwal;
 use App\Models\Nilai;
 
 // Main Page Route
@@ -128,8 +130,8 @@ Route::prefix('dosen')->group(
         Route::put('/frs/persetujuan/{id}', [DosenFrsController::class, 'updateStatus'])->name('dosen.frs.update');
 
         // Route Nilai
-        Route::get('/api/nilai', function () { 
-          return new NilaiCollection(Nilai::query());
+        Route::get('/api/jadwal-kuliah', function () { 
+          return new DosenJadwalKuliahCollection(Jadwal::query());
         })->name('dosen.api.nilai');
       }
     );

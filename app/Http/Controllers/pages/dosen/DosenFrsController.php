@@ -13,8 +13,7 @@ class DosenFrsController extends Controller
 {
     public function index()
     {
-        $frsList = Frs::with('mahasiswa')->orderBy('created_at', 'desc')->get();
-        return view('pages.dosen.frs.index', compact('frsList'));
+        return view('pages.dosen.frs.index');
     }
 
     public function show($id)
