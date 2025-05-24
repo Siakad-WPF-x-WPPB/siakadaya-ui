@@ -47,6 +47,12 @@
       "name": "Program Studi",
       "icon": "menu-icon tf-icons ti ti-building",
       "slug": "admin-program-studi-index"
+    },
+    {
+      "url": "admin/ruangan",
+      "name": "Ruangan",
+      "icon": "menu-icon tf-icons ti ti-building-warehouse",
+      "slug": "admin-ruangan-index"
     }
   ],
   "menuDosen": [

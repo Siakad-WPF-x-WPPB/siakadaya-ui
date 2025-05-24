@@ -20,6 +20,6 @@ class Ruangan extends Model
 
     public function jadwal()
     {
-        return $this->hasMany(Jadwal::class, 'jadwal_id');
+        return $this->hasMany(Jadwal::class, 'ruangan_id');
     }
 }

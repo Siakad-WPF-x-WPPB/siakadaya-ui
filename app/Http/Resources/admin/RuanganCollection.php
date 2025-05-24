@@ -5,9 +5,9 @@ namespace App\Http\Resources\admin;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-use App\Models\ProgramStudi;
+use App\Models\Ruangan;
 
-class ProgramStudiCollection extends ResourceCollection
+class RuanganCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -26,29 +26,31 @@ class ProgramStudiCollection extends ResourceCollection
         $orderColumnIndex = $request->get('order')[0]['column'] ?? 2;
         $orderDirection = $request->get('order')[0]['dir'] ?? 'desc';
 
-        // Map column index to actual column name (only available columns)
+        // Map column index to actual column name (based on ruangan schema)
         $columns = [
             2 => 'kode',
             3 => 'nama',
-            4 => 'created_at',
+            4 => 'gedung',
+            5 => 'created_at',
         ];
 
         $orderColumn = $columns[$orderColumnIndex] ?? 'id';
 
         // Get total count first (before any filtering)
-        $totalRecords = ProgramStudi::count();
+        $totalRecords = Ruangan::count();
 
         // Start main query
-        $baseQuery = ProgramStudi::query();
+        $baseQuery = Ruangan::query();
 
         // Clone for filtered count
         $filteredQuery = clone $baseQuery;
 
-        // Apply search if provided (only search in existing fields)
+        // Apply search if provided (search in all ruangan fields)
         if (!empty($searchValue)) {
             $searchClosure = function($q) use ($searchValue) {
                 $q->where('kode', 'like', "%{$searchValue}%")
-                  ->orWhere('nama', 'like', "%{$searchValue}%");
+                  ->orWhere('nama', 'like', "%{$searchValue}%")
+                  ->orWhere('gedung', 'like', "%{$searchValue}%");
             };
 
             $baseQuery->where($searchClosure);
@@ -58,11 +60,13 @@ class ProgramStudiCollection extends ResourceCollection
         // Get filtered count
         $filteredRecords = $filteredQuery->count();
 
-        // Add sorting (only for existing columns)
+        // Add sorting (for all ruangan columns)
         if ($orderColumn === 'kode') {
             $baseQuery->orderBy('kode', $orderDirection);
         } elseif ($orderColumn === 'nama') {
             $baseQuery->orderBy('nama', $orderDirection);
+        } elseif ($orderColumn === 'gedung') {
+            $baseQuery->orderBy('gedung', $orderDirection);
         } elseif ($orderColumn === 'created_at') {
             $baseQuery->orderBy('created_at', $orderDirection);
         } else {
@@ -70,20 +74,20 @@ class ProgramStudiCollection extends ResourceCollection
         }
 
         // Apply pagination and get data
-        $prodiData = $baseQuery->offset($start)
-                               ->limit($length)
-                               ->get();
+        $ruanganData = $baseQuery->offset($start)
+                                 ->limit($length)
+                                 ->get();
 
-        // Format data (only using existing database fields)
-        $data = $prodiData->map(function ($prodi) {
+        // Format data (using ruangan database fields)
+        $data = $ruanganData->map(function ($ruangan) {
             return [
-                'id' => $prodi->id,
-                'kode' => $prodi->kode ?? 'No Code',
-                'nama' => $prodi->nama ?? 'No Name',
+                'id' => $ruangan->id,
+                'kode' => $ruangan->kode ?? 'No Code',
+                'nama' => $ruangan->nama ?? 'No Name',
+                'gedung' => $ruangan->gedung ?? 'No Building',
 
-                // For debugging
-                'created_at' => $prodi->created_at ? $prodi->created_at->format('Y-m-d H:i:s') : null,
-                'updated_at' => $prodi->updated_at ? $prodi->updated_at->format('Y-m-d H:i:s') : null,
+                'ruangan_display' => ($ruangan->kode ?? 'No Code') . ' - ' . ($ruangan->nama ?? 'No Name'),
+                'location_display' => ($ruangan->nama ?? 'No Name') . ' (' . ($ruangan->gedung ?? 'No Building') . ')',
             ];
         })->toArray();
 

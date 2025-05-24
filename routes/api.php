@@ -12,8 +12,11 @@ use App\Http\Controllers\pages\admin\MahasiswaController;
 use App\Http\Controllers\pages\admin\MataKuliahController;
 use App\Http\Controllers\pages\admin\TahunAjarController;
 use App\Http\Controllers\pages\admin\ProgramStudiController;
+use App\Http\Controllers\pages\admin\RuanganController;
+
 use App\Http\Controllers\pages\mahasiswa\FrsMahasiswaController;
 use App\Http\Controllers\pages\mahasiswa\JadwalKuliahMahasiswaController;
+
 use App\Http\Resources\admin\DosenCollection;
 use App\Http\Resources\admin\JadwalCollection;
 use App\Http\Resources\admin\KelasCollection;
@@ -21,6 +24,8 @@ use App\Http\Resources\admin\MahasiswaCollection;
 use App\Http\Resources\admin\MataKuliahCollection;
 use App\Http\Resources\admin\TahunAjarCollection;
 use App\Http\Resources\admin\ProgramStudiCollection;
+use App\Http\Resources\admin\RuanganCollection;
+
 use App\Http\Resources\dosen\DosenJadwalKuliahCollection;
 use App\Http\Resources\dosen\FrsCollection;
 use App\Http\Resources\dosen\FrsDetailCollection;
@@ -149,6 +154,17 @@ Route::get('/program-studi/{id}', [ProgramStudiController::class, 'show']);
 Route::post('/program-studi/store', [ProgramStudiController::class, 'store']);
 Route::put('/program-studi/update/{id}', [ProgramStudiController::class, 'update']);
 Route::delete('/program-studi/destroy/{id}', [ProgramStudiController::class, 'destroy']);
+
+// * API FRS
+// TODO: implementasi API Ruangan
+// *********************************************************************************
+Route::get('/ruangan', function () {
+  return new RuanganCollection([]);
+});
+Route::get('/ruangan/{id}', [RuanganController::class, 'show']);
+Route::post('/ruangan/store', [RuanganController::class, 'store']);
+Route::put('/ruangan/update/{id}', [RuanganController::class, 'update']);
+Route::delete('/ruangan/destroy/{id}', [RuanganController::class, 'destroy']);
 
 // * API FRS
 // TODO: implementasi API FRS
