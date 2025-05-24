@@ -93,21 +93,6 @@ class ProgramStudiCollection extends ResourceCollection
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $filteredRecords,
             'data' => $data,
-            // Add debug info
-            'debug' => [
-                'start' => $start,
-                'length' => $length,
-                'total_in_db' => ProgramStudi::count(),
-                'data_count' => count($data),
-                'search' => $searchValue,
-                'order_column' => $orderColumn,
-                'order_direction' => $orderDirection,
-                'current_page' => ($start / $length) + 1,
-                'total_pages' => ceil(ProgramStudi::count() / $length),
-                'showing_from' => $start + 1,
-                'showing_to' => min($start + $length, ProgramStudi::count()),
-                'available_columns' => ['id', 'kode', 'nama', 'created_at', 'updated_at'],
-            ]
         ];
     }
 }
