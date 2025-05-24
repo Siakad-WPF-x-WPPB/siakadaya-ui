@@ -67,12 +67,6 @@
       "name": "FRS",
       "icon": "menu-icon tf-icons ti ti-books",
       "slug": "dosen-frs-index"
-    },
-    {
-      "url": "dosen/nilai",
-      "name": "Nilai",
-      "icon": "menu-icon tf-icons ti ti-file-text",
-      "slug": "dosen-nilai-index"
     }
   ]
 }
