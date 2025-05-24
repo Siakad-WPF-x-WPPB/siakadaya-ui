@@ -3,11 +3,61 @@
 namespace App\Http\Controllers\pages\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Dosen;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use Exception;
+
+use App\Models\Dosen;
+use App\Models\ProgramStudi;
 
 class DosenController extends Controller
 {
+    private function validateDosenData(Request $request, $id = null)
+    {
+        $nipRule = $id ? "required|string|max:18|unique:dosen,nip,{$id}" : 'required|string|max:18|unique:dosen,nip';
+        $emailRule = $id ? "required|email|unique:dosen,email,{$id}" : 'required|email|unique:dosen,email';
+
+        return $request->validate([
+            'prodi_id' => 'required|exists:program_studi,id',
+            'nip' => $nipRule,
+            'nama' => 'required|string',
+            'jenis_kelamin' => ['required', Rule::in(['L', 'P'])],
+            'telepon' => 'required|string',
+            'email' => $emailRule,
+            'password' => $id ? 'nullable|string' : 'required|string',
+            'tanggal_lahir' => 'required|date|before:today',
+            'jabatan' => 'required|string',
+            'golongan_akhir' => 'required|string',
+            'is_wali' => 'boolean',
+        ], [
+            'prodi_id.required' => 'Program studi harus dipilih.',
+            'prodi_id.exists' => 'Program studi yang dipilih tidak valid.',
+            'nip.required' => 'NIP wajib diisi.',
+            'nip.max' => 'NIP maksimal 18 karakter.',
+            'nip.unique' => 'NIP sudah digunakan oleh dosen lain.',
+            'nama.required' => 'Nama dosen wajib diisi.',
+            'nama.max' => 'Nama dosen maksimal 100 karakter.',
+            'jenis_kelamin.required' => 'Jenis kelamin harus dipilih.',
+            'jenis_kelamin.in' => 'Jenis kelamin harus L atau P.',
+            'telepon.required' => 'Nomor telepon wajib diisi.',
+            'telepon.max' => 'Nomor telepon maksimal 15 karakter.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan oleh dosen lain.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 6 karakter.',
+            'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
+            'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
+            'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
+            'jabatan.required' => 'Jabatan wajib diisi.',
+            'golongan_akhir.required' => 'Golongan akhir wajib diisi.',
+            'is_wali.required' => 'Status wali harus dipilih.',
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +71,7 @@ class DosenController extends Controller
      */
     public function create()
     {
-        $program_studi = \App\Models\ProgramStudi::all();
+        $program_studi = ProgramStudi::all();
 
         return view('pages.admin.dosen.form', compact('program_studi'));
     }
@@ -31,28 +81,52 @@ class DosenController extends Controller
      */
     public function store(Request $request)
     {
-      $request->merge(['is_wali' => filter_var($request->is_wali, FILTER_VALIDATE_BOOLEAN)]);
+      try {
+        // validate the request data
+        $validated = $this->validateDosenData($request);
 
-      // dd($request->all());
-
-        $validated = $request->validate([
-            'nip' => 'required|unique:dosen,nip',
-            'prodi_id' => 'required|exists:program_studi,id',
-            'nama' => 'required|string',
-            'jenis_kelamin' => 'required|in:L,P',
-            'telepon' => 'required|string',
-            'email' => 'required|email|unique:dosen,email',
-            'password' => 'required|string',
-            'tanggal_lahir' => 'required|date|before:today',
-            'jabatan' => 'required|string',
-            'golongan_akhir' => 'required|string',
-            'is_wali' => 'required|in:true,false,0,1',
-        ]);
-
+        // hash the password
         $validated['password'] = bcrypt($validated['password']);
+
+        // create a new Dosen record
         $dosen = Dosen::create($validated);
 
+        // Handle different response types based on request
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data dosen berhasil disimpan.',
+                'data' => $dosen
+            ], 201);
+        }
+
         return redirect()->route('admin-dosen-index')->with('success', 'Data dosen berhasil disimpan.');
+      } catch (ValidationException $e) {
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        }
+
+        return redirect()->back()
+            ->withErrors($e->errors())
+            ->withInput();
+      } catch (Exception $e) {
+        Log::error('Error creating dosen: ' . $e->getMessage());
+
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.'
+            ], 500);
+        }
+
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Terjadi kesalahan saat menyimpan data.');
+      }
     }
 
     /**
@@ -69,7 +143,7 @@ class DosenController extends Controller
     public function edit(string $id)
     {
         $dosen = Dosen::findOrFail($id);
-        $program_studi = \App\Models\ProgramStudi::all();
+        $program_studi = ProgramStudi::all();
 
         return view('pages.admin.dosen.form', compact('dosen', 'program_studi'));
     }
@@ -79,30 +153,70 @@ class DosenController extends Controller
      */
     public function update(Request $request, string $id)
     {
+      try {
         $dosen = Dosen::findOrFail($id);
 
-        $validated = $request->validate([
-            'nip' => 'required|unique:dosen,nip,' . $dosen->id,
-            'prodi_id' => 'required|exists:program_studi,id',
-            'nama' => 'required|string',
-            'jenis_kelamin' => 'required|in:L,P',
-            'telepon' => 'required|string',
-            'email' => 'required|email|unique:dosen,email,' . $dosen->id,
-            'tanggal_lahir' => 'required|date',
-            'jabatan' => 'required|string',
-            'golongan_akhir' => 'required|string',
-            'is_wali' => 'required|boolean',
-        ]);
+        // Use the existing validation method with custom error messages
+        $validated = $this->validateDosenData($request, $id);
 
+        // Handle password update
         if ($request->filled('password')) {
             $validated['password'] = bcrypt($request->password);
         } else {
-            $validated['password'] = $dosen->password;
+            // Remove password from validated data if not provided
+            unset($validated['password']);
         }
 
         $dosen->update($validated);
 
+        // Handle different response types
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data dosen berhasil diperbarui.',
+                'data' => $dosen
+            ]);
+        }
+
         return redirect()->route('admin-dosen-index')->with('success', 'Data dosen berhasil diperbarui.');
+      } catch (ValidationException $e) {
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => false,
+                  'message' => 'Validasi gagal',
+                  'errors' => $e->errors()
+              ], 422);
+          }
+
+          return redirect()->back()
+              ->withErrors($e->errors())
+              ->withInput();
+
+      } catch (ModelNotFoundException $e) {
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => false,
+                  'message' => 'Data dosen tidak ditemukan'
+              ], 404);
+          }
+
+          return redirect()->route('admin-dosen-index')
+              ->with('error', 'Data dosen tidak ditemukan.');
+
+      } catch (Exception $e) {
+          Log::error('Error updating dosen: ' . $e->getMessage());
+
+          if ($request->expectsJson() || $request->is('api/*')) {
+              return response()->json([
+                  'success' => false,
+                  'message' => 'Terjadi kesalahan saat memperbarui data.'
+              ], 500);
+          }
+
+          return redirect()->back()
+              ->withInput()
+              ->with('error', 'Terjadi kesalahan saat memperbarui data.');
+      }
     }
 
     /**

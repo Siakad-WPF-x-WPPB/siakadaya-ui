@@ -126,7 +126,10 @@ class MahasiswaController extends Controller
                 'errors' => $e->errors()
             ], 422);
         }
-        throw $e;
+
+        return redirect()->back()
+            ->withErrors($e->errors())
+            ->withInput();
       } catch (Exception $e) {
         Log::error('Error creating mahasiswa: ' . $e->getMessage());
 
