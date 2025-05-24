@@ -96,7 +96,7 @@ $(function () {
             } else if (status === 'Tidak Aktif') {
               return '<span class="badge bg-label-danger">Tidak Aktif</span>';
             } else {
-              return '<span class="badge bg-label-secpndary">Unknown</span>';
+              return '<span class="badge bg-label-secondary">Unknown</span>';
             }
           }
         },
