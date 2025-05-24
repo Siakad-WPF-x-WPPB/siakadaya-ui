@@ -17,7 +17,8 @@ use App\Http\Controllers\pages\admin\{
   KelasController,
   MahasiswaController,
   MataKuliahController,
-  TahunAjarController
+  TahunAjarController,
+  ProgramStudiController
 };
 use App\Http\Controllers\pages\dosen\DosenDashboardController;
 use App\Http\Controllers\pages\dosen\DosenFrsController;
@@ -105,6 +106,15 @@ Route::prefix('admin')->group(function () {
       'update'  => 'admin-jadwal-kuliah-update',
       'destroy' => 'admin-jadwal-kuliah-destroy',
     ]);
+    Route::resource('program-studi', ProgramStudiController::class)->names([
+      'index'   => 'admin-program-studi-index',
+      'create'  => 'admin-program-studi-create',
+      'store'   => 'admin-program-studi-store',
+      'show'    => 'admin-program-studi-show',
+      'edit'    => 'admin-program-studi-edit',
+      'update'  => 'admin-program-studi-update',
+      'destroy' => 'admin-program-studi-destroy',
+    ]);
   });
 });
 
@@ -120,7 +130,7 @@ Route::prefix('dosen')->group(
         Route::get('/mahasiswa', [DosenMahasiswaController::class, 'index'])->name('dosen-mahasiswa-index');
         Route::get('/jadwal-kuliah', [DosenJadwalKuliahController::class, 'index'])->name('dosen-jadwal-kuliah-index');
         Route::get('/jadwal-kuliah/{jadwal}/mahasiswa', [DosenJadwalKuliahController::class, 'listMahasiswa'])->name('dosen.jadwal.mahasiswa');
-        
+
         Route::get('/jadwal-kuliah/{jadwal}/nilai/{mahasiswa}', [DosenNilaiController::class, 'create'])->name('dosen.nilai.create');
         Route::post('/jadwal-kuliah/{jadwal}/nilai/{mahasiswa}', [DosenNilaiController::class, 'store'])->name('dosen.nilai.store');
 
@@ -130,7 +140,7 @@ Route::prefix('dosen')->group(
         Route::put('/frs/persetujuan/{id}', [DosenFrsController::class, 'updateStatus'])->name('dosen.frs.update');
 
         // Route Nilai
-        Route::get('/api/jadwal-kuliah', function () { 
+        Route::get('/api/jadwal-kuliah', function () {
           return new DosenJadwalKuliahCollection(Jadwal::query());
         })->name('dosen.api.nilai');
       }
