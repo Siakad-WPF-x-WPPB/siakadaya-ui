@@ -3,18 +3,33 @@
 namespace App\Http\Controllers\pages\dosen;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\DetailJadwal;
 use App\Models\Frs;
 use App\Models\FrsDetail;
 use App\Models\Jadwal;
 use App\Models\PersetujuanFrs;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class DosenFrsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $dosen = Auth::guard('dosen')->user();
+
+            if (!$dosen || !$dosen->is_wali) {
+                abort(403, 'Akses ditolak. Hanya dosen wali yang dapat mengakses halaman ini.');
+            }
+
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         return view('pages.dosen.frs.index');
