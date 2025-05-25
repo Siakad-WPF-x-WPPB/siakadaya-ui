@@ -328,28 +328,71 @@ $(function () {
   // Delete record with route destroy
   $('.datatables-basic tbody').on('click', '.item-destroy', function () {
     var data = dt_basic.row($(this).parents('tr')).data();
-    var id = data.id; // Get the ID of the record to delete
-
-    // Show confirmation dialog
-    if (confirm('Are you sure you want to delete this record?')) {
-      // Send DELETE request to the server
-      $.ajax({
-        url: '/api/tahun-ajar/destroy/' + id,
-        type: 'DELETE',
-        success: function (response) {
-          // Show success message
-          // toastr.success(response.message || 'Data kelas berhasil dihapus.');
-          alert(response.message || 'Data kelas berhasil dihapus.');
-
-          // Refresh the DataTable
-          dt_basic.ajax.reload(null, false);
-        },
-        error: function (xhr) {
-          // Show error message
-          // toastr.error(xhr.responseJSON?.message || 'Failed to delete record');
-          alert('Failed to delete record: ' + (xhr.responseJSON?.message || error));
-        }
+    if (!data || typeof data.id === 'undefined') {
+      console.error('Error: Tidak dapat menemukan ID dari data baris.', data);
+      Swal.fire({
+        title: 'Error!',
+        text: 'Tidak dapat menemukan ID data untuk dihapus.',
+        icon: 'error'
       });
+      return;
     }
+    var id = data.id;
+
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Anda tidak akan dapat mengembalikan ini!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#7367F0',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya',
+      cancelButtonText: 'Batal' // Tambahkan teks untuk tombol batal jika diinginkan
+    }).then(result => {
+      if (result.isConfirmed) {
+        // Send DELETE request to the se qrver
+        $.ajax({
+          url: '/api/tahun-ajar/destroy/' + id, // Pastikan URL ini benar
+          type: 'DELETE',
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Contoh untuk Laravel
+          },
+          success: function (response) {
+            Swal.fire({
+              title: 'Dihapus!',
+              text: response.message || 'Data Tahun Ajar berhasil dihapus.',
+              icon: 'success'
+            });
+            // Refresh the DataTable
+            if (typeof dt_basic !== 'undefined') {
+              dt_basic.ajax.reload(null, false); // false agar paging tidak reset
+            }
+          },
+          error: function (xhr) {
+            // Coba ambil pesan error dari responseJSON, jika tidak ada, tampilkan pesan umum
+            let errorMessage = 'Gagal menghapus data.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              errorMessage = xhr.responseJSON.message;
+            } else if (xhr.responseText) {
+              // Kadang error tidak dalam format JSON
+              try {
+                const parsedError = JSON.parse(xhr.responseText);
+                if (parsedError && parsedError.message) {
+                  errorMessage = parsedError.message;
+                }
+              } catch (e) {
+                // Biarkan errorMessage default jika parsing gagal
+              }
+            }
+
+            Swal.fire({
+              title: 'Gagal!',
+              text: errorMessage,
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
   });
 });

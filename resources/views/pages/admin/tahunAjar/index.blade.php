@@ -54,6 +54,19 @@ $configData = Helper::appClasses();
       </table>
     </div>
   </div>
+  @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () { 
+            if (window.iziToast) { 
+                iziToast.success({
+                    title: 'Sukses',
+                    message: @json(session('success')),
+                    position: 'topRight'
+                });
+            }
+        });
+    </script>
+  @endif
   <!-- Modal to add new record -->
   <div class="offcanvas offcanvas-end" id="add-new-record">
     <div class="offcanvas-header border-bottom">

@@ -45,7 +45,7 @@ class JadwalCollection extends ResourceCollection
             'kelas.programStudi',
             'dosen',
             'matakuliah',
-            'ruangan_nama',
+            'ruangan',
             'tahunAjar',
         ]);
 
@@ -111,7 +111,7 @@ class JadwalCollection extends ResourceCollection
                       ->orderBy('tahun_ajar.tahun_mulai', $orderDirection)
                       ->orderBy('tahun_ajar.semester', $orderDirection)
                       ->select('jadwal.*');
-        } elseif ($orderColumn === 'ruangan_nama') {
+        } elseif ($orderColumn === 'ruangan') {
             $baseQuery->leftJoin('ruangan', 'jadwal.ruangan_id', '=', 'ruangan.id')
                       ->orderBy('ruangan.nama', $orderDirection)
                       ->select('jadwal.*');

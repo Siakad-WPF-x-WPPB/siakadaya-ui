@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\pages\dosen;
 
 use App\Http\Controllers\Controller;
+use App\Models\Jadwal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DosenDashboardController extends Controller
 {
@@ -12,7 +14,13 @@ class DosenDashboardController extends Controller
      */
     public function index()
     {
-        return view('pages.dosen.dashboard.index');
+        $dosenId = Auth::guard('dosen')->id();
+        $jadwals = Jadwal::where('dosen_id', $dosenId)
+            ->with(['matakuliah', 'kelas', 'ruangan'])
+            ->orderByRaw("FIELD(hari, 'senin', 'selasa', 'rabu', 'kamis', 'jum\'at', 'sabtu', 'minggu')")
+            ->get();
+
+        return view('pages.dosen.dashboard.index', compact('jadwals'));
     }
 
     /**
