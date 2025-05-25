@@ -28,4 +28,9 @@ class TahunAjar extends Model
     {
         return $this->hasMany(Nilai::class, 'tahun_ajar_id');
     }
+
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'tahun_ajar_id');
+    }
 }

@@ -212,7 +212,7 @@ class JadwalKuliahController extends Controller
     }
 
     public function getMatakuliahByProdi($prodiId)
-{
+    {
     try {
         // Validate prodi exists
         $prodi = ProgramStudi::findOrFail($prodiId);

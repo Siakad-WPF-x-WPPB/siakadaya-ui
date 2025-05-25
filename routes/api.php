@@ -44,6 +44,9 @@ Route::get('/login', function () {
 
 Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
 
+// * API User Mahasiswa
+// TODO: implementasi API Mahasiswa
+// *********************************************************************************
 // Rute ini akan menggunakan 'auth:sanctum'.
 // Sanctum akan mengautentikasi token dan mengambil 'tokenable' model (yaitu Mahasiswa).
 Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () {
@@ -166,8 +169,8 @@ Route::post('/ruangan/store', [RuanganController::class, 'store']);
 Route::put('/ruangan/update/{id}', [RuanganController::class, 'update']);
 Route::delete('/ruangan/destroy/{id}', [RuanganController::class, 'destroy']);
 
-// * API FRS
-// TODO: implementasi API FRS
+// * API FRS Mahasiswa
+// TODO: implementasi API FRS Mahasiswa
 // *********************************************************************************
 Route::get('/frs', function () {
   return new FrsCollection([]);
