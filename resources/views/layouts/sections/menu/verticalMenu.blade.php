@@ -34,7 +34,12 @@ $configData = Helper::appClasses();
     @endif
 
     @foreach ($menus as $menu)
-    
+      {{-- Skip FRS menu is dosen is not wali --}}
+      @if (Auth::guard('dosen')->check() && isset($menu->slug) && $menu->slug === 'dosen-frs-index')
+        @if (!Auth::guard('dosen')->user()->is_wali)
+          @continue
+        @endif
+      @endif
 
       {{-- adding active and open class if child is active --}}
 

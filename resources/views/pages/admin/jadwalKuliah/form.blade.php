@@ -51,6 +51,32 @@
         @endif
 
         <div class="row mb-6">
+          <div class="col-md-12">
+            <label class="form-label" for="tahun-ajar">Tahun Ajar <span class="text-danger">*</span></label>
+            <div class="col-sm-12">
+              <select name="tahun_ajar_id" id="tahun-ajar" class="select2 form-select @error('tahun_ajar_id') is-invalid @enderror" data-allow-clear="true">
+                <option value="">Pilih Tahun Ajar</option>
+                @foreach($tahunAjar->where('status', 'Aktif') as $ta)
+                  <option value="{{ $ta->id }}"
+                          {{ (isset($jadwal) && $jadwal->tahun_ajar_id == $ta->id) || old('tahun_ajar_id') == $ta->id ? 'selected' : '' }}>
+                    {{ $ta->semester }} {{ $ta->tahun_mulai }}/{{ $ta->tahun_akhir }}
+                    @if($ta->status == 'Aktif')
+                      <span class="badge bg-success ms-2">Aktif</span>
+                    @endif
+                  </option>
+                @endforeach
+              </select>
+              @error('tahun_ajar_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Hanya tahun ajar dengan status aktif yang dapat dipilih</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-6">
           <div class="col-md-6">
             <label class="form-label" for="prodi">Program Studi</label>
             <div class="col-sm-12">
@@ -184,10 +210,10 @@
             </div>
           </div>
           <div class="col-md-4">
-            <label class="form-label" for="jam-akhir">Jam Akhir</label>
+            <label class="form-label" for="jam-selesai">Jam Selesai</label>
             <div class="col-sm-12">
-              <input type="time" id="jam-akhir" name="jam_akhir" value="{{ $jadwal->jam_akhir ?? old('jam_akhir') }}" class="form-control flatpickr-basic @error('jam_akhir') is-invalid @enderror" placeholder="Jam Mulai" />
-              @error('jam_akhir')
+              <input type="time" id="jam-selesai" name="jam_selesai" value="{{ $jadwal->jam_selesai ?? old('jam_selesai') }}" class="form-control flatpickr-basic @error('jam_selesai') is-invalid @enderror" placeholder="Jam Selesai" />
+              @error('jam_selesai')
                 <div class="invalid-feedback d-block">
                   {{ $message }}
                 </div>
