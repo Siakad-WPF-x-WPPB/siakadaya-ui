@@ -9,20 +9,30 @@ $configData = Helper::appClasses();
 @section('content')
   <!-- Card Border Shadow -->
   <div class="row g-6">
+    <!-- Card Mahasiswa -->
     <div class="col-lg-3 col-sm-6">
-      <div class="card card-border-shadow-primary h-100">
+      <div class="card card-border-shadow-primary h-full">
         <div class="card-body">
-          <div class="d-flex align-items-center mb-2">
+          <h6 class="mb-4 ">Total Mahasiswa</h6>
+          <div class="d-flex align-items-center">
             <div class="avatar me-4">
-              <span class="avatar-initial rounded bg-label-primary"><i class='ti ti-truck ti-28px'></i></span>
+              <span class="avatar-initial rounded bg-label-primary"><i class='ti ti-user ti-28px'></i></span>
             </div>
-            <h4 class="mb-0">42</h4>
+            <h4 class="mb-0">{{ $mahasiswa }}</h4>
           </div>
-          <p class="mb-1">On route vehicles</p>
-          <p class="mb-0">
-            <span class="text-heading fw-medium me-2">+18.2%</span>
-            <small class="text-muted">than last week</small>
-          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card card-border-shadow-warning h-full">
+        <div class="card-body">
+          <h6 class="mb-4">Total Dosen</h6>
+          <div class="d-flex align-items-center">
+            <div class="avatar me-4">
+              <span class="avatar-initial rounded bg-label-warning"><i class='ti ti-user ti-28px'></i></span>
+            </div>
+            <h4 class="mb-0">{{ $dosen }}</h4>
+          </div>
         </div>
       </div>
     </div>
