@@ -53,12 +53,17 @@ Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () 
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
   Route::post('/frs/store', [FrsMahasiswaController::class, 'store']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
-  Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'semua']);
-  Route::get('/jadwal/hari-ini', [JadwalKuliahMahasiswaController::class, 'hariIni']);
-  Route::get('/jadwal/mendatang', [JadwalKuliahMahasiswaController::class, 'besok']);
+  Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'getAll']);
+  Route::get('/jadwal/today', [JadwalKuliahMahasiswaController::class, 'getToday']);
+  Route::get('/jadwal/tomorrow', [JadwalKuliahMahasiswaController::class, 'getTomorrow']);
+  Route::get('/jadwal/program-studi', [JadwalKuliahMahasiswaController::class, 'getPerProdi']);
+
+  // Rute untuk mendapatkan data FRS mahasiswa
+  Route::get('/jadwal/dropdown-options', [JadwalKuliahMahasiswaController::class, 'getDropdownOptions']);
+  Route::get('/jadwal/dropdown-options-prodi', [JadwalKuliahMahasiswaController::class, 'getDropdownOptionsProdi']);
+
   // Rute API mahasiswa lainnya
   Route::get('/data-khusus', function (Request $request) {
-    // $request->user() di sini adalah instance Mahasiswa
     return response()->json(['message' => 'Ini data khusus untuk mahasiswa: ' . $request->user()->name]);
   });
 });
