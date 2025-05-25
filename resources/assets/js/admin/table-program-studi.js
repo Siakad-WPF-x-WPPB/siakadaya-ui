@@ -295,7 +295,7 @@ $(function () {
         $('.card-header').after('<hr class="my-0">');
       }
     });
-    $('div.head-label').html('<h5 class="card-title mb-0">DataTable with Buttons</h5>');
+    $('div.head-label').html('<h5 class="card-title mb-0">Tabel Program Studi</h5>');
   }
 
   // Delete record with route destroy

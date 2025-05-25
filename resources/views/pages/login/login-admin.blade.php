@@ -48,7 +48,7 @@ $customizerHidden = 'customizer-hide';
           </div>
           <!-- /Logo -->
           <h4 class="mb-1">Welcome to {{ config('variables.templateName') }}! 👋</h4>
-          <p class="mb-6">Please sign-in to your account and start the adventure</p>
+          <p class="mb-6">Silahkan masuk sebagai Admin untuk memulai</p>
 
           <form id="formAuthentication" class="mb-4" action="{{ route('login-admin') }}" method="POST">
             @csrf
@@ -69,7 +69,7 @@ $customizerHidden = 'customizer-hide';
               <div class="text-danger">{{ $message }}</div>
               @enderror
             </div>
-            <div class="my-8">
+            {{-- <div class="my-8">
               <div class="d-flex justify-content-between">
                 <div class="form-check mb-0 ms-2">
                   <input class="form-check-input" type="checkbox" id="remember-me">
@@ -81,7 +81,7 @@ $customizerHidden = 'customizer-hide';
                   <p class="mb-0">Forgot Password?</p>
                 </a>
               </div>
-            </div>
+            </div> --}}
             <div class="mb-6">
               <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
             </div>
@@ -94,7 +94,7 @@ $customizerHidden = 'customizer-hide';
             </a>
           </p>
 
-          <div class="divider my-6">
+          {{-- <div class="divider my-6">
             <div class="divider-text">or</div>
           </div>
 
@@ -115,7 +115,7 @@ $customizerHidden = 'customizer-hide';
               <i class="tf-icons ti ti-brand-google-filled"></i>
             </a>
           </div>
-        </div>
+        </div> --}}
       </div>
       <!-- /Register -->
     </div>

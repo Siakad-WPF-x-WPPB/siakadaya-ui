@@ -334,7 +334,7 @@ $(function () {
         $('.dataTables_filter').addClass('me-3 ps-0');
       }
     });
-    $('div.head-label').html('<h5 class="card-title mb-0">DataTable with Buttons</h5>');
+    $('div.head-label').html('<h5 class="card-title mb-0">Tabel Jadwal</h5>');
   }
 
   // Delete record with route destroy
