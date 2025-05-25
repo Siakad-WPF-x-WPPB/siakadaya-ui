@@ -212,7 +212,7 @@
           <div class="col-md-4">
             <label class="form-label" for="jam-selesai">Jam Selesai</label>
             <div class="col-sm-12">
-              <input type="time" id="jam-selesai" name="jam_selesai" value="{{ $jadwal->jam_selesai ?? old('jam_selesai') }}" class="form-control flatpickr-basic @error('jam_selesai') is-invalid @enderror" placeholder="Jam Mulai" />
+              <input type="time" id="jam-selesai" name="jam_selesai" value="{{ $jadwal->jam_selesai ?? old('jam_selesai') }}" class="form-control flatpickr-basic @error('jam_selesai') is-invalid @enderror" placeholder="Jam Selesai" />
               @error('jam_selesai')
                 <div class="invalid-feedback d-block">
                   {{ $message }}
