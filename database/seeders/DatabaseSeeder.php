@@ -117,7 +117,6 @@ class DatabaseSeeder extends Seeder
 
     Frs::create([
       'mahasiswa_id' => $mahasiswa->id,
-      'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
       'tanggal_pengisian' => now(),
     ]);
 

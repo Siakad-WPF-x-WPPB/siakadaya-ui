@@ -26,13 +26,11 @@ class FrsMahasiswaController extends Controller
 
         $request->validate([
             'jadwal_ids' => 'required|array',
-            'tahun_ajar_id' => 'required|uuid'
         ]);
 
         $frs = Frs::create([
             'id' => Str::uuid(),
             'mahasiswa_id' => $mahasiswa->id,
-            'tahun_ajar_id' => $request->tahun_ajar_id,
             'tanggal_pengisian' => now(),
         ]);
 

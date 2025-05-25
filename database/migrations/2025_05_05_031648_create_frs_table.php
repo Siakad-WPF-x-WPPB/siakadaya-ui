@@ -16,7 +16,6 @@ return new class extends Migration
 
             // Foreign key constraints
             $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignUuid('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
 
             // FRS details
             $table->date('tanggal_pengisian');
