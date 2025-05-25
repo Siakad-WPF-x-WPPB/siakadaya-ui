@@ -30,11 +30,11 @@ class Kelas extends Model
 
     public function mahasiswa()
     {
-        return $this->hasMany(Mahasiswa::class, 'kelas_id');
+        return $this->hasMany(Mahasiswa::class, 'mahasiswa_id');
     }
 
     public function jadwal()
     {
-        return $this->hasMany(Jadwal::class, 'jadwal_id');
+        return $this->hasMany(Jadwal::class, 'kelas_id');
     }
 }

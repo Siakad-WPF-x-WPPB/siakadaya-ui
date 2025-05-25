@@ -50,6 +50,7 @@ $configData = Helper::appClasses();
             <th>Mata Kuliah</th>
             <th>Ruangan</th>
             <th>Jadwal</th>
+            <th>Tahun Ajar</th>
             <th>Action</th>
           </tr>
         </thead>

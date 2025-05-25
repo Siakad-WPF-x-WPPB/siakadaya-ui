@@ -82,7 +82,7 @@ class DatabaseSeeder extends Seeder
     //   'tanggal_pengisian' => now(),
     // ]);
 
-    Mahasiswa::factory()->create([
+    $mahasiswa = Mahasiswa::factory()->create([
       'nrp' => '1234567890',
       'nama' => 'Budi Santoso',
       'email' => 'budi@gmail.com',
@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder
   ]);
 
     Frs::create([
-      'mahasiswa_id' => Mahasiswa::inRandomOrder()->first()->id,
+      'mahasiswa_id' => $mahasiswa->id,
       'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
       'tanggal_pengisian' => now(),
     ]);

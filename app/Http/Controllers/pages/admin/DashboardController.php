@@ -3,6 +3,14 @@
 namespace App\Http\Controllers\pages\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dosen;
+use App\Models\Jadwal;
+use App\Models\Kelas;
+use App\Models\Mahasiswa;
+use App\Models\Matakuliah;
+use App\Models\ProgramStudi;
+use App\Models\Ruangan;
+use App\Models\TahunAjar;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -12,7 +20,25 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('pages.admin.dashboard.index');
+        $mahasiswa = Mahasiswa::count();
+        $dosen = Dosen::count();
+        $kelas = Kelas::count();
+        $programStudi = ProgramStudi::count();
+        $tahunAjar = TahunAjar::count();
+        $ruangan = Ruangan::count();
+        $matakuliah = Matakuliah::count();
+        $jadwal = Jadwal::count();
+        
+        return view('pages.admin.dashboard.index', [
+            'mahasiswa' => $mahasiswa,
+            'dosen' => $dosen,
+            'kelas' => $kelas,
+            'programStudi' => $programStudi,
+            'tahunAjar' => $tahunAjar,
+            'ruangan' => $ruangan,
+            'matakuliah' => $matakuliah,
+            'jadwal' => $jadwal
+        ]);
     }
 
     /**

@@ -24,7 +24,9 @@ $(function () {
       ajax: {
         url: '/api/jadwal',
         dataSrc: function (json) {
-          // console.log('Fetched data: ', json);
+          if (typeof DEBUG !== 'undefined' && DEBUG) {
+            console.log('Fetched data: ', json);
+          }
           return json.data;
         }
       },
@@ -41,6 +43,7 @@ $(function () {
             return row.hari + ' ' + row.waktu;
           }
         },
+        { data: 'tahun_ajar' },
         { data: '' }
       ],
       columnDefs: [
@@ -100,6 +103,13 @@ $(function () {
         {
           // For Hari, Jam Mulai, Jam Selesai
           targets: 6,
+          searchable: true,
+          orderable: true,
+          responsivePriority: 5
+        },
+        {
+          // For Tahun Ajar
+          targets: 7,
           searchable: true,
           orderable: true,
           responsivePriority: 5
@@ -326,7 +336,7 @@ $(function () {
         $('.dataTables_filter').addClass('me-3 ps-0');
       }
     });
-    $('div.head-label').html('<h5 class="card-title mb-0">DataTable with Buttons</h5>');
+    $('div.head-label').html('<h5 class="card-title mb-0">Tabel Jadwal</h5>');
   }
 
   // Delete record with route destroy

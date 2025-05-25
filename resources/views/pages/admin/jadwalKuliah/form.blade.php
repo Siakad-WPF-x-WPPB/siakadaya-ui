@@ -37,7 +37,8 @@
 <div class="col-xxl">
   <div class="card mb-6">
     <div class="card-header d-flex align-items-center justify-content-between">
-      <h5 class="mb-0">Basic Layout</h5> <small class="text-muted float-end">Default label</small>
+      <h5 class="mb-0">Form Jadwal Kuliah</h5>
+      {{-- <small class="text-muted float-end">Default label</small> --}}
     </div>
     <div class="card-body">
       <form id="formAccountSettings" method="POST"
@@ -48,6 +49,32 @@
         @if(isset($jadwal))
             @method('PUT')
         @endif
+
+        <div class="row mb-6">
+          <div class="col-md-12">
+            <label class="form-label" for="tahun-ajar">Tahun Ajar <span class="text-danger">*</span></label>
+            <div class="col-sm-12">
+              <select name="tahun_ajar_id" id="tahun-ajar" class="select2 form-select @error('tahun_ajar_id') is-invalid @enderror" data-allow-clear="true">
+                <option value="">Pilih Tahun Ajar</option>
+                @foreach($tahunAjar->where('status', 'Aktif') as $ta)
+                  <option value="{{ $ta->id }}"
+                          {{ (isset($jadwal) && $jadwal->tahun_ajar_id == $ta->id) || old('tahun_ajar_id') == $ta->id ? 'selected' : '' }}>
+                    {{ $ta->semester }} {{ $ta->tahun_mulai }}/{{ $ta->tahun_akhir }}
+                    @if($ta->status == 'Aktif')
+                      <span class="badge bg-success ms-2">Aktif</span>
+                    @endif
+                  </option>
+                @endforeach
+              </select>
+              @error('tahun_ajar_id')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Hanya tahun ajar dengan status aktif yang dapat dipilih</small>
+            </div>
+          </div>
+        </div>
 
         <div class="row mb-6">
           <div class="col-md-6">
@@ -185,7 +212,7 @@
           <div class="col-md-4">
             <label class="form-label" for="jam-selesai">Jam Selesai</label>
             <div class="col-sm-12">
-              <input type="time" id="jam-selesai" name="jam_selesai" value="{{ $jadwal->jam_selesai ?? old('jam_selesai') }}" class="form-control flatpickr-basic @error('jam_selesai') is-invalid @enderror" placeholder="Jam Mulai" />
+              <input type="time" id="jam-selesai" name="jam_selesai" value="{{ $jadwal->jam_selesai ?? old('jam_selesai') }}" class="form-control flatpickr-basic @error('jam_selesai') is-invalid @enderror" placeholder="Jam Selesai" />
               @error('jam_selesai')
                 <div class="invalid-feedback d-block">
                   {{ $message }}

@@ -17,6 +17,7 @@ class Jadwal extends Model
         'dosen_id',
         'mk_id',
         'ruangan_id',
+        'tahun_ajar_id',
         'jam_mulai',
         'jam_selesai',
         'hari',
@@ -42,9 +43,9 @@ class Jadwal extends Model
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
 
-    public function frs()
+    public function tahunAjar()
     {
-        return $this->hasMany(Frs::class, 'jadwal_id');
+        return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
     }
 
     public function frsDetail()

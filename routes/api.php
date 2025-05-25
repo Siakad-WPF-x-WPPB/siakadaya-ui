@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\MahasiswaAuthController;
+use App\Http\Controllers\Api\MahasiswaDetailFrsController;
 use App\Http\Controllers\authentications\AdminLoginController;
 use App\Http\Controllers\pages\admin\DosenController;
 use App\Http\Controllers\pages\admin\JadwalKuliahController;
@@ -44,18 +45,27 @@ Route::get('/login', function () {
 
 Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
 
+// * API User Mahasiswa
+// TODO: implementasi API Mahasiswa
+// *********************************************************************************
 // Rute ini akan menggunakan 'auth:sanctum'.
 // Sanctum akan mengautentikasi token dan mengambil 'tokenable' model (yaitu Mahasiswa).
 Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () {
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
   Route::post('/frs/store', [FrsMahasiswaController::class, 'store']);
+  Route::get('/frs', [MahasiswaDetailFrsController::class, 'index']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
-  Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'semua']);
-  Route::get('/jadwal/hari-ini', [JadwalKuliahMahasiswaController::class, 'hariIni']);
-  Route::get('/jadwal/mendatang', [JadwalKuliahMahasiswaController::class, 'besok']);
+  Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'getAll']);
+  Route::get('/jadwal/today', [JadwalKuliahMahasiswaController::class, 'getToday']);
+  Route::get('/jadwal/tomorrow', [JadwalKuliahMahasiswaController::class, 'getTomorrow']);
+  Route::get('/jadwal/program-studi', [JadwalKuliahMahasiswaController::class, 'getPerProdi']);
+
+  // Rute untuk mendapatkan data FRS mahasiswa
+  Route::get('/jadwal/dropdown-options', [JadwalKuliahMahasiswaController::class, 'getDropdownOptions']);
+  Route::get('/jadwal/dropdown-options-prodi', [JadwalKuliahMahasiswaController::class, 'getDropdownOptionsProdi']);
+
   // Rute API mahasiswa lainnya
   Route::get('/data-khusus', function (Request $request) {
-    // $request->user() di sini adalah instance Mahasiswa
     return response()->json(['message' => 'Ini data khusus untuk mahasiswa: ' . $request->user()->name]);
   });
 });
@@ -166,8 +176,8 @@ Route::post('/ruangan/store', [RuanganController::class, 'store']);
 Route::put('/ruangan/update/{id}', [RuanganController::class, 'update']);
 Route::delete('/ruangan/destroy/{id}', [RuanganController::class, 'destroy']);
 
-// * API FRS
-// TODO: implementasi API FRS
+// * API FRS Mahasiswa
+// TODO: implementasi API FRS Mahasiswa
 // *********************************************************************************
 Route::get('/frs', function () {
   return new FrsCollection([]);
