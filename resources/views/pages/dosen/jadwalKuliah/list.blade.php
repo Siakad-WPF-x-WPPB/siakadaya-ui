@@ -36,7 +36,7 @@
         </div>
         <div class="card-datatable table-responsive pt-0">
             @if ($mahasiswas->isEmpty())
-            <h5 class="text-center">Tidak ada mahasiswa yang mengambil jadwal ini atau FRS belum disetujui.</h5>
+            <h5 class="text-center">Belum ada mahasiswa yang mengambil jadwal ini atau FRS mahasiswa belum disetujui dosen wali. </h5>
             @else
             <table class="datatables-basic table">
                 <thead>

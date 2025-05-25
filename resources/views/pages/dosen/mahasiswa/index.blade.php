@@ -50,7 +50,6 @@ $configData = Helper::appClasses();
             <th>Kelas</th>
             <th>Jenis Kelamin</th>
             <th>Status</th>
-            
           </tr>
         </thead>
       </table>
