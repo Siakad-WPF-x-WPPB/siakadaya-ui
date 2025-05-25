@@ -24,7 +24,9 @@ $(function () {
       ajax: {
         url: '/api/jadwal',
         dataSrc: function (json) {
-          console.log('Fetched data: ', json);
+          if (DEBUG) {
+            console.log('Fetched data: ', json);
+          }
           return json.data;
         }
       },
