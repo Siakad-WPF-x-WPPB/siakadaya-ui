@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
             $table->foreignUuid('mk_id')->constrained('matakuliah')->onDelete('cascade');
             $table->foreignUuid('ruangan_id')->constrained('ruangan')->onDelete('cascade');
+            $table->foreignUuid('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
 
             // Jadwal details
             $table->time('jam_mulai');

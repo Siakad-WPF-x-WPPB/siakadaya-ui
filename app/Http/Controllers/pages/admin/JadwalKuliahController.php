@@ -18,6 +18,7 @@ use App\Models\Dosen;
 use App\Models\Matakuliah;
 use App\Models\Ruangan;
 use App\Models\ProgramStudi;
+use App\Models\TahunAjar;
 
 class JadwalKuliahController extends Controller
 {
@@ -28,6 +29,7 @@ class JadwalKuliahController extends Controller
           'dosen_id' => 'required|exists:dosen,id',
           'mk_id' => 'required|exists:matakuliah,id',
           'ruangan_id' => 'required|exists:ruangan,id',
+          'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
           'hari' => [
               'required',
               'string',
@@ -88,6 +90,8 @@ class JadwalKuliahController extends Controller
         'mk_id.exists' => 'Mata kuliah yang dipilih tidak valid',
         'ruangan_id.required' => 'Ruangan harus dipilih',
         'ruangan_id.exists' => 'Ruangan yang dipilih tidak valid',
+        'tahun_ajar_id.required' => 'Tahun ajar harus dipilih',
+        'tahun_ajar_id.exists' => 'Tahun ajar yang dipilih tidak valid',
         'jam_mulai.required' => 'Jam mulai harus diisi',
         'jam_mulai.date_format' => 'Format jam mulai tidak valid (HH:MM)',
         'jam_selesai.required' => 'Jam selesai harus diisi',
@@ -110,9 +114,10 @@ class JadwalKuliahController extends Controller
     {
         $conflicts = [];
 
-        // Check dosen conflict
+        // Check dosen conflict (within same tahun_ajar)
         $dosenConflict = Jadwal::where('dosen_id', $data['dosen_id'])
             ->where('hari', $data['hari'])
+            ->where('tahun_ajar_id', $data['tahun_ajar_id']) // Add tahun_ajar filter
             ->when($excludeId, function($query, $excludeId) {
                 return $query->where('id', '!=', $excludeId);
             })
@@ -124,16 +129,17 @@ class JadwalKuliahController extends Controller
                             ->where('jam_selesai', '>=', $data['jam_selesai']);
                       });
             })
-            ->with(['kelas.programStudi', 'matakuliah'])
+            ->with(['kelas.programStudi', 'matakuliah', 'tahunAjar'])
             ->first();
 
         if ($dosenConflict) {
-            $conflicts['dosen_id'] = "Dosen sudah memiliki jadwal pada {$data['hari']} jam {$dosenConflict->jam_mulai}-{$dosenConflict->jam_selesai} untuk mata kuliah {$dosenConflict->matakuliah->nama}";
+            $conflicts['dosen_id'] = "Dosen sudah memiliki jadwal pada {$data['hari']} jam {$dosenConflict->jam_mulai}-{$dosenConflict->jam_selesai} untuk mata kuliah {$dosenConflict->matakuliah->nama} di tahun ajar {$dosenConflict->tahunAjar->semester} {$dosenConflict->tahunAjar->tahun_mulai}/{$dosenConflict->tahunAjar->tahun_akhir}";
         }
 
-        // Check ruangan conflict
+        // Check ruangan conflict (within same tahun_ajar)
         $ruanganConflict = Jadwal::where('ruangan_id', $data['ruangan_id'])
             ->where('hari', $data['hari'])
+            ->where('tahun_ajar_id', $data['tahun_ajar_id']) // Add tahun_ajar filter
             ->when($excludeId, function($query, $excludeId) {
                 return $query->where('id', '!=', $excludeId);
             })
@@ -145,16 +151,17 @@ class JadwalKuliahController extends Controller
                             ->where('jam_selesai', '>=', $data['jam_selesai']);
                       });
             })
-            ->with(['dosen', 'matakuliah'])
+            ->with(['dosen', 'matakuliah', 'tahunAjar'])
             ->first();
 
         if ($ruanganConflict) {
-            $conflicts['ruangan_id'] = "Ruangan sudah digunakan pada {$data['hari']} jam {$ruanganConflict->jam_mulai}-{$ruanganConflict->jam_selesai} untuk mata kuliah {$ruanganConflict->matakuliah->nama}";
+            $conflicts['ruangan_id'] = "Ruangan sudah digunakan pada {$data['hari']} jam {$ruanganConflict->jam_mulai}-{$ruanganConflict->jam_selesai} untuk mata kuliah {$ruanganConflict->matakuliah->nama} di tahun ajar {$ruanganConflict->tahunAjar->semester} {$ruanganConflict->tahunAjar->tahun_mulai}/{$ruanganConflict->tahunAjar->tahun_akhir}";
         }
 
-        // Check kelas conflict
+        // Check kelas conflict (within same tahun_ajar)
         $kelasConflict = Jadwal::where('kelas_id', $data['kelas_id'])
             ->where('hari', $data['hari'])
+            ->where('tahun_ajar_id', $data['tahun_ajar_id']) // Add tahun_ajar filter
             ->when($excludeId, function($query, $excludeId) {
                 return $query->where('id', '!=', $excludeId);
             })
@@ -166,11 +173,11 @@ class JadwalKuliahController extends Controller
                             ->where('jam_selesai', '>=', $data['jam_selesai']);
                       });
             })
-            ->with(['dosen', 'matakuliah'])
+            ->with(['dosen', 'matakuliah', 'tahunAjar'])
             ->first();
 
         if ($kelasConflict) {
-            $conflicts['kelas_id'] = "Kelas sudah memiliki jadwal pada {$data['hari']} jam {$kelasConflict->jam_mulai}-{$kelasConflict->jam_selesai} untuk mata kuliah {$kelasConflict->matakuliah->nama}";
+            $conflicts['kelas_id'] = "Kelas sudah memiliki jadwal pada {$data['hari']} jam {$kelasConflict->jam_mulai}-{$kelasConflict->jam_selesai} untuk mata kuliah {$kelasConflict->matakuliah->nama} di tahun ajar {$kelasConflict->tahunAjar->semester} {$kelasConflict->tahunAjar->tahun_mulai}/{$kelasConflict->tahunAjar->tahun_akhir}";
         }
 
         if (!empty($conflicts)) {
@@ -261,8 +268,12 @@ class JadwalKuliahController extends Controller
           $matakuliah = Matakuliah::orderBy('nama')->get();
           $ruangan = Ruangan::orderBy('nama')->get();
           $prodi = ProgramStudi::orderBy('nama')->get();
+          $tahunAjar = TahunAjar::where('status', 'Aktif')
+                          ->orderBy('tahun_mulai', 'desc')
+                          ->orderBy('semester')
+                          ->get();
 
-          return view('pages.admin.jadwalKuliah.form', compact('kelas', 'dosen', 'matakuliah', 'ruangan', 'prodi'));
+          return view('pages.admin.jadwalKuliah.form', compact('kelas', 'dosen', 'matakuliah', 'ruangan', 'prodi','tahunAjar'));
       } catch (Exception $e) {
           Log::error('Error loading create form: ' . $e->getMessage());
           return redirect()->route('admin-jadwal-kuliah-index')->with('error', 'Terjadi kesalahan saat memuat form');
@@ -292,7 +303,7 @@ class JadwalKuliahController extends Controller
               return response()->json([
                   'success' => true,
                   'message' => 'Jadwal berhasil ditambahkan',
-                  'data' => $jadwal->load(['kelas.programStudi', 'dosen', 'matakuliah', 'ruangan'])
+                  'data' => $jadwal->load(['kelas.programStudi', 'dosen', 'matakuliah', 'ruangan', 'tahunAjar'])
               ], 201);
           }
 
@@ -352,8 +363,12 @@ class JadwalKuliahController extends Controller
           $matakuliah = Matakuliah::orderBy('nama')->get();
           $ruangan = Ruangan::orderBy('nama')->get();
           $prodi = ProgramStudi::orderBy('nama')->get();
+          $tahunAjar = TahunAjar::orderByRaw("CASE WHEN status = 'Aktif' THEN 0 ELSE 1 END")
+                          ->orderBy('tahun_mulai', 'desc')
+                          ->orderBy('semester')
+                          ->get();
 
-          return view('pages.admin.jadwalKuliah.form', compact('jadwal', 'kelas', 'dosen', 'matakuliah', 'ruangan', 'prodi'));
+          return view('pages.admin.jadwalKuliah.form', compact('jadwal', 'kelas', 'dosen', 'matakuliah', 'ruangan', 'prodi', 'tahunAjar'));
       } catch (ModelNotFoundException $e) {
           return redirect()->route('admin-jadwal-kuliah-index')
                           ->with('error', 'Jadwal tidak ditemukan');
@@ -369,6 +384,8 @@ class JadwalKuliahController extends Controller
      */
     public function update(Request $request, string $id)
     {
+      // dd($request->all());
+
       try {
           DB::beginTransaction();
 
@@ -383,7 +400,7 @@ class JadwalKuliahController extends Controller
               return response()->json([
                   'success' => true,
                   'message' => 'Jadwal berhasil diperbarui',
-                  'data' => $jadwal->load(['kelas.programStudi', 'dosen', 'matakuliah', 'ruangan'])
+                  'data' => $jadwal->load(['kelas.programStudi', 'dosen', 'matakuliah', 'ruangan', 'tahunAjar'])
               ]);
           }
 

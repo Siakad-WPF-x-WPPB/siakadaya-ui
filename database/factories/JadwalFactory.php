@@ -6,6 +6,7 @@ use App\Models\Dosen;
 use App\Models\Kelas;
 use App\Models\Matakuliah;
 use App\Models\Ruangan;
+use App\Models\TahunAjar;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -39,6 +40,7 @@ class JadwalFactory extends Factory
             'dosen_id' => Dosen::inRandomOrder()->first()->id,
             'mk_id' => Matakuliah::inRandomOrder()->first()->id,
             'ruangan_id' => Ruangan::inRandomOrder()->first()->id,
+            'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
 
             'jam_mulai' => $selectedSlot[0],
             'jam_selesai' => $selectedSlot[1],

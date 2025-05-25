@@ -24,7 +24,7 @@ $(function () {
       ajax: {
         url: '/api/jadwal',
         dataSrc: function (json) {
-          // console.log('Fetched data: ', json);
+          console.log('Fetched data: ', json);
           return json.data;
         }
       },
@@ -41,6 +41,7 @@ $(function () {
             return row.hari + ' ' + row.waktu;
           }
         },
+        { data: 'tahun_ajar' },
         { data: '' }
       ],
       columnDefs: [
@@ -100,6 +101,13 @@ $(function () {
         {
           // For Hari, Jam Mulai, Jam Selesai
           targets: 6,
+          searchable: true,
+          orderable: true,
+          responsivePriority: 5
+        },
+        {
+          // For Tahun Ajar
+          targets: 7,
           searchable: true,
           orderable: true,
           responsivePriority: 5

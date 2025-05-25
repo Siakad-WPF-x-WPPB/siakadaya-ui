@@ -28,10 +28,11 @@ class JadwalCollection extends ResourceCollection
         // Map column index to actual column name
         $columns = [
             2 => 'kelas_display',
-            3 => 'dosen_nama',
-            4 => 'matakuliah_nama',
-            5 => 'ruangan_nama',
+            3 => 'dosen',
+            4 => 'matakuliah',
+            5 => 'ruangan',
             6 => 'waktu',
+            7 => 'tahun_ajar',
         ];
 
         $orderColumn = $columns[$orderColumnIndex] ?? 'id';
@@ -44,7 +45,8 @@ class JadwalCollection extends ResourceCollection
             'kelas.programStudi',
             'dosen',
             'matakuliah',
-            'ruangan'
+            'ruangan',
+            'tahunAjar',
         ]);
 
         // Clone for filtered count
@@ -74,6 +76,11 @@ class JadwalCollection extends ResourceCollection
                   ->orWhereHas('kelas.programStudi', function($q) use ($searchValue) {
                       $q->where('nama', 'like', "%{$searchValue}%")
                         ->orWhere('kode', 'like', "%{$searchValue}%");
+                  })
+                  ->orWhereHas('tahunAjar', function($q) use ($searchValue) {
+                      $q->where('semester', 'like', "%{$searchValue}%")
+                        ->orWhere('tahun_mulai', 'like', "%{$searchValue}%")
+                        ->orWhere('tahun_akhir', 'like', "%{$searchValue}%");
                   });
             };
 
@@ -98,6 +105,11 @@ class JadwalCollection extends ResourceCollection
         } elseif ($orderColumn === 'dosen_nama') {
             $baseQuery->leftJoin('dosen', 'jadwal.dosen_id', '=', 'dosen.id')
                       ->orderBy('dosen.nama', $orderDirection)
+                      ->select('jadwal.*');
+        } elseif ($orderColumn === 'tahun_ajar') {
+            $baseQuery->leftJoin('tahun_ajar', 'jadwal.tahun_ajar_id', '=', 'tahun_ajar.id')
+                      ->orderBy('tahun_ajar.tahun_mulai', $orderDirection)
+                      ->orderBy('tahun_ajar.semester', $orderDirection)
                       ->select('jadwal.*');
         } elseif ($orderColumn === 'ruangan_nama') {
             $baseQuery->leftJoin('ruangan', 'jadwal.ruangan_id', '=', 'ruangan.id')
@@ -158,9 +170,12 @@ class JadwalCollection extends ResourceCollection
                 'kode_ruangan' => $jadwal->ruangan ? $jadwal->ruangan->kode : '',
                 'gedung' => $jadwal->ruangan ? $jadwal->ruangan->gedung : '',
 
-                // For debugging
-                'created_at' => $jadwal->created_at ? $jadwal->created_at->format('Y-m-d H:i:s') : null,
-                'updated_at' => $jadwal->updated_at ? $jadwal->updated_at->format('Y-m-d H:i:s') : null,
+                // Tahun Ajar information
+                'tahun_ajar' => $jadwal->tahunAjar ?
+                    $jadwal->tahunAjar->semester . ' ' . $jadwal->tahunAjar->tahun_mulai . '/' . $jadwal->tahunAjar->tahun_akhir
+                    : 'No Academic Year',
+                'semester' => $jadwal->tahunAjar ? $jadwal->tahunAjar->semester : '',
+                'status_tahun_ajar' => $jadwal->tahunAjar ? $jadwal->tahunAjar->status : '',
             ];
         })->toArray();
 
