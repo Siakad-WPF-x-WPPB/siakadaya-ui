@@ -45,7 +45,7 @@ class JadwalCollection extends ResourceCollection
             'kelas.programStudi',
             'dosen',
             'matakuliah',
-            'ruangan',
+            'ruangan_nama',
             'tahunAjar',
         ]);
 
