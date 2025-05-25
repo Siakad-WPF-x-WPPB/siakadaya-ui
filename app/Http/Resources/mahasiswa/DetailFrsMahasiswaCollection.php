@@ -33,6 +33,7 @@ class DetailFrsMahasiswaCollection extends ResourceCollection
                 'tahun_ajar' => $frsDetail->frs?->tahunAjar?->tahun_mulai ?? null,
                 'tahun_berakhir' => $frsDetail->frs?->tahunAjar?->tahun_akhir ?? null,
                 'semester' => $frsDetail->frs?->tahunAjar?->semester ?? null,
+                'dosen_wali' => $jadwal?->kelas->dosen?->nama ?? null,
             ];
         })->all();
     }
