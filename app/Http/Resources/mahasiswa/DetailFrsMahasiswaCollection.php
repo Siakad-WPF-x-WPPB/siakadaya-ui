@@ -30,6 +30,9 @@ class DetailFrsMahasiswaCollection extends ResourceCollection
                 'nama_dosen' => $jadwal?->dosen?->nama ?? null,
                 'kelas' => $jadwal?->kelas?->pararel ?? null,
                 'ruangan' => $jadwal?->ruangan?->nama ?? null,
+                'tahun_ajar' => $frsDetail->frs?->tahunAjar?->tahun_mulai ?? null,
+                'tahun_berakhir' => $frsDetail->frs?->tahunAjar?->tahun_akhir ?? null,
+                'semester' => $frsDetail->frs?->tahunAjar?->semester ?? null,
             ];
         })->all();
     }
