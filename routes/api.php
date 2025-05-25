@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\MahasiswaAuthController;
+use App\Http\Controllers\Api\MahasiswaDetailFrsController;
 use App\Http\Controllers\authentications\AdminLoginController;
 use App\Http\Controllers\pages\admin\DosenController;
 use App\Http\Controllers\pages\admin\JadwalKuliahController;
@@ -49,6 +50,7 @@ Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
 Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () {
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
   Route::post('/frs/store', [FrsMahasiswaController::class, 'store']);
+  Route::get('/frs', [MahasiswaDetailFrsController::class, 'index']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
   Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'semua']);
   Route::get('/jadwal/hari-ini', [JadwalKuliahMahasiswaController::class, 'hariIni']);
