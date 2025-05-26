@@ -146,6 +146,7 @@ Route::prefix('dosen')->group(
 
         // Route FRS
         Route::get('/frs', [DosenFrsController::class, 'index'])->name('dosen-frs-index');
+        Route::get('/frs/data', [DosenFrsController::class, 'getFrsData'])->name('frs.data');
         Route::get('/frs/{id}', [DosenFrsController::class, 'show'])->name('dosen.frs.show');
         Route::put('/frs/persetujuan/{id}', [DosenFrsController::class, 'updateStatus'])->name('dosen.frs.update');
 

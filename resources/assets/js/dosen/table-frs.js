@@ -29,63 +29,117 @@ $(function () {
       processing: true,
       serverSide: true,
       ajax: {
-        url: '/api/frs',
+        url: '/dosen/frs/data',
         dataSrc: function (json) {
           console.log('Fetched data: ', json);
           return json.data;
         }
       },
-      columns: [{ data: '' }, { data: 'nrp' }, { data: 'nama_mahasiswa' }, { data: 'tanggal_pengisian' }, { data: '' }],
+      columns: [
+          {
+            data: null,
+            defaultContent: '',
+            orderable: false,
+            searchable: false,
+            className: 'control'
+          },
+          { data: 'nrp', title: 'NRP' },
+          { data: 'nama_mahasiswa', title: 'Nama Mahasiswa' },
+          { data: 'kelas', title: 'Kelas' },
+          { data: 'program_studi', title: 'Program Studi' },
+          { data: 'tanggal_pengisian', title: 'Tanggal Pengisian' },
+          { data: 'total_matakuliah', title: 'Total Mata Kuliah' },
+          {
+            data: 'status_badge',
+            title: 'Status',
+            orderable: false,
+            searchable: false
+          },
+          {
+            data: 'id',
+            title: 'Actions',
+            orderable: false,
+            searchable: false,
+            render: function(data, type, row) {
+              return `<div class="d-flex">
+                <a href="/dosen/frs/${data}" class="btn btn-sm btn-primary">
+                  <i class="ti ti-eye"></i> Lihat Detail
+                </a>
+              </div>`;
+            }
+          }
+      ],
       columnDefs: [
         {
-          // For Responsive
+          // For Responsive control column
           className: 'control',
           orderable: false,
           searchable: false,
-          responsivePriority: 2,
-          targets: 0,
-          render: function (data, type, full, meta) {
-            return '';
-          }
-        },
-        {
-          // For Nama Mahasiswa
-          targets: 1,
-          searchable: false,
-          orderable: false,
-          responsivePriority: 5
+          responsivePriority: 1,
+          targets: 0
         },
         {
           // For NRP
-          targets: 2,
+          targets: 1,
           searchable: true,
           orderable: true,
           responsivePriority: 3
         },
         {
-          // For Tanggal Pengisisan
-          targets: 3,
+          // For Nama Mahasiswa
+          targets: 2,
           searchable: true,
+          orderable: true,
+          responsivePriority: 2
+        },
+        {
+          // For Kelas
+          targets: 3,
+          searchable: false,
           orderable: true,
           responsivePriority: 4
         },
         {
-          // Actions
-          targets: -1,
+          // For Program Studi
+          targets: 4,
+          searchable: false,
+          orderable: true,
+          responsivePriority: 5
+        },
+        {
+          // For Tanggal Pengisian
+          targets: 5,
+          searchable: false,
+          orderable: true,
+          responsivePriority: 6
+        },
+        {
+          // For Total Mata Kuliah
+          targets: 6,
+          searchable: false,
+          orderable: true,
+          responsivePriority: 7,
+          className: 'text-center'
+        },
+        {
+          // For Status Badge
+          targets: 7,
+          searchable: false,
+          orderable: false,
+          responsivePriority: 8,
+          className: 'text-center'
+        },
+        {
+          // For Actions
+          targets: 8,
           title: 'Actions',
           orderable: false,
           searchable: false,
-          render: function (data, type, full, meta) {
-            return (
-              '<div class="d-flex">' +
-              '<a href="/dosen/frs/' +
-              full.id +
-              '"class="btn btn-md btn-primary btn-text-secondary">Detail</a>'
-            );
-          }
+          responsivePriority: 9,
+          className: 'text-center'
         }
       ],
-      order: [[2, 'desc']],
+      order: [[5, 'desc']],
       dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-6 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-n6 mt-md-0"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
       displayLength: 7,
       lengthMenu: [7, 10, 25, 50, 75, 100],
