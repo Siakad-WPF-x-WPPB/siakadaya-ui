@@ -103,6 +103,7 @@ class DosenNilaiController extends Controller
         Nilai::updateOrCreate(
             [
                 'frs_detail_id' => $frsDetail->id,
+                'frs_detail_id' => $frsDetail->id,
             ],
             [
                 'nilai_angka' => $nilaiAngka,
