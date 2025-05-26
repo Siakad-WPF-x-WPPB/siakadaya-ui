@@ -43,21 +43,36 @@
                     <tr>
                         <th>NRP</th>
                         <th>Nama Mahasiswa</th>
+                        <th>Nilai Angka</th>
+                        <th>Nilai Huruf</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
              
                     <tbody>
                         @foreach ($mahasiswas as $mahasiswa)
-                            <tr>
-                                <td>{{ $mahasiswa->nrp ?? 'N/A' }}</td>
-                                <td>{{ $mahasiswa->nama ?? 'N/A' }}</td>
-                                <td>
-                                    <a href="{{ route('dosen.nilai.create', ['jadwal' => $jadwal->id, 'mahasiswa' => $mahasiswa->id]) }}"
-                                        class="btn btn-md btn-success">Input Nilai</a>
-                                </td>
-                            </tr>
-                        @endforeach
+                        @php
+                            $nilaiDetail = null;
+                            foreach ($mahasiswa->frs as $frs) {
+                                foreach ($frs->frsDetail as $detail) {
+                                    if ($detail->jadwal_id == $jadwal->id && $detail->status == 'disetujui') {
+                                        $nilaiDetail = $detail;
+                                        break 2;
+                                    }
+                                }
+                            }
+                        @endphp
+                        <tr>
+                            <td>{{ $mahasiswa->nrp ?? 'N/A' }}</td>
+                            <td>{{ $mahasiswa->nama ?? 'N/A' }}</td>
+                            <td>{{ $nilaiDetail && $nilaiDetail->nilai ? $nilaiDetail->nilai->nilai_angka : '-' }}</td>
+                            <td>{{ $nilaiDetail && $nilaiDetail->nilai ? $nilaiDetail->nilai->nilai_huruf : '-' }}</td>
+                            <td>
+                                <a href="{{ route('dosen.nilai.create', ['jadwal' => $jadwal->id, 'mahasiswa' => $mahasiswa->id]) }}"
+                                    class="btn btn-md btn-success">Input Nilai</a>
+                            </td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 @endif
             </table>
