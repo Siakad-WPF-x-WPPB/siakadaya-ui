@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
   /**
    * Seed the application's database.
    */
-  
+
   public function run(): void
   {
 
@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
     //   'name' => 'Test User',
     //   'email' => 'test@example.com',
     // ]);
-    
+
     $dosen = Dosen::factory()->create([
       'nip' => '3123500056',
       'nama' => 'Muhammad Raihan',
@@ -117,6 +117,7 @@ class DatabaseSeeder extends Seeder
 
     Frs::create([
       'mahasiswa_id' => $mahasiswa->id,
+      'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
       'tanggal_pengisian' => now(),
     ]);
 
