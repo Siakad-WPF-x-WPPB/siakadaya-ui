@@ -26,4 +26,9 @@ class Frs extends Model
     {
         return $this->hasMany(FrsDetail::class, 'frs_id');
     }
+    
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class);
+    }
 }
