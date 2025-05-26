@@ -23,7 +23,15 @@
 
 <!-- Page Scripts -->
 @section('page-script')
-@vite(['resources/assets/js/form-layouts.js'])
+@push('scripts')
+<script>
+    // Define variables for edit form
+    @if(isset($dosen))
+        var dosenIsWali = '{{ $dosen->is_wali }}';
+    @endif
+</script>
+@endpush
+@vite(['resources/assets/js/form-layouts.js', 'resources/assets/js/admin/form-dosen-wali.js'])
 @endsection
 
 @section('content')
@@ -229,7 +237,28 @@
                 </div>
               @enderror
             </div>
+        </div>
+        
+        {{-- Pilihan Kelas Wali --}}
+        <div class="col-md-4 mb-6" id="kelas-container">
+          <label class="form-label" for="kelas_id">Pilih Kelas Wali</label>
+          <div class="col-sm-12">
+            <select name="kelas_id" id="kelas_id" class="select2 form-select @error('kelas_id') is-invalid @enderror" data-allow-clear="true" disabled>
+              <option value="">Pilih Kelas</option>
+              @foreach($kelas ?? [] as $kls)
+                <option value="{{ $kls->id }}"
+                  {{ (isset($dosen) && $kls->dosen_id == $dosen->id) || old('kelas_id') == $kls->id ? 'selected' : '' }}>
+                  {{ $kls->pararel }}
+                </option>
+              @endforeach
+            </select>
+            @error('kelas_id')
+              <div class="invalid-feedback d-block">
+                {{ $message }}
+              </div>
+            @enderror
           </div>
+        </div>
         </div>
         <div class="row mt-4">
           <div class="col-md-6 d-grid">
