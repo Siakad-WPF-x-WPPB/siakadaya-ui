@@ -22,6 +22,11 @@ class Frs extends Model
         return $this->belongsTo(Mahasiswa::class);
     }
 
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class);
+    }
+
     public function frsDetail()
     {
         return $this->hasMany(FrsDetail::class, 'frs_id');
