@@ -13,10 +13,7 @@ class Nilai extends Model
     protected $table = 'nilai';
 
     protected $fillable = [
-        'dosen_id',
-        'mahasiswa_id',
-        'mk_id',
-        'tahun_ajar_id',
+        'frs_detail_id',
         'status',
         'nilai_huruf',
         'nilai_angka',
@@ -27,23 +24,8 @@ class Nilai extends Model
         'nilai_angka' => 'float',
     ];
 
-    public function dosen()
+    public function frsDetail()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_id');
-    }
-
-    public function mahasiswa()
-    {
-        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
-    }
-
-    public function matakuliah()
-    {
-        return $this->belongsTo(Matakuliah::class, 'mk_id');
-    }
-
-    public function tahunAjar()
-    {
-        return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
+        return $this->belongsTo(FrsDetail::class, 'frs_detail_id');
     }
 }

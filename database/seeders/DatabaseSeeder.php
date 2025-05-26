@@ -55,17 +55,7 @@ class DatabaseSeeder extends Seeder
       'prodi_id' => ProgramStudi::inRandomOrder()->first()->id,
       'jabatan' => 'Dosen Tetap',
       'golongan_akhir' => 'III/a',
-      'is_wali' => false
-  ]);
-
-  Nilai::factory()->create([
-      'mahasiswa_id' => Mahasiswa::inRandomOrder()->first()->id,
-      'mk_id' => Matakuliah::inRandomOrder()->first()->id,
-      'dosen_id' => $dosen->id, // <- ini penting
-      'tahun_ajar_id' => TahunAjar::inRandomOrder()->first()->id,
-      'status' => 'lulus',
-      'nilai_huruf' => 'A',
-      'nilai_angka' => 90,
+      'is_wali' => true
   ]);
 
   Admin::create([
@@ -103,28 +93,35 @@ class DatabaseSeeder extends Seeder
       'kelurahan' => 'Kelurahan 1',
       'kecamatan' => 'Kecamatan 1',
       'kota' => 'Kota 1'
-  ]);
+    ]);
 
-  $jadwal = Jadwal::factory()->create([
-    'kelas_id' => Kelas::inRandomOrder()->first()->id,
-    'dosen_id' => $dosen->id,
-    'mk_id' => Matakuliah::inRandomOrder()->first()->id,
-    'ruangan_id' => Ruangan::inRandomOrder()->first()->id,
-    'hari' => 'Senin',
-    'jam_mulai' => '08:00:00',
-    'jam_selesai' => '10:00:00',
-  ]);
+    $jadwal = Jadwal::factory()->create([
+      'kelas_id' => Kelas::inRandomOrder()->first()->id,
+      'dosen_id' => $dosen->id,
+      'mk_id' => Matakuliah::inRandomOrder()->first()->id,
+      'ruangan_id' => Ruangan::inRandomOrder()->first()->id,
+      'hari' => 'Senin',
+      'jam_mulai' => '08:00:00',
+      'jam_selesai' => '10:00:00',
+    ]);
 
-    Frs::create([
+    $frs = Frs::create([
       'mahasiswa_id' => $mahasiswa->id,
       'tanggal_pengisian' => now(),
     ]);
 
-    FrsDetail::create([
-      'frs_id' => Frs::inRandomOrder()->first()->id,
+    $frsDetail = FrsDetail::create([
+      'frs_id' => $frs->id,
       'jadwal_id' => $jadwal->id,
       'status' => 'pending',
       'tanggal_persetujuan' => now(),
+    ]);
+
+    Nilai::factory()->create([
+      'frs_detail_id' => $frsDetail->id,
+      'status' => 'lulus',
+      'nilai_huruf' => 'A',
+      'nilai_angka' => 90,
     ]);
 
   // Kelas::factory()->create([
