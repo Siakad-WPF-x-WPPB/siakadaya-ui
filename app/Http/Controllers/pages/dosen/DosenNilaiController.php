@@ -25,18 +25,18 @@ class DosenNilaiController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Get tahun_ajar_id from the student's approved FRS for this schedule
+        // Get tahun_ajar_id from the student's approved detailFrs for this schedule
         $frsDetail = FrsDetail::where('jadwal_id', $jadwal->id)
-            ->whereHas('frs', function ($query) use ($mahasiswa) {
+            ->whereHas('detailFrs', function ($query) use ($mahasiswa) {
                 $query->where('mahasiswa_id', $mahasiswa->id);
             })
             ->where('status', 'disetujui')
-            ->with('frs') // Eager load FRS
+            ->with('detailFrs') // Eager load detailFrs
             ->first();
 
-        if (!$frsDetail || !$frsDetail->frs || !$frsDetail->jadwal->tahun_ajar_id) {
+        if (!$frsDetail || !$frsDetail->detailFrs || !$frsDetail->jadwal->tahun_ajar_id) {
             return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
-                ->with('error', 'Data FRS (termasuk Tahun Ajar) tidak lengkap atau tidak ditemukan untuk mahasiswa pada jadwal ini.');
+                ->with('error', 'Data detailFrs (termasuk Tahun Ajar) tidak lengkap atau tidak ditemukan untuk mahasiswa pada jadwal ini.');
         }
         $tahunAjarId = $frsDetail->jadwal->tahun_ajar_id;
 
@@ -77,20 +77,19 @@ class DosenNilaiController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Get tahun_ajar_id (same logic as in showForm)
+        // Get tahun_ajar_id (same logic as in create)
         $frsDetail = FrsDetail::where('jadwal_id', $jadwal->id)
-            ->whereHas('frs', function ($query) use ($mahasiswa) {
+            ->whereHas('detailFrs', function ($query) use ($mahasiswa) {
                 $query->where('mahasiswa_id', $mahasiswa->id);
             })
             ->where('status', 'disetujui')
-            ->with('frs')
+            ->with('detailFrs')
             ->first();
 
-        if (!$frsDetail || !$frsDetail->frs || !$frsDetail->jadwal->tahun_ajar_id) {
+        if (!$frsDetail || !$frsDetail->detailFrs || !$frsDetail->jadwal->tahun_ajar_id) {
             return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
-                ->with('error', 'Gagal menyimpan nilai. Data FRS (Tahun Ajar) tidak lengkap.');
+                ->with('error', 'Gagal menyimpan nilai. Data detailFrs (Tahun Ajar) tidak lengkap.');
         }
-        $tahunAjarId = $frsDetail->jadwal->tahun_ajar_id;
 
         $validator = Validator::make($request->all(), [
             'nilai_angka' => 'required|integer|min:0|max:100',
@@ -107,10 +106,7 @@ class DosenNilaiController extends Controller
 
         Nilai::updateOrCreate(
             [
-                'mahasiswa_id' => $mahasiswa->id,
-                'mk_id' => $jadwal->mk_id,
-                'dosen_id' => $jadwal->dosen_id,
-                'tahun_ajar_id' => $tahunAjarId,
+                'frs_detail_id' => $frsDetail->id,
             ],
             [
                 'nilai_angka' => $nilaiAngka,

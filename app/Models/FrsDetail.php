@@ -32,4 +32,10 @@ class FrsDetail extends Model
     {
         return $this->belongsTo(Jadwal::class, 'jadwal_id');
     }
+
+    public function nilai()
+    {
+        return $this->hasOne(Nilai::class, 'nilai_id');
+    }
+    
 }

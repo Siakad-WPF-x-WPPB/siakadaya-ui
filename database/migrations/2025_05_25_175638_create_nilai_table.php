@@ -15,10 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             // Foreign key constraints
-            $table->foreignUuid('dosen_id')->constrained('dosen')->onDelete('cascade');
-            $table->foreignUuid('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignUuid('mk_id')->constrained('matakuliah')->onDelete('cascade');
-            $table->foreignUuid('tahun_ajar_id')->constrained('tahun_ajar')->onDelete('cascade');
+            $table->foreignUuid('frs_detail_id')->constrained('frs_detail')->onDelete('cascade');
 
             // Nilai details
             $table->enum('status', ['lulus', 'tidak lulus']);
