@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\pages\dosen;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\dosen\FrsCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -35,9 +36,50 @@ class DosenFrsController extends Controller
         return view('pages.dosen.frs.index');
     }
 
+    public function getFrsData(Request $request)
+    {
+        $dosen = Auth::guard('dosen')->user();
+
+        // Get FRS only from mahasiswa in classes where this dosen is wali
+        $query = Frs::with(['mahasiswa.kelas', 'frsDetail.jadwal.matakuliah'])
+            ->whereHas('mahasiswa.kelas', function ($q) use ($dosen) {
+                $q->where('dosen_id', $dosen->id);
+            });
+
+        // Apply search if provided
+        $searchValue = $request->get('search')['value'] ?? '';
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->whereHas('mahasiswa', function ($mq) use ($searchValue) {
+                    $mq->where('nama', 'like', "%{$searchValue}%")
+                      ->orWhere('nrp', 'like', "%{$searchValue}%");
+                });
+            });
+        }
+
+        // Get paginated results
+        $start = $request->get('start', 0);
+        $length = $request->get('length', 10);
+
+        $frsData = $query->orderBy('tanggal_pengisian', 'desc')
+                        ->offset($start)
+                        ->limit($length)
+                        ->get();
+
+        return new FrsCollection($frsData);
+    }
+
     public function show($id)
     {
-        $frs = Frs::with(['mahasiswa', 'frsDetail.jadwal.matakuliah'])->findOrFail($id);
+        $dosen = Auth::guard('dosen')->user();
+
+        // Check if this dosen wali can access this FRS
+        $frs = Frs::with(['mahasiswa.kelas', 'frsDetail.jadwal.matakuliah', 'frsDetail.jadwal.dosen'])
+            ->whereHas('mahasiswa.kelas', function ($q) use ($dosen) {
+                $q->where('dosen_id', $dosen->id);
+            })
+            ->findOrFail($id);
+
         return view('pages.dosen.frs.show', compact('frs'));
     }
 
