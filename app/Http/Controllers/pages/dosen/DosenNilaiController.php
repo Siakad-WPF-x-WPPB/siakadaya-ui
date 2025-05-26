@@ -34,11 +34,11 @@ class DosenNilaiController extends Controller
             ->with('frs') // Eager load FRS
             ->first();
 
-        if (!$frsDetail || !$frsDetail->frs || !$frsDetail->frs->tahun_ajar_id) {
+        if (!$frsDetail || !$frsDetail->frs || !$frsDetail->jadwal->tahun_ajar_id) {
             return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
                 ->with('error', 'Data FRS (termasuk Tahun Ajar) tidak lengkap atau tidak ditemukan untuk mahasiswa pada jadwal ini.');
         }
-        $tahunAjarId = $frsDetail->frs->tahun_ajar_id;
+        $tahunAjarId = $frsDetail->jadwal->tahun_ajar_id;
 
         // Find existing nilai or create a new one for the form
         $nilai = Nilai::firstOrNew([
@@ -86,11 +86,11 @@ class DosenNilaiController extends Controller
             ->with('frs')
             ->first();
 
-        if (!$frsDetail || !$frsDetail->frs || !$frsDetail->frs->tahun_ajar_id) {
+        if (!$frsDetail || !$frsDetail->frs || !$frsDetail->jadwal->tahun_ajar_id) {
             return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
                 ->with('error', 'Gagal menyimpan nilai. Data FRS (Tahun Ajar) tidak lengkap.');
         }
-        $tahunAjarId = $frsDetail->frs->tahun_ajar_id;
+        $tahunAjarId = $frsDetail->jadwal->tahun_ajar_id;
 
         $validator = Validator::make($request->all(), [
             'nilai_angka' => 'required|integer|min:0|max:100',
