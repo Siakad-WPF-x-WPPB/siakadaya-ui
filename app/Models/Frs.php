@@ -18,6 +18,10 @@ class Frs extends Model
         'tanggal_pengisian',
     ];
 
+    protected $casts = [
+        'tanggal_pengisian' => 'datetime',
+    ];
+
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class);
