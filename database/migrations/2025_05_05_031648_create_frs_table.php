@@ -23,7 +23,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['mahasiswa_id', 'tahun_ajar_id'], 'unique_frs_per_mahasiswa_tahun_ajar');
+            // $table->unique(['mahasiswa_id', 'tahun_ajar_id'], 'unique_frs_per_mahasiswa_tahun_ajar');
         });
     }
 
