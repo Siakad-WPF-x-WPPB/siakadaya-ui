@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\pages\mahasiswa;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\mahasiswa\JadwalMahasiswaCollection;
 use App\Models\Frs;
 use App\Models\FrsDetail;
 use App\Models\Jadwal;
@@ -27,6 +26,18 @@ class FrsMahasiswaController extends Controller
         $request->validate([
             'jadwal_ids' => 'required|array',
         ]);
+
+        $existingJadwalIds = FrsDetail::whereHas('frs', function ($query) use ($mahasiswa) {
+            $query->where('mahasiswa_id', $mahasiswa->id);
+        })->pluck('jadwal_id')->toArray();
+
+        $duplicateJadwal = array_intersect($request->jadwal_ids, $existingJadwalIds);
+        if (!empty($duplicateJadwal)) {
+            return response()->json([
+                'message' => 'Anda sudah mengambil salah satu jadwal yang dipilih.',
+                'jadwal_ids' => array_values($duplicateJadwal),
+            ], 422);
+        }
 
         // Get active tahun ajar
         $activeTahunAjar = TahunAjar::where('status', 'Aktif')->first();

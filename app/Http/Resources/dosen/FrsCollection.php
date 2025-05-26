@@ -37,9 +37,6 @@ class FrsCollection extends ResourceCollection
                         'id' => $frs->id,
                         'nama_mahasiswa' => $frs->mahasiswa->nama,
                         'nrp' => $frs->mahasiswa->nrp,
-                        'tahun_mulai' => $frs->tahunAjar->tahun_mulai,
-                        'tahun_akhir' => $frs->tahunAjar->tahun_akhir,
-                        'semester' => $frs->tahunAjar->semester,
                         'tanggal_pengisian' => $frs->tanggal_pengisian,
                     ];
                 }

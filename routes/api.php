@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\MahasiswaAuthController;
 use App\Http\Controllers\Api\MahasiswaDetailFrsController;
+use App\Http\Controllers\Api\MahasiswaNilaiController;
 use App\Http\Controllers\authentications\AdminLoginController;
 use App\Http\Controllers\pages\admin\DosenController;
 use App\Http\Controllers\pages\admin\JadwalKuliahController;
@@ -59,6 +60,7 @@ Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () 
   Route::get('/jadwal/today', [JadwalKuliahMahasiswaController::class, 'getToday']);
   Route::get('/jadwal/tomorrow', [JadwalKuliahMahasiswaController::class, 'getTomorrow']);
   Route::get('/jadwal/program-studi', [JadwalKuliahMahasiswaController::class, 'getPerProdi']);
+  Route::get('/nilai', [MahasiswaNilaiController::class, 'index']);
 
   // Rute untuk mendapatkan data FRS mahasiswa
   Route::get('/jadwal/dropdown-options', [JadwalKuliahMahasiswaController::class, 'getDropdownOptions']);
