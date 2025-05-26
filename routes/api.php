@@ -63,6 +63,13 @@ Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () 
   // Rute untuk mendapatkan data FRS mahasiswa
   Route::get('/jadwal/dropdown-options', [JadwalKuliahMahasiswaController::class, 'getDropdownOptions']);
   Route::get('/jadwal/dropdown-options-prodi', [JadwalKuliahMahasiswaController::class, 'getDropdownOptionsProdi']);
+  Route::get('/jadwal/for-frs', [JadwalKuliahMahasiswaController::class, 'getForFrs']);
+  Route::get('/jadwal/available-for-frs', [JadwalKuliahMahasiswaController::class, 'getAvailableForFrs']);
+
+  // FRS routes
+  Route::get('/frs/status', [FrsMahasiswaController::class, 'checkFrsStatus']);
+  Route::get('/frs/my-frs', [FrsMahasiswaController::class, 'getMyFrs']);
+  Route::post('/frs', [FrsMahasiswaController::class, 'store']);
 
   // Rute API mahasiswa lainnya
   Route::get('/data-khusus', function (Request $request) {

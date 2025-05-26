@@ -16,8 +16,6 @@ class TahunAjarController extends Controller
 {
     private function validateTahunAjarData(Request $request, $id = null)
     {
-// Removed unnecessary debug statements.
-
       return $request->validate([
           'semester' => [
               'required',
@@ -42,6 +40,12 @@ class TahunAjarController extends Controller
               'required',
               Rule::in(['Aktif', 'Tidak Aktif'])
           ],
+          'mulai_frs' => ['nullable', 'date'],
+          'selesai_frs' => ['nullable', 'date', 'after_or_equal:mulai_frs'],
+          'mulai_edit_frs' => ['nullable', 'date', 'after_or_equal:selesai_frs'],
+          'selesai_edit_frs' => ['nullable', 'date', 'after_or_equal:mulai_edit_frs'],
+          'mulai_drop_frs' => ['nullable', 'date', 'after_or_equal:selesai_edit_frs'],
+          'selesai_drop_frs' => ['nullable', 'date', 'after_or_equal:mulai_drop_frs'],
       ], [
           'semester.required' => 'Semester harus dipilih.',
           'semester.in' => 'Semester harus Ganjil atau Genap.',
@@ -57,7 +61,34 @@ class TahunAjarController extends Controller
           'tahun_akhir.gt' => 'Tahun berakhir harus lebih besar dari tahun mulai.',
           'status.required' => 'Status harus dipilih.',
           'status.in' => 'Status harus Aktif atau Tidak Aktif.',
+          'mulai_frs.date' => 'Format tanggal mulai FRS tidak valid.',
+          'selesai_frs.date' => 'Format tanggal selesai FRS tidak valid.',
+          'selesai_frs.after_or_equal' => 'Tanggal selesai FRS harus setelah atau sama dengan tanggal mulai FRS.',
+          'mulai_edit_frs.date' => 'Format tanggal mulai edit FRS tidak valid.',
+          'mulai_edit_frs.after_or_equal' => 'Tanggal mulai edit FRS harus setelah atau sama dengan tanggal selesai FRS.',
+          'selesai_edit_frs.date' => 'Format tanggal selesai edit FRS tidak valid.',
+          'selesai_edit_frs.after_or_equal' => 'Tanggal selesai edit FRS harus setelah atau sama dengan tanggal mulai edit FRS.',
+          'mulai_drop_frs.date' => 'Format tanggal mulai drop FRS tidak valid.',
+          'mulai_drop_frs.after_or_equal' => 'Tanggal mulai drop FRS harus setelah atau sama dengan tanggal selesai edit FRS.',
+          'selesai_drop_frs.date' => 'Format tanggal selesai drop FRS tidak valid.',
+          'selesai_drop_frs.after_or_equal' => 'Tanggal selesai drop FRS harus setelah atau sama dengan tanggal mulai drop FRS.',
       ]);
+    }
+
+    private function validateUniqueActiveStatus(Request $request, $id = null)
+    {
+        if ($request->status === 'Aktif') {
+            $query = TahunAjar::where('status', 'Aktif');
+            if ($id) {
+                $query->where('id', '!=', $id);
+            }
+
+            if ($query->exists()) {
+                throw ValidationException::withMessages([
+                    'status' => 'Hanya satu tahun ajar yang dapat aktif pada satu waktu.'
+                ]);
+            }
+        }
     }
 
     /**
@@ -84,6 +115,14 @@ class TahunAjarController extends Controller
       try {
         // validate the request data
         $validated = $this->validateTahunAjarData($request);
+
+        // validate unique active status
+        $this->validateUniqueActiveStatus($request);
+
+        // If setting as active, deactivate others first
+        if ($validated['status'] === 'Aktif') {
+            TahunAjar::where('status', 'Aktif')->update(['status' => 'Tidak Aktif']);
+        }
 
         // create a new tahun ajar record
         $tahunAjar = TahunAjar::create($validated);
@@ -153,8 +192,18 @@ class TahunAjarController extends Controller
         // validate the request data
         $validated = $this->validateTahunAjarData($request, $id);
 
+        // validate unique active status
+        $this->validateUniqueActiveStatus($request, $id);
+
         // find the existing tahun ajar record
         $tahunAjar = TahunAjar::findOrFail($id);
+
+        // If setting as active, deactivate others first
+        if ($validated['status'] === 'Aktif') {
+            TahunAjar::where('status', 'Aktif')
+                ->where('id', '!=', $id)
+                ->update(['status' => 'Tidak Aktif']);
+        }
 
         // update the tahun ajar record
         $tahunAjar->update($validated);
@@ -214,6 +263,15 @@ class TahunAjarController extends Controller
     {
       try {
           $tahunAjar = TahunAjar::findOrFail($id);
+
+          // Check if this academic year is used in jadwal
+          if ($tahunAjar->jadwal()->exists()) {
+              return response()->json([
+                  'success' => false,
+                  'message' => 'Tahun ajar tidak dapat dihapus karena masih digunakan dalam jadwal.'
+              ], 422);
+          }
+
           $tahunAjar->delete();
 
           return response()->json([

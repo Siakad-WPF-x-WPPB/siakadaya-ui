@@ -19,9 +19,7 @@ class JadwalKuliahMahasiswaController extends Controller
     public function getAll(Request $request)
     {
         $query = Jadwal::with(['dosen', 'matakuliah', 'kelas', 'ruangan', 'tahunAjar'])
-            ->whereHas('kelas.mahasiswa', function ($q) {
-                $q->where('id', auth('mahasiswa_api')->id());
-            });
+            ->where('kelas_id', auth('mahasiswa_api')->user()->kelas_id); // Fix this line
 
         // Apply filters if provided
         $this->applyFilters($query, $request);
@@ -210,8 +208,81 @@ class JadwalKuliahMahasiswaController extends Controller
         ]);
     }
 
+    public function getForFrs(Request $request)
+    {
+        $mahasiswa = auth('mahasiswa_api')->user();
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mahasiswa not authenticated'
+            ], 401);
+        }
+
+        // Get active tahun ajar
+        $activeTahunAjar = TahunAjar::where('status', 'Aktif')->first();
+
+        if (!$activeTahunAjar) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada tahun ajar yang aktif'
+            ], 404);
+        }
+
+        // Check if FRS period is open
+        if (!$activeTahunAjar->isFrsOpen()) {
+            $status = $activeTahunAjar->getFrsStatus();
+            $message = match($status) {
+                'not_started' => 'Periode FRS belum dimulai. Dimulai tanggal ' . $activeTahunAjar->mulai_frs?->format('d M Y'),
+                'edit_open' => 'Periode FRS sudah berakhir. Saat ini periode edit FRS.',
+                'drop_open' => 'Periode FRS sudah berakhir. Saat ini periode drop FRS.',
+                'closed' => 'Periode FRS sudah berakhir.',
+                default => 'Periode FRS tidak aktif.'
+            };
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'frs_status' => $status
+            ], 422);
+        }
+
+        // Get jadwal from active tahun ajar only
+        $query = Jadwal::with(['dosen', 'matakuliah', 'kelas', 'ruangan', 'tahunAjar'])
+            ->where('tahun_ajar_id', $activeTahunAjar->id)
+            ->whereHas('kelas', function ($q) use ($mahasiswa) {
+                $q->where('prodi_id', $mahasiswa->prodi_id);
+            });
+
+        $jadwal = $query->orderBy('hari')
+                        ->orderBy('jam_mulai')
+                        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => new JadwalMahasiswaCollection($jadwal),
+            'tahun_ajar' => [
+                'id' => $activeTahunAjar->id,
+                'semester' => $activeTahunAjar->semester,
+                'tahun_mulai' => $activeTahunAjar->tahun_mulai,
+                'tahun_akhir' => $activeTahunAjar->tahun_akhir,
+                'display_name' => $activeTahunAjar->semester . ' ' . $activeTahunAjar->tahun_mulai . '/' . $activeTahunAjar->tahun_akhir,
+                'frs_status' => $activeTahunAjar->getFrsStatus()
+            ]
+        ]);
+    }
+
     private function applyFilters($query, Request $request)
     {
+        // For FRS mode, force active tahun ajar only
+        if ($request->has('for_frs') && $request->for_frs) {
+            $activeTahunAjar = TahunAjar::where('status', 'Aktif')->first();
+            if ($activeTahunAjar) {
+                $query->where('tahun_ajar_id', $activeTahunAjar->id);
+            }
+            return;
+        }
+
         // Filter by specific tahun ajar ID (highest priority)
         if ($request->has('tahun_ajar_id') && !empty($request->tahun_ajar_id)) {
             $query->where('tahun_ajar_id', $request->tahun_ajar_id);
@@ -241,5 +312,66 @@ class JadwalKuliahMahasiswaController extends Controller
                 $q->where('status', 'Aktif');
             });
         }
+    }
+
+    public function getAvailableForFrs(Request $request)
+    {
+        $mahasiswa = auth('mahasiswa_api')->user();
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mahasiswa not authenticated'
+            ], 401);
+        }
+
+        // Get active tahun ajar
+        $activeTahunAjar = TahunAjar::where('status', 'Aktif')->first();
+
+        if (!$activeTahunAjar) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada tahun ajar yang aktif'
+            ], 404);
+        }
+
+        // Check if FRS period is open
+        if (!$activeTahunAjar->isFrsOpen()) {
+            $status = $activeTahunAjar->getFrsStatus();
+            $message = match($status) {
+                'not_started' => 'Periode FRS belum dimulai.',
+                'edit_open' => 'Periode FRS sudah berakhir. Saat ini periode edit FRS.',
+                'drop_open' => 'Periode FRS sudah berakhir. Saat ini periode drop FRS.',
+                'closed' => 'Periode FRS sudah berakhir.',
+                default => 'Periode FRS tidak aktif.'
+            };
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'frs_status' => $status
+            ], 422);
+        }
+
+        // Get jadwal for student's kelas in active tahun ajar
+        $jadwal = Jadwal::with(['dosen', 'matakuliah', 'kelas', 'ruangan', 'tahunAjar'])
+        ->where('tahun_ajar_id', $activeTahunAjar->id)
+        ->where('kelas_id', $mahasiswa->kelas_id) // Direct comparison instead of whereHas
+        ->orderBy('hari')
+        ->orderBy('jam_mulai')
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => new JadwalMahasiswaCollection($jadwal),
+            'tahun_ajar' => [
+                'id' => $activeTahunAjar->id,
+                'semester' => $activeTahunAjar->semester,
+                'tahun_mulai' => $activeTahunAjar->tahun_mulai,
+                'tahun_akhir' => $activeTahunAjar->tahun_akhir,
+                'display_name' => $activeTahunAjar->semester . ' ' . $activeTahunAjar->tahun_mulai . '/' . $activeTahunAjar->tahun_akhir,
+                'frs_status' => $activeTahunAjar->getFrsStatus()
+            ]
+        ]);
     }
 }
