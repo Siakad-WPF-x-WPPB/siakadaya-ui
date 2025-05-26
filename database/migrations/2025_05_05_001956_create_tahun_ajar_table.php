@@ -20,6 +20,16 @@ return new class extends Migration
             $table->integer('tahun_akhir');
             $table->enum('status', ['Aktif', 'Tidak Aktif'])->default('Aktif')->index();
 
+            // Tanggal penting
+            $table->date('mulai_frs')->nullable();
+            $table->date('selesai_frs')->nullable();
+
+            $table->date('mulai_edit_frs')->nullable();
+            $table->date('selesai_edit_frs')->nullable();
+
+            $table->date('mulai_drop_frs')->nullable();
+            $table->date('selesai_drop_frs')->nullable();
+
             $table->timestamps();
         });
     }
