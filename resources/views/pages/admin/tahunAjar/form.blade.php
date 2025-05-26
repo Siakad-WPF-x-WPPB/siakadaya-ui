@@ -24,13 +24,28 @@
 <!-- Page Scripts -->
 @section('page-script')
 @vite(['resources/assets/js/form-layouts.js'])
+<script>
+$(document).ready(function() {
+  // Initialize flatpickr for date fields
+  $('.flatpickr-date').flatpickr({
+    dateFormat: 'Y-m-d',
+    allowInput: true
+  });
+
+  // Initialize flatpickr for year fields
+  $('.flatpickr-year').flatpickr({
+    plugins: [new yearSelectPlugin()],
+    dateFormat: 'Y'
+  });
+});
+</script>
 @endsection
 
 @section('content')
 <div class="col-xxl">
   <div class="card mb-6">
     <div class="card-header d-flex align-items-center justify-content-between">
-      <h5 class="mb-0">Form Tahun Ajar</h5> 
+      <h5 class="mb-0">Form Tahun Ajar</h5>
       {{-- <small class="text-muted float-end">Default label</small> --}}
     </div>
     <div class="card-body">
@@ -43,7 +58,10 @@
             @method('PUT')
         @endif
 
-        <div class="row">
+        <!-- Basic Information -->
+        <h6>1. Informasi Dasar</h6>
+
+        <div class="row mb-4">
           <div class="col-md-3">
             <label class="form-label" for="semester">Semester</label>
             <div class="col-sm-12">
@@ -97,6 +115,94 @@
             </div>
           </div>
         </div>
+
+        <hr class="my-6 mx-n4" />
+
+        <!-- FRS Period -->
+        <h6>2. Periode FRS (Form Rencana Studi)</h6>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label class="form-label" for="mulai-frs">Tanggal Mulai FRS</label>
+            <div class="col-sm-12">
+              <input name="mulai_frs" value="{{ isset($tahunAjar) && $tahunAjar->mulai_frs ? $tahunAjar->mulai_frs->format('Y-m-d') : old('mulai_frs') }}" type="text" id="mulai-frs" class="form-control dob-picker @error('mulai_frs') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('mulai_frs')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Tanggal dimulainya periode pengisian FRS</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="selesai-frs">Tanggal Selesai FRS</label>
+            <div class="col-sm-12">
+              <input name="selesai_frs" value="{{ isset($tahunAjar) && $tahunAjar->selesai_frs ? $tahunAjar->selesai_frs->format('Y-m-d') : old('selesai_frs') }}" type="text" id="selesai-frs" class="form-control dob-picker @error('selesai_frs') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('selesai_frs')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Tanggal berakhirnya periode pengisian FRS</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label class="form-label" for="mulai-edit-frs">Tanggal Mulai Edit FRS</label>
+            <div class="col-sm-12">
+              <input name="mulai_edit_frs" value="{{ isset($tahunAjar) && $tahunAjar->mulai_edit_frs ? $tahunAjar->mulai_edit_frs->format('Y-m-d') : old('mulai_edit_frs') }}" type="text" id="mulai-edit-frs" class="form-control dob-picker @error('mulai_edit_frs') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('mulai_edit_frs')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Tanggal dimulainya periode edit FRS</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="selesai-edit-frs">Tanggal Selesai Edit FRS</label>
+            <div class="col-sm-12">
+              <input name="selesai_edit_frs" value="{{ isset($tahunAjar) && $tahunAjar->selesai_edit_frs ? $tahunAjar->selesai_edit_frs->format('Y-m-d') : old('selesai_edit_frs') }}" type="text" id="selesai-edit-frs" class="form-control dob-picker @error('selesai_edit_frs') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('selesai_edit_frs')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Tanggal berakhirnya periode edit FRS</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label class="form-label" for="mulai-drop-frs">Tanggal Mulai Drop FRS</label>
+            <div class="col-sm-12">
+              <input name="mulai_drop_frs" value="{{ isset($tahunAjar) && $tahunAjar->mulai_drop_frs ? $tahunAjar->mulai_drop_frs->format('Y-m-d') : old('mulai_drop_frs') }}" type="text" id="mulai-drop-frs" class="form-control dob-picker @error('mulai_drop_frs') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('mulai_drop_frs')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Tanggal dimulainya periode drop FRS</small>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="selesai-drop-frs">Tanggal Selesai Drop FRS</label>
+            <div class="col-sm-12">
+              <input name="selesai_drop_frs" value="{{ isset($tahunAjar) && $tahunAjar->selesai_drop_frs ? $tahunAjar->selesai_drop_frs->format('Y-m-d') : old('selesai_drop_frs') }}" type="text" id="selesai-drop-frs" class="form-control dob-picker @error('selesai_drop_frs') is-invalid @enderror" placeholder="YYYY-MM-DD" />
+              @error('selesai_drop_frs')
+                <div class="invalid-feedback d-block">
+                  {{ $message }}
+                </div>
+              @enderror
+              <small class="form-text text-muted">Tanggal berakhirnya periode drop FRS</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- FRS Confirmation Period -->
         <div class="row mt-4">
           <div class="col-md-6 d-grid">
             <button type="submit" class="btn btn-primary">Kirim</button>

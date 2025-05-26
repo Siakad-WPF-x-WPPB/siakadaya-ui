@@ -46,7 +46,11 @@ $configData = Helper::appClasses();
             <th></th>
             <th>NRP</th>
             <th>Nama Mahasiswa</th>
+            <th>Kelas</th>
+            <th>Program Studi</th>
             <th>Tanggal Pengisian</th>
+            <th>Total Mata Kuliah</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -102,7 +106,7 @@ $configData = Helper::appClasses();
         <div class="col-sm-12">
           <button type="submit" class="btn btn-primary data-submit me-sm-4 me-1">Submit</button>
           <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
-        </div>  
+        </div>
       </form>
 
     </div>
