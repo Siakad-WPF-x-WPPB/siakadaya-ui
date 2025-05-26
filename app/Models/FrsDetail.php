@@ -35,7 +35,7 @@ class FrsDetail extends Model
 
     public function nilai()
     {
-        return $this->hasOne(Nilai::class, 'nilai_id');
+        return $this->hasOne(Nilai::class, 'frs_detail_id');
     }
     
 }

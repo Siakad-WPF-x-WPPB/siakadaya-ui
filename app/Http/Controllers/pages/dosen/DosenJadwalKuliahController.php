@@ -38,7 +38,13 @@ class DosenJadwalKuliahController extends Controller
         $mahasiswas = Mahasiswa::whereHas('frs.frsDetail', function ($query) use ($jadwal) {
             $query->where('jadwal_id', $jadwal->id)
                 ->where('status', 'disetujui');
-        })->get();
+        })
+            ->with(['frs.frsDetail' => function ($query) use ($jadwal) {
+                $query->where('jadwal_id', $jadwal->id)
+                    ->where('status', 'disetujui')
+                    ->with('nilai');
+            }])
+            ->get();
 
 
         return view('pages.dosen.jadwalKuliah.list', compact('jadwal', 'mahasiswas'));

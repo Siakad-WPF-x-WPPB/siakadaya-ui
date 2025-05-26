@@ -50,22 +50,22 @@ class FrsMahasiswaController extends Controller
         }
 
         // Check if FRS period is open
-        if (!$activeTahunAjar->isFrsOpen()) {
-            $status = $activeTahunAjar->getFrsStatus();
-            $message = match($status) {
-                'not_started' => 'Periode FRS belum dimulai. Dimulai tanggal ' . $activeTahunAjar->mulai_frs?->format('d M Y'),
-                'edit_open' => 'Periode FRS sudah berakhir. Saat ini periode edit FRS.',
-                'drop_open' => 'Periode FRS sudah berakhir. Saat ini periode drop FRS.',
-                'closed' => 'Periode FRS sudah berakhir.',
-                default => 'Periode FRS tidak aktif.'
-            };
+        // if (!$activeTahunAjar->isFrsOpen()) {
+        //     $status = $activeTahunAjar->getFrsStatus();
+        //     $message = match($status) {
+        //         'not_started' => 'Periode FRS belum dimulai. Dimulai tanggal ' . $activeTahunAjar->mulai_frs?->format('d M Y'),
+        //         'edit_open' => 'Periode FRS sudah berakhir. Saat ini periode edit FRS.',
+        //         'drop_open' => 'Periode FRS sudah berakhir. Saat ini periode drop FRS.',
+        //         'closed' => 'Periode FRS sudah berakhir.',
+        //         default => 'Periode FRS tidak aktif.'
+        //     };
 
-            return response()->json([
-                'success' => false,
-                'message' => $message,
-                'frs_status' => $status
-            ], 422);
-        }
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => $message,
+        //         'frs_status' => $status
+        //     ], 422);
+        // }
 
         // Check if student already has FRS for this active academic year
         $existingFrs = Frs::where('mahasiswa_id', $mahasiswa->id)
@@ -143,18 +143,23 @@ class FrsMahasiswaController extends Controller
         $frs = Frs::where('mahasiswa_id', $mahasiswa->id)
                   ->where('tahun_ajar_id', $activeTahunAjar->id)
                   ->with([
-                      'details.jadwal.dosen',
-                      'details.jadwal.matakuliah',
-                      'details.jadwal.kelas',
-                      'details.jadwal.ruangan',
+                      'details' => function ($query) {
+                          $query->where('status', 'disetujui')
+                                ->with([
+                                    'jadwal.dosen',
+                                    'jadwal.matakuliah',
+                                    'jadwal.kelas',
+                                    'jadwal.ruangan'
+                                ]);
+                      },
                       'tahunAjar'
                   ])
                   ->first();
 
-        if (!$frs) {
+        if (!$frs || $frs->details->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Belum ada FRS untuk tahun ajar yang aktif'
+                'message' => 'Belum ada FRS yang disetujui untuk tahun ajar yang aktif'
             ], 404);
         }
 
