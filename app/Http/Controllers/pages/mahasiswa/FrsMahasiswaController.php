@@ -68,16 +68,16 @@ class FrsMahasiswaController extends Controller
         // }
 
         // Check if student already has FRS for this active academic year
-        $existingFrs = Frs::where('mahasiswa_id', $mahasiswa->id)
-                          ->where('tahun_ajar_id', $activeTahunAjar->id)
-                          ->first();
+        // $existingFrs = Frs::where('mahasiswa_id', $mahasiswa->id)
+        //                   ->where('tahun_ajar_id', $activeTahunAjar->id)
+        //                   ->first();
 
-        if ($existingFrs) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Anda sudah mengisi FRS untuk tahun ajar yang aktif.'
-            ], 422);
-        }
+        // if ($existingFrs) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Anda sudah mengisi FRS untuk tahun ajar yang aktif.'
+        //     ], 422);
+        // }
 
         // Validate that all jadwal belong to active tahun ajar and student's class
         $jadwalIds = $request->jadwal_ids;
