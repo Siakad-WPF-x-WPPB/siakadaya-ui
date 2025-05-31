@@ -79,8 +79,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
-                    <a class="dropdown-item mt-0"
-                        href="{{ Route::has('profile.show') ? route('profile.show') : 'javascript:void(0);' }}">
+                    <a class="dropdown-item mt-0" href="@if(Auth::guard('admin')->check()) @elseif(Auth::guard('dosen')->check()) {{ route('dosen-profile') }} @else javascript:void(0); @endif">
                         <div class="d-flex align-items-center">
                             <div class="flex-shrink-0 me-2">
                                 <div class="avatar avatar-online">
@@ -89,13 +88,21 @@
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="mb-0">
-                                    @if (Auth::check())
-                                        {{ Auth::user()->nama }}
+                                    @if (Auth::guard('admin')->check())
+                                        {{ Auth::guard('admin')->user()->nama }}
+                                    @elseif (Auth::guard('dosen')->check())
+                                        {{ Auth::guard('dosen')->user()->nama }}
                                     @else
                                         John Doe
                                     @endif
                                 </h6>
-                                <small class="text-muted"></small>
+                                <small class="text-muted">
+                                    @if (Auth::guard('admin')->check())
+                                        Admin
+                                    @elseif (Auth::guard('dosen')->check())
+                                        Dosen
+                                    @endif
+                                </small>
                             </div>
                         </div>
                     </a>

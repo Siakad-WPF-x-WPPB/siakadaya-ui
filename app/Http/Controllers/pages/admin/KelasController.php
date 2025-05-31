@@ -75,7 +75,6 @@ class KelasController extends Controller
 
         // create a new kelas record
         $kelas = Kelas::create($validated);
-
         // handle different response based on request type
         if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json([
