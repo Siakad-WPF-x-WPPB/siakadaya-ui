@@ -44,7 +44,7 @@
         @endif
 
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label class="form-label" for="prodi">Program Studi</label>
             <div class="col-sm-12">
               <select name="prodi_id" id="prodi" class="select2 form-select @error('prodi_id') is-invalid @enderror" data-allow-clear="true">
@@ -62,7 +62,7 @@
               @enderror
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label class="form-label" for="pararel">Pararel</label>
             <div class="col-sm-12">
               <input type="text" id="pararel" name="pararel" value="{{ $kelas->pararel ?? old('pararel') }}" class="form-control @error('pararel') is-invalid @enderror" placeholder="IT-A" aria-label="IT-A" aria-describedby="pararel2" />
@@ -73,7 +73,7 @@
               @enderror
             </div>
           </div>
-          <div class="col-md-4">
+          {{-- <div class="col-md-4">
             <label class="form-label" for="dosen">Dosen</label>
             <div class="col-sm-12">
               <select name="dosen_id" id="dosen" class="select2 form-select @error('dosen_id') is-invalid @enderror" data-allow-clear="true">
@@ -90,7 +90,7 @@
                 </div>
               @enderror
             </div>
-          </div>
+          </div> --}}
         </div>
         <div class="row mt-4">
           <div class="col-md-6 d-grid">

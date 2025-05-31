@@ -26,6 +26,7 @@ use App\Http\Controllers\pages\dosen\DosenFrsController;
 use App\Http\Controllers\pages\dosen\DosenJadwalKuliahController;
 use App\Http\Controllers\pages\dosen\DosenMahasiswaController;
 use App\Http\Controllers\pages\dosen\DosenNilaiController;
+use App\Http\Controllers\pages\dosen\DosenProfileController;
 use App\Http\Resources\dosen\DosenJadwalKuliahCollection;
 use App\Http\Resources\dosen\NilaiCollection;
 use App\Models\Jadwal;
@@ -136,6 +137,7 @@ Route::prefix('dosen')->group(
     Route::middleware('auth:dosen')->group(
       function () {
         Route::get('/dashboard', [DosenDashboardController::class, 'index'])->name('dosen-dashboard');
+        Route::get('/profile', [DosenProfileController::class, 'index'])->name('dosen-profile');
         Route::post('/logout', [DosenLoginController::class, 'logout'])->name('dosen-logout');
         Route::get('/mahasiswa', [DosenMahasiswaController::class, 'index'])->name('dosen-mahasiswa-index');
         Route::get('/jadwal-kuliah', [DosenJadwalKuliahController::class, 'index'])->name('dosen-jadwal-kuliah-index');

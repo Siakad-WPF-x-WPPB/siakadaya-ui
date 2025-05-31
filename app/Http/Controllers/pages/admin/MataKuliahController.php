@@ -138,8 +138,19 @@ class MataKuliahController extends Controller
       try {
         $matakuliah = Matakuliah::findOrFail($id);
 
-        // validate the request data
-        $validated = $this->validateMatakuliahData($request, $id);
+            // Jika sudah ada jadwal dan prodi_id ingin diubah, abaikan perubahan prodi_id
+            if ($matakuliah->jadwal()->exists() && $request->prodi_id != $matakuliah->prodi_id) {
+                // Validasi tanpa prodi_id
+                $validated = $request->except('prodi_id');
+                $validated = $this->validateMatakuliahData(new Request(array_merge($request->all(), [
+                    'prodi_id' => $matakuliah->prodi_id
+                ])), $id);
+
+                $matakuliah->update($validated);
+            }
+
+            // validate the request data
+            $validated = $this->validateMatakuliahData($request, $id);
 
         // update the matakuliah record
         $matakuliah->update($validated);

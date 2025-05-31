@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Exception;
 
 use App\Models\Dosen;
+use App\Models\Kelas;
 use App\Models\ProgramStudi;
 
 class DosenController extends Controller
@@ -32,6 +33,15 @@ class DosenController extends Controller
             'jabatan' => 'required|string',
             'golongan_akhir' => 'required|string',
             'is_wali' => 'boolean',
+            'kelas_id' => [
+                'nullable',
+                'exists:kelas,id',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->input('is_wali') == '1' && !$value) {
+                        $fail('Kelas wajib dipilih jika dosen adalah wali.');
+                    }
+                }
+            ],
         ], [
             'prodi_id.required' => 'Program studi harus dipilih.',
             'prodi_id.exists' => 'Program studi yang dipilih tidak valid.',
@@ -55,6 +65,7 @@ class DosenController extends Controller
             'jabatan.required' => 'Jabatan wajib diisi.',
             'golongan_akhir.required' => 'Golongan akhir wajib diisi.',
             'is_wali.required' => 'Status wali harus dipilih.',
+            'kelas_id.exists' => 'Kelas yang dipilih tidak valid.',
         ]);
     }
 
@@ -72,8 +83,9 @@ class DosenController extends Controller
     public function create()
     {
         $program_studi = ProgramStudi::all();
+        $kelas = Kelas::whereNull('dosen_id')->get();
 
-        return view('pages.admin.dosen.form', compact('program_studi'));
+        return view('pages.admin.dosen.form', compact('program_studi', 'kelas'));
     }
 
     /**
@@ -88,8 +100,18 @@ class DosenController extends Controller
         // hash the password
         $validated['password'] = bcrypt($validated['password']);
 
+            // Ambil kelas_id sebelum remove dari validated data
+            $kelasId = $validated['kelas_id'] ?? null;
+
+            // Remove kelas_id dari validated data karena tidak ada field ini di tabel dosen
+            unset($validated['kelas_id']);
+
         // create a new Dosen record
         $dosen = Dosen::create($validated);
+
+            if ($request->input('is_wali') == '1' && $kelasId) {
+                Kelas::where('id', $kelasId)->update(['dosen_id' => $dosen->id]);
+            }
 
         // Handle different response types based on request
         if ($request->expectsJson() || $request->is('api/*')) {
@@ -145,7 +167,12 @@ class DosenController extends Controller
         $dosen = Dosen::findOrFail($id);
         $program_studi = ProgramStudi::all();
 
-        return view('pages.admin.dosen.form', compact('dosen', 'program_studi'));
+        $kelas = Kelas::where(function ($q) use ($dosen) {
+            $q->whereNull('dosen_id')
+                ->orWhere('dosen_id', $dosen->id);
+        })->get();
+
+        return view('pages.admin.dosen.form', compact('dosen', 'program_studi', 'kelas'));
     }
 
     /**
@@ -167,7 +194,23 @@ class DosenController extends Controller
             unset($validated['password']);
         }
 
-        $dosen->update($validated);
+            // Ambil kelas_id sebelum remove dari validated data
+            $kelasId = $validated['kelas_id'] ?? null;
+
+            // Remove kelas_id dari validated data karena tidak ada field ini di tabel dosen
+            unset($validated['kelas_id']);
+
+            // Reset kelas lama jika dosen sebelumnya adalah wali
+            if ($dosen->is_wali == 1) {
+                Kelas::where('dosen_id', $dosen->id)->update(['dosen_id' => null]);
+            }
+
+            $dosen->update($validated);
+
+            // Jika dosen adalah wali dan kelas dipilih, update tabel kelas
+            if ($request->input('is_wali') == '1' && $kelasId) {
+                Kelas::where('id', $kelasId)->update(['dosen_id' => $dosen->id]);
+            }
 
         // Handle different response types
         if ($request->expectsJson() || $request->is('api/*')) {

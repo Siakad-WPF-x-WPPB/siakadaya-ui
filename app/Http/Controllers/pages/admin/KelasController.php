@@ -23,7 +23,7 @@ class KelasController extends Controller
 
       return $request->validate([
         'prodi_id' => 'required|exists:program_studi,id',
-        'dosen_id' => 'required|exists:dosen,id',
+        // 'dosen_id' => 'required|exists:dosen,id',
         'pararel' => [
             'required',
             'string',
@@ -36,8 +36,8 @@ class KelasController extends Controller
       ], [
           'prodi_id.required' => 'Program studi harus dipilih.',
           'prodi_id.exists' => 'Program studi yang dipilih tidak valid.',
-          'dosen_id.required' => 'Dosen wali harus dipilih.',
-          'dosen_id.exists' => 'Dosen yang dipilih tidak valid.',
+        //   'dosen_id.required' => 'Dosen wali harus dipilih.',
+        //   'dosen_id.exists' => 'Dosen yang dipilih tidak valid.',
           'pararel.required' => 'Nama kelas/pararel wajib diisi.',
           'pararel.string' => 'Nama kelas/pararel harus berupa teks.',
           'pararel.max' => 'Nama kelas/pararel maksimal 10 karakter.',
@@ -75,7 +75,6 @@ class KelasController extends Controller
 
         // create a new kelas record
         $kelas = Kelas::create($validated);
-
         // handle different response based on request type
         if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json([
