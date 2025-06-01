@@ -26,4 +26,9 @@ class Admin extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    public function pengumuman()
+    {
+        return $this->hasMany(Pengumuman::class, 'admin_id');
+    }
 }
