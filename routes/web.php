@@ -17,7 +17,8 @@ use App\Http\Controllers\pages\admin\{
   KelasController,
   MahasiswaController,
   MataKuliahController,
-  TahunAjarController,
+    PengumumanController,
+    TahunAjarController,
   ProgramStudiController,
   RuanganController,
 };
@@ -125,6 +126,15 @@ Route::prefix('admin')->group(function () {
       'edit'    => 'admin-ruangan-edit',
       'update'  => 'admin-ruangan-update',
       'destroy' => 'admin-ruangan-destroy',
+    ]);
+    Route::resource('pengumuman', PengumumanController::class)->names([
+      'index'   => 'admin-pengumuman-index',
+      'create'  => 'admin-pengumuman-create',
+      'store'   => 'admin-pengumuman-store',
+      'show'    => 'admin-pengumuman-show',
+      'edit'    => 'admin-pengumuman-edit',
+      'update'  => 'admin-pengumuman-update',
+      'destroy' => 'admin-pengumuman-destroy',
     ]);
   });
 });

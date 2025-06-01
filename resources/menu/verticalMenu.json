@@ -59,6 +59,12 @@
       "name": "Ruangan",
       "icon": "menu-icon tf-icons ti ti-building-warehouse",
       "slug": "admin-ruangan-index"
+    },
+    {
+      "url": "admin/pengumuman",
+      "name": "Pengumuman",
+      "icon": "menu-icon tf-icons ti ti-speakerphone",
+      "slug": "admin-pengumuman-index"
     }
   ],
   "menuDosen": [
