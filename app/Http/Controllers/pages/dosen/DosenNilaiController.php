@@ -245,7 +245,7 @@ class DosenNilaiController extends Controller
             Log::error("Stack trace: " . $e->getTraceAsString());
 
             return redirect()->back()
-                ->with('error', 'Gagal mengimport data: ' . $e->getMessage());
+                ->with('error', 'Gagal mengimport data. Silakan coba lagi atau hubungi administrator.');
         }
     }
 
