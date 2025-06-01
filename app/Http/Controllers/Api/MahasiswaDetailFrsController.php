@@ -7,6 +7,8 @@ use App\Http\Resources\mahasiswa\DetailFrsMahasiswaCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FrsDetail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MahasiswaDetailFrsController extends Controller
 {
@@ -35,5 +37,41 @@ class MahasiswaDetailFrsController extends Controller
         }
 
         return new DetailFrsMahasiswaCollection($frsDetails);
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $mahasiswa = Auth::guard('mahasiswa_api')->user();
+
+            if (!$mahasiswa) {
+                return response()->json(['message' => 'Unauthenticated.'], 401);
+            }
+
+            $frsDetail = FrsDetail::whereHas('frs', function ($query) use ($mahasiswa) {
+                $query->where('mahasiswa_id', $mahasiswa->id);
+            })->find($id);
+
+            if (!$frsDetail) {
+                return response()->json(['message' => 'Detail FRS tidak ditemukan atau tidak memiliki akses.'], 404);
+            }
+
+            DB::beginTransaction();
+
+            $frsDetail->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Mata kuliah berhasil dihapus dari FRS.'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting FRS detail: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menghapus mata kuliah dari FRS.'
+            ], 500);
+        }
     }
 }
