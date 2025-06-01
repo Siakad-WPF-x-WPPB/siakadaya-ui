@@ -19,14 +19,78 @@
 <!-- Page Scripts -->
 @section('page-script')
     {{-- @vite(['resources/assets/js/dosen/table-jadwal.js']) --}}
+    <script>
+        // Excel Import Modal Handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const importBtn = document.getElementById('importExcelBtn');
+            if (importBtn) {
+                importBtn.addEventListener('click', function() {
+                    var modal = new bootstrap.Modal(document.getElementById('importModal'));
+                    modal.show();
+                });
+            }
+
+            // File input change handler
+            const fileInput = document.getElementById('excelFile');
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    const fileName = this.files[0]?.name || '';
+                    document.getElementById('fileName').textContent = fileName ? `File: ${fileName}` : '';
+                });
+            }
+        });
+    </script>
 @endsection
 
 @section('content')
     <div class="card">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h5 class="mb-0"> Mahasiswa Terdaftar untuk Jadwal:</h5>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-success" id="importExcelBtn">
+                    <i class="ti ti-file-import me-2"></i>Import Nilai Excel
+                </button>
+                <a href="{{ route('dosen.nilai.template', $jadwal->id) }}" class="btn btn-outline-primary">
+                    <i class="ti ti-download me-2"></i>Download Template
+                </a>
+            </div>
         </div>
         <div class="card-body">
+
+        @if (session('success'))
+            <div class="alert alert-success mt-3 alert-dismissible">
+                <i class="ti ti-check-circle me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger mt-3 alert-dismissible">
+                <i class="ti ti-alert-circle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if (session('warning') && session('import_errors'))
+            <div class="alert alert-warning mt-3">
+                <i class="ti ti-alert-triangle me-2"></i>{{ session('warning') }}
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-warning" type="button" data-bs-toggle="collapse" data-bs-target="#errorDetails">
+                        <i class="ti ti-eye me-1"></i>Lihat Detail Error
+                    </button>
+                </div>
+                <div class="collapse mt-2" id="errorDetails">
+                    <div class="card card-body bg-light">
+                        <ul class="mb-0 small">
+                            @foreach (session('import_errors') as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <h6>
             <strong>Mata Kuliah:</strong> {{ $jadwal->matakuliah->nama ?? 'N/A' }} <br>
             <strong>Kelas:</strong> {{ $jadwal->kelas->pararel ?? 'N/A' }} <br>
@@ -48,7 +112,7 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-             
+
                     <tbody>
                         @foreach ($mahasiswas as $mahasiswa)
                         @php
@@ -78,64 +142,58 @@
             </table>
         </div>
     </div>
-    <!-- Modal to add new record -->
-    <div class="offcanvas offcanvas-end" id="add-new-record">
-        <div class="offcanvas-header border-bottom">
-            <h5 class="offcanvas-title" id="exampleModalLabel">New Record</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body flex-grow-1">
-            <form class="add-new-record pt-0 row g-2" id="form-add-new-record" onsubmit="return false">
-                <div class="col-sm-12">
-                    <label class="form-label" for="basicFullname">Full Name</label>
-                    <div class="input-group input-group-merge">
-                        <span id="basicFullname2" class="input-group-text"><i class="ti ti-user"></i></span>
-                        <input type="text" id="basicFullname" class="form-control dt-full-name" name="basicFullname"
-                            placeholder="John Doe" aria-label="John Doe" aria-describedby="basicFullname2" />
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <label class="form-label" for="basicPost">Post</label>
-                    <div class="input-group input-group-merge">
-                        <span id="basicPost2" class="input-group-text"><i class='ti ti-briefcase'></i></span>
-                        <input type="text" id="basicPost" name="basicPost" class="form-control dt-post"
-                            placeholder="Web Developer" aria-label="Web Developer" aria-describedby="basicPost2" />
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <label class="form-label" for="basicEmail">Email</label>
-                    <div class="input-group input-group-merge">
-                        <span class="input-group-text"><i class="ti ti-mail"></i></span>
-                        <input type="text" id="basicEmail" name="basicEmail" class="form-control dt-email"
-                            placeholder="john.doe@example.com" aria-label="john.doe@example.com" />
-                    </div>
-                    <div class="form-text">
-                        You can use letters, numbers & periods
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <label class="form-label" for="basicDate">Joining Date</label>
-                    <div class="input-group input-group-merge">
-                        <span id="basicDate2" class="input-group-text"><i class='ti ti-calendar'></i></span>
-                        <input type="text" class="form-control dt-date" id="basicDate" name="basicDate"
-                            aria-describedby="basicDate2" placeholder="MM/DD/YYYY" aria-label="MM/DD/YYYY" />
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <label class="form-label" for="basicSalary">Salary</label>
-                    <div class="input-group input-group-merge">
-                        <span id="basicSalary2" class="input-group-text"><i class='ti ti-currency-dollar'></i></span>
-                        <input type="number" id="basicSalary" name="basicSalary" class="form-control dt-salary"
-                            placeholder="12000" aria-label="12000" aria-describedby="basicSalary2" />
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <button type="submit" class="btn btn-primary data-submit me-sm-4 me-1">Submit</button>
-                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
-                </div>
-            </form>
 
+    <!-- Import Excel Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importModalLabel">
+                        <i class="ti ti-file-import me-2"></i>Import Nilai dari Excel
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ route('dosen.nilai.import', $jadwal->id) }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Instructions -->
+                        <div class="alert alert-info mb-3">
+                            <h6 class="mb-2"><i class="ti ti-info-circle me-1"></i>Petunjuk Import:</h6>
+                            <ol class="mb-0 small">
+                                <li>Download template Excel terlebih dahulu dengan tombol "Download Template"</li>
+                                <li>Buka file template dan isi kolom <strong>"nilai_angka"</strong> dengan nilai 0-100</li>
+                                <li><strong>Jangan mengubah</strong> kolom "nrp" dan "nama"</li>
+                                <li>Simpan file Excel dan upload di form ini</li>
+                                <li>Nilai huruf dan status kelulusan akan dihitung otomatis</li>
+                            </ol>
+                        </div>
+
+                        <!-- File Input -->
+                        <div class="mb-3">
+                            <label class="form-label" for="excelFile">Pilih File Excel</label>
+                            <input type="file" id="excelFile" name="file"
+                                   class="form-control"
+                                   accept=".xlsx,.xls,.csv" required>
+                            <div class="form-text" id="fileName"></div>
+                        </div>
+
+                        <!-- Template Download Link -->
+                        <div class="mb-3">
+                            <a href="{{ route('dosen.nilai.template', $jadwal->id) }}"
+                               class="btn btn-outline-primary btn-sm" target="_blank">
+                                <i class="ti ti-download me-1"></i>Download Template Excel
+                            </a>
+                            <small class="text-muted d-block mt-1">Template berisi semua mahasiswa yang terdaftar di jadwal ini</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="ti ti-upload me-1"></i>Import Nilai
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    <!--/ DataTable with Buttons -->
 @endsection

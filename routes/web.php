@@ -145,6 +145,8 @@ Route::prefix('dosen')->group(
 
         Route::get('/jadwal-kuliah/{jadwal}/nilai/{mahasiswa}', [DosenNilaiController::class, 'create'])->name('dosen.nilai.create');
         Route::post('/jadwal-kuliah/{jadwal}/nilai/{mahasiswa}', [DosenNilaiController::class, 'store'])->name('dosen.nilai.store');
+        Route::post('jadwal/{jadwal}/nilai/import', [DosenNilaiController::class, 'import'])->name('dosen.nilai.import');
+        Route::get('jadwal/{jadwal}/nilai/template', [DosenNilaiController::class, 'downloadTemplate'])->name('dosen.nilai.template');
 
         // Route FRS
         Route::get('/frs', [DosenFrsController::class, 'index'])->name('dosen-frs-index');
