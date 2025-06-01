@@ -13,6 +13,7 @@ use App\Http\Controllers\pages\admin\JadwalKuliahController;
 use App\Http\Controllers\pages\admin\KelasController;
 use App\Http\Controllers\pages\admin\MahasiswaController;
 use App\Http\Controllers\pages\admin\MataKuliahController;
+use App\Http\Controllers\pages\admin\PengumumanController;
 use App\Http\Controllers\pages\admin\TahunAjarController;
 use App\Http\Controllers\pages\admin\ProgramStudiController;
 use App\Http\Controllers\pages\admin\RuanganController;
@@ -99,10 +100,6 @@ Route::delete('/mahasiswa/destroy/{id}', [MahasiswaController::class, 'destroy']
 // TODO: implementasi API Dosen
 // *********************************************************************************
 
-// * API Dosen
-// TODO: implementasi API Dosen
-// *********************************************************************************
-
 Route::get('/dosen', function () {
   return new DosenCollection([]);
 });
@@ -174,6 +171,11 @@ Route::delete('/tahun-ajar/destroy/{id}', [TahunAjarController::class, 'destroy'
 Route::get('/pengumuman', function () {
   return new PengumumanCollection([]);
 });
+
+Route::get('/pengumuman/{id}', [PengumumanController::class, 'show']);
+Route::post('/pengumuman/store', [PengumumanController::class, 'store']);
+Route::put('/pengumuman/update/{id}', [PengumumanController::class, 'update']);
+Route::delete('/pengumuman/destroy/{id}', [PengumumanController::class, 'destroy']);
 
 // * API FRS
 // TODO: implementasi API Program Studi

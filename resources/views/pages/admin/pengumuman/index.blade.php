@@ -4,7 +4,7 @@ $configData = Helper::appClasses();
 
 @extends('layouts/layoutMaster')
 
-@section('title', 'Kelas')
+@section('title', 'Pengumuman')
 
 <!-- Vendor Styles -->
 @section('vendor-style')
@@ -45,8 +45,10 @@ $configData = Helper::appClasses();
           <tr>
             <th></th>
             <th></th>
-            <th>Kode</th>
-            <th>Nama</th>
+            <th>Nama pembuat</th>
+            <th>Judul</th>
+            <th>Tanggal</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>

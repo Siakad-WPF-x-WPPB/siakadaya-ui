@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('admin_id')->constrained('admin')->onDelete('cascade');
             $table->string('judul');
             $table->text('isi');
-            $table->dateTime('tanggal_dibuat')->default(now());
+            $table->date('tanggal_dibuat')->default(now());
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
