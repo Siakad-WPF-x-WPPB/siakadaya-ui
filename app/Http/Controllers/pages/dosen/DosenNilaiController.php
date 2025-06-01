@@ -121,6 +121,85 @@ class DosenNilaiController extends Controller
     }
 
     /**
+     * Delete nilai for a specific mahasiswa
+     */
+    public function destroy(Jadwal $jadwal, Mahasiswa $mahasiswa)
+    {
+        // Authorization
+        if ($jadwal->dosen_id !== Auth::guard('dosen')->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Get frsDetail for this mahasiswa and jadwal
+        $frsDetail = FrsDetail::where('jadwal_id', $jadwal->id)
+            ->whereHas('frs', function ($query) use ($mahasiswa) {
+                $query->where('mahasiswa_id', $mahasiswa->id);
+            })
+            ->where('status', 'disetujui')
+            ->first();
+
+        if (!$frsDetail) {
+            return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
+                ->with('error', 'Data FRS tidak ditemukan untuk mahasiswa ini.');
+        }
+
+        // Find and delete nilai
+        $nilai = Nilai::where('frs_detail_id', $frsDetail->id)->first();
+
+        if (!$nilai) {
+            return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
+                ->with('error', 'Nilai tidak ditemukan untuk mahasiswa ini.');
+        }
+
+        try {
+            $nilai->delete();
+
+            Log::info("Nilai deleted for mahasiswa: {$mahasiswa->nama} (ID: {$mahasiswa->id}) in jadwal: {$jadwal->id}");
+
+            return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
+                ->with('success', 'Nilai untuk mahasiswa ' . $mahasiswa->nama . ' berhasil dihapus.');
+
+        } catch (\Exception $e) {
+            Log::error("Error deleting nilai: " . $e->getMessage());
+
+            return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
+                ->with('error', 'Gagal menghapus nilai: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete all nilai for a jadwal
+     */
+    public function destroyAll(Jadwal $jadwal)
+    {
+        // Authorization
+        if ($jadwal->dosen_id !== Auth::guard('dosen')->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        try {
+            // Get all frs_detail_ids for this jadwal
+            $frsDetailIds = FrsDetail::where('jadwal_id', $jadwal->id)
+                ->where('status', 'disetujui')
+                ->pluck('id');
+
+            // Delete all nilai for these frs_details
+            $deletedCount = Nilai::whereIn('frs_detail_id', $frsDetailIds)->delete();
+
+            Log::info("Deleted {$deletedCount} nilai records for jadwal: {$jadwal->id}");
+
+            return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
+                ->with('success', "Berhasil menghapus {$deletedCount} nilai mahasiswa.");
+
+        } catch (\Exception $e) {
+            Log::error("Error deleting all nilai: " . $e->getMessage());
+
+            return redirect()->route('dosen.jadwal.mahasiswa', $jadwal->id)
+                ->with('error', 'Gagal menghapus semua nilai: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Process Excel import for batch nilai input
      */
     public function import(Request $request, Jadwal $jadwal)
