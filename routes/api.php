@@ -59,6 +59,7 @@ Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () 
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
   Route::post('/frs/store', [FrsMahasiswaController::class, 'store']);
   Route::get('/frs', [MahasiswaDetailFrsController::class, 'index']);
+  Route::delete('/frs/destroy/{id}',[MahasiswaDetailFrsController::class, 'destroy']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
   Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'getAll']);
   Route::get('/jadwal/today', [JadwalKuliahMahasiswaController::class, 'getToday']);
