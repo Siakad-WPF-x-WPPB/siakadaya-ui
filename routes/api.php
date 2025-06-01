@@ -57,9 +57,6 @@ Route::post('/mahasiswa/login', [MahasiswaAuthController::class, 'login']);
 // Sanctum akan mengautentikasi token dan mengambil 'tokenable' model (yaitu Mahasiswa).
 Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () {
   Route::get('/profile', [MahasiswaAuthController::class, 'profile']);
-  Route::post('/frs/store', [FrsMahasiswaController::class, 'store']);
-  Route::get('/frs', [MahasiswaDetailFrsController::class, 'index']);
-  Route::delete('/frs/destroy/{id}',[MahasiswaDetailFrsController::class, 'destroy']);
   Route::post('/logout', [MahasiswaAuthController::class, 'logout']);
   Route::get('/jadwal', [JadwalKuliahMahasiswaController::class, 'getAll']);
   Route::get('/jadwal/today', [JadwalKuliahMahasiswaController::class, 'getToday']);
@@ -75,9 +72,12 @@ Route::middleware('auth:mahasiswa_api')->prefix('mahasiswa')->group(function () 
   Route::get('/jadwal/available-for-frs', [JadwalKuliahMahasiswaController::class, 'getAvailableForFrs']);
 
   // FRS routes
+  Route::post('/frs/store', [FrsMahasiswaController::class, 'store']);
+  Route::get('/frs', [MahasiswaDetailFrsController::class, 'index']);
   Route::get('/frs/status', [FrsMahasiswaController::class, 'checkFrsStatus']);
   Route::get('/frs/my-frs', [FrsMahasiswaController::class, 'getMyFrs']);
   Route::post('/frs', [FrsMahasiswaController::class, 'store']);
+  Route::delete('/frs/destroy/{id}',[MahasiswaDetailFrsController::class, 'destroy']);
 
   // Rute API mahasiswa lainnya
   Route::get('/data-khusus', function (Request $request) {

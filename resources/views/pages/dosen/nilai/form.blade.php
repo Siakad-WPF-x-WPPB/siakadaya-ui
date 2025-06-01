@@ -29,6 +29,52 @@
                 <small class="text-muted float-end">Form penilaian</small>
             </div>
             <div class="card-body">
+                @if ($nilai->exists)
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-warning">
+                                <h6><i class="ti ti-alert-triangle me-2"></i>Hapus Nilai</h6>
+                                <p class="mb-2">Menghapus nilai akan mengembalikan status mahasiswa menjadi "Belum Dinilai".</p>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="ti ti-trash me-1"></i>Hapus Nilai
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">
+                                        <i class="ti ti-alert-triangle me-2"></i>Konfirmasi Hapus Nilai
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Apakah Anda yakin ingin menghapus nilai untuk mahasiswa:</p>
+                                    <div class="alert alert-info">
+                                        <strong>{{ $mahasiswa->nama }}</strong> ({{ $mahasiswa->nrp }})<br>
+                                        <small>Nilai saat ini: {{ $nilai->nilai_angka }} ({{ $nilai->nilai_huruf }})</small>
+                                    </div>
+                                    <p class="text-danger"><small><i class="ti ti-info-circle me-1"></i>Tindakan ini tidak dapat dibatalkan!</small></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <form method="POST" action="{{ route('dosen.nilai.destroy', ['jadwal' => $jadwal->id, 'mahasiswa' => $mahasiswa->id]) }}" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="ti ti-trash me-1"></i>Ya, Hapus Nilai
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="mb-3">

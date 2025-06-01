@@ -100,18 +100,19 @@ class DosenController extends Controller
         // hash the password
         $validated['password'] = bcrypt($validated['password']);
 
-            // Ambil kelas_id sebelum remove dari validated data
-            $kelasId = $validated['kelas_id'] ?? null;
+        // Ambil kelas_id sebelum remove dari validated data
+        $kelasId = $validated['kelas_id'] ?? null;
 
-            // Remove kelas_id dari validated data karena tidak ada field ini di tabel dosen
-            unset($validated['kelas_id']);
+        // Remove kelas_id dari validated data karena tidak ada field ini di tabel dosen
+        unset($validated['kelas_id']);
 
         // create a new Dosen record
         $dosen = Dosen::create($validated);
 
-            if ($request->input('is_wali') == '1' && $kelasId) {
-                Kelas::where('id', $kelasId)->update(['dosen_id' => $dosen->id]);
-            }
+        // Only assign kelas if dosen is wali and kelas is selected
+        if (($request->input('is_wali') == '1' || $request->input('is_wali') === true) && $kelasId) {
+            Kelas::where('id', $kelasId)->update(['dosen_id' => $dosen->id]);
+        }
 
         // Handle different response types based on request
         if ($request->expectsJson() || $request->is('api/*')) {
@@ -207,9 +208,15 @@ class DosenController extends Controller
 
             $dosen->update($validated);
 
-            // Jika dosen adalah wali dan kelas dipilih, update tabel kelas
-            if ($request->input('is_wali') == '1' && $kelasId) {
-                Kelas::where('id', $kelasId)->update(['dosen_id' => $dosen->id]);
+            // Handle kelas assignment based on is_wali status
+            if ($request->input('is_wali') == '1' || $request->input('is_wali') === true) {
+                // Jika dosen adalah wali dan kelas dipilih, update tabel kelas
+                if ($kelasId) {
+                    Kelas::where('id', $kelasId)->update(['dosen_id' => $dosen->id]);
+                }
+            } else {
+                // Jika dosen bukan wali (is_wali = false), hapus dosen_id dari semua kelas
+                Kelas::where('dosen_id', $dosen->id)->update(['dosen_id' => null]);
             }
 
         // Handle different response types
