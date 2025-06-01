@@ -33,7 +33,6 @@ $(function () {
         { data: 'id' },
         { data: 'nama_pembuat' },
         { data: 'judul' },
-        { data: 'isi' },
         { data: 'tanggal_dibuat' },
         { data: 'status' },
         { data: '' }
@@ -79,22 +78,15 @@ $(function () {
           responsivePriority: 5
         },
         {
-          // For Isi
+          // For Tanggal Dibuat
           targets: 4,
           searchable: true,
           orderable: true,
           responsivePriority: 5
         },
         {
-          // For Tanggal Dibuat
-          targets: 5,
-          searchable: true,
-          orderable: true,
-          responsivePriority: 5
-        },
-        {
           // For Status
-          targets: 6,
+          targets: 5,
           searchable: true,
           orderable: true,
           responsivePriority: 5,

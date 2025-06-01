@@ -83,17 +83,6 @@
             </div>
           </div>
         </div>
-        
-        <!-- error handling for all fields -->
-        @if ($errors->any())
-          <div class="alert alert-danger">
-            <ul>
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-        @endif
 
         <div class="row mt-4">
           <div class="col-md-6 d-grid">

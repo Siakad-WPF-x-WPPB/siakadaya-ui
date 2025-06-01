@@ -47,7 +47,6 @@ $configData = Helper::appClasses();
             <th></th>
             <th>Nama pembuat</th>
             <th>Judul</th>
-            <th>Isi</th>
             <th>Tanggal</th>
             <th>Status</th>
             <th>Action</th>
