@@ -71,6 +71,50 @@ class MahasiswaController extends Controller
       }
     }
 
+    public function getFilterOptions(Request $request)
+    {
+        try {
+            $prodiId = $request->get('prodi_id');
+
+            $data = [
+                'program_studi' => ProgramStudi::select('id', 'nama')->get(),
+                'status' => [
+                    ['value' => 'Aktif', 'label' => 'Aktif'],
+                    ['value' => 'Cuti', 'label' => 'Cuti'],
+                    ['value' => 'Keluar', 'label' => 'Keluar']
+                ]
+            ];
+
+            // If prodi_id is provided, get kelas for that prodi
+            if ($prodiId) {
+                $data['kelas'] = Kelas::where('prodi_id', $prodiId)
+                    ->select('id', 'pararel')
+                    ->get();
+            } else {
+                $data['kelas'] = Kelas::select('id', 'pararel', 'prodi_id')
+                    ->with('programStudi:id,nama')
+                    ->get()
+                    ->map(function($kelas) {
+                        return [
+                            'id' => $kelas->id,
+                            'pararel' => $kelas->pararel,
+                            'prodi_nama' => $kelas->programStudi->nama ?? ''
+                        ];
+                    });
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data filter'
+            ], 500);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */

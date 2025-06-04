@@ -21,6 +21,14 @@ $(function () {
     dt_multilingual_table = $('.dt-multilingual'),
     dt_basic;
 
+  // Initialize filters
+  let prodiFilter = '';
+  let kelasFilter = '';
+  let statusFilter = '';
+  let semesterFilter = '';
+  let genderFilter = '';
+  let yearFilter = '';
+
   // DataTable with buttons
   // --------------------------------------------------------------------
 
@@ -30,8 +38,21 @@ $(function () {
       serverSide: true,
       ajax: {
         url: '/api/mahasiswa',
+        data: function(d) {
+          d.prodi_filter = prodiFilter;
+          d.kelas_filter = kelasFilter;
+          d.status_filter = statusFilter;
+          d.semester_filter = semesterFilter;
+          d.gender_filter = genderFilter;
+          d.year_filter = yearFilter;
+        },
         dataSrc: function (json) {
           console.log('Fetched data: ', json);
+
+          if (json.filterOptions) {
+            updateFilterDropdowns(json.filterOptions);
+          }
+
           return json.data;
         }
       },
@@ -199,7 +220,7 @@ $(function () {
           }
         }
       ],
-      order: [[2, 'desc']],
+      order: [[2, 'asc']],
       dom: '<"card-header flex-column flex-md-row"<"head-label text-center"><"dt-action-buttons text-end pt-6 pt-md-0"B>><"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end mt-n6 mt-md-0"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
       displayLength: 10,
       lengthMenu: [10, 25, 50, 75, 100],
@@ -392,9 +413,258 @@ $(function () {
       },
       initComplete: function (settings, json) {
         $('.card-header').after('<hr class="my-0">');
+
+        var filterHtml = '<div class="filter-container p-6">' + getFilterHTML() + '</div>';
+        $('.datatables-basic').closest('.card-datatable').before(filterHtml);
+
+        initializeFilterEvents();
+
+        loadFilterOptions();
       }
     });
     $('div.head-label').html('<h5 class="card-title mb-0">Tabel Mahasiswa</h5>');
+  }
+
+  // Function to generate filter HTML
+  function getFilterHTML() {
+    return `
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0 text-muted">
+          <i class="ti ti-filter me-2"></i>Filter Data
+        </h6>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="reset-filters">
+          <i class="ti ti-refresh me-1"></i>Reset
+        </button>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="prodi-filter" class="form-label fw-medium">
+            <i class="ti ti-school me-1"></i>Program Studi
+          </label>
+          <select id="prodi-filter" class="form-select">
+            <option value="">Semua Program Studi</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="kelas-filter" class="form-label fw-medium">
+            <i class="ti ti-users me-1"></i>Kelas
+          </label>
+          <select id="kelas-filter" class="form-select">
+            <option value="">Semua Kelas</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="status-filter" class="form-label fw-medium">
+            <i class="ti ti-user-check me-1"></i>Status
+          </label>
+          <select id="status-filter" class="form-select">
+            <option value="">Semua Status</option>
+          </select>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <label for="semester-filter" class="form-label fw-medium">
+            <i class="ti ti-calendar me-1"></i>Semester
+          </label>
+          <select id="semester-filter" class="form-select">
+            <option value="">Semua Semester</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="3">Semester 3</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+            <option value="7">Semester 7</option>
+            <option value="8">Semester 8</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="gender-filter" class="form-label fw-medium">
+            <i class="ti ti-gender-male me-1"></i>Jenis Kelamin
+          </label>
+          <select id="gender-filter" class="form-select">
+            <option value="">Semua Jenis Kelamin</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="year-filter" class="form-label fw-medium">
+            <i class="ti ti-calendar-time me-1"></i>Tahun Masuk
+          </label>
+          <select id="year-filter" class="form-select">
+            <option value="">Semua Tahun</option>
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  // Function to initialize filter events
+  function initializeFilterEvents() {
+    // Program Studi filter change
+    $('#prodi-filter').on('change', function() {
+      prodiFilter = $(this).val();
+      kelasFilter = ''; // Reset kelas filter
+      $('#kelas-filter').val(''); // Reset kelas dropdown
+
+      // Load kelas for selected prodi
+      if (prodiFilter) {
+        loadKelasForProdi(prodiFilter);
+      } else {
+        loadAllKelas();
+      }
+
+      // Reload table
+      dt_basic.ajax.reload();
+    });
+
+    // Kelas filter change
+    $('#kelas-filter').on('change', function() {
+      kelasFilter = $(this).val();
+      dt_basic.ajax.reload();
+    });
+
+    // Status filter change
+    $('#status-filter').on('change', function() {
+      statusFilter = $(this).val();
+      dt_basic.ajax.reload();
+    });
+
+    $('#semester-filter').on('change', function() {
+      semesterFilter = $(this).val();
+      dt_basic.ajax.reload();
+    });
+
+    $('#gender-filter').on('change', function() {
+      genderFilter = $(this).val();
+      dt_basic.ajax.reload();
+    });
+
+    $('#year-filter').on('change', function() {
+      yearFilter = $(this).val();
+      dt_basic.ajax.reload();
+    });
+
+    // Reset filters
+    $('#reset-filters').on('click', function() {
+      resetAllFilters();
+    });
+  }
+
+  // Function to reset all filters
+  function resetAllFilters() {
+    prodiFilter = '';
+    kelasFilter = '';
+    statusFilter = '';
+    semesterFilter = '';
+    genderFilter = '';
+    yearFilter = '';
+
+    $('#prodi-filter').val('');
+    $('#kelas-filter').val('');
+    $('#status-filter').val('');
+    $('#semester-filter').val('');
+    $('#gender-filter').val('');
+    $('#year-filter').val('');
+
+    loadAllKelas();
+    dt_basic.ajax.reload();
+  }
+
+  // Function to load filter options
+  function loadFilterOptions() {
+    $.ajax({
+      url: '/api/mahasiswa/filter-options',
+      method: 'GET',
+      success: function(response) {
+        if (response.success) {
+          updateFilterDropdowns(response.data);
+        }
+      },
+      error: function(xhr) {
+        console.error('Error loading filter options:', xhr);
+      }
+    });
+  }
+
+  // Function to load kelas for specific prodi
+  function loadKelasForProdi(prodiId) {
+    $.ajax({
+      url: `/api/kelas-by-prodi/${prodiId}`,
+      method: 'GET',
+      success: function(response) {
+        if (response.success) {
+          updateKelasDropdown(response.data);
+        }
+      },
+      error: function(xhr) {
+        console.error('Error loading kelas:', xhr);
+      }
+    });
+  }
+
+  // Function to load all kelas
+  function loadAllKelas() {
+    $.ajax({
+      url: '/api/mahasiswa/filter-options',
+      method: 'GET',
+      success: function(response) {
+        if (response.success) {
+          updateKelasDropdown(response.data.kelas);
+        }
+      },
+      error: function(xhr) {
+        console.error('Error loading all kelas:', xhr);
+      }
+    });
+  }
+
+  // Function to update filter dropdowns
+  function updateFilterDropdowns(data) {
+    // Update Program Studi
+    if (data.program_studi) {
+      const prodiSelect = $('#prodi-filter');
+      prodiSelect.empty().append('<option value="">Semua Program Studi</option>');
+      data.program_studi.forEach(function(prodi) {
+        prodiSelect.append(`<option value="${prodi.id}">${prodi.nama}</option>`);
+      });
+    }
+
+    // Update Kelas
+    if (data.kelas) {
+      updateKelasDropdown(data.kelas);
+    }
+
+    // Update Status
+    if (data.status) {
+      const statusSelect = $('#status-filter');
+      statusSelect.empty().append('<option value="">Semua Status</option>');
+      data.status.forEach(function(status) {
+        statusSelect.append(`<option value="${status.value}">${status.label}</option>`);
+      });
+    }
+
+    // Update Tahun Masuk
+    if (data.years) {
+    const yearSelect = $('#year-filter');
+    yearSelect.empty().append('<option value="">Semua Tahun</option>');
+    data.years.forEach(function(year) {
+      yearSelect.append(`<option value="${year.value}">${year.label}</option>`);
+    });
+  }
+  }
+
+  // Function to update kelas dropdown
+  function updateKelasDropdown(kelasData) {
+    const kelasSelect = $('#kelas-filter');
+    kelasSelect.empty().append('<option value="">Semua Kelas</option>');
+
+    kelasData.forEach(function(kelas) {
+      const label = kelas.prodi_nama ? `${kelas.pararel} (${kelas.prodi_nama})` : kelas.pararel;
+      kelasSelect.append(`<option value="${kelas.id}">${label}</option>`);
+    });
   }
 
   // Delete record with route destroy
