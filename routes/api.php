@@ -93,6 +93,8 @@ Route::get('/mahasiswa', function () {
   return new MahasiswaCollection([]);
 });
 Route::get('/mahasiswa/{id}', [MahasiswaController::class, 'show']);
+Route::get('/api/mahasiswa/filter-options', [MahasiswaController::class, 'getFilterOptions']);
+Route::get('/api/kelas-by-prodi/{prodiId}', [MahasiswaController::class, 'getKelasByProdi']);
 Route::post('/mahasiswa/store', [MahasiswaController::class, 'store']);
 Route::put('/mahasiswa/update/{id}', [MahasiswaController::class, 'update']);
 Route::delete('/mahasiswa/destroy/{id}', [MahasiswaController::class, 'destroy']);
