@@ -17,7 +17,8 @@ use App\Http\Controllers\pages\admin\{
   KelasController,
   MahasiswaController,
   MataKuliahController,
-  TahunAjarController,
+    PengumumanController,
+    TahunAjarController,
   ProgramStudiController,
   RuanganController,
 };
@@ -126,6 +127,15 @@ Route::prefix('admin')->group(function () {
       'update'  => 'admin-ruangan-update',
       'destroy' => 'admin-ruangan-destroy',
     ]);
+    Route::resource('pengumuman', PengumumanController::class)->names([
+      'index'   => 'admin-pengumuman-index',
+      'create'  => 'admin-pengumuman-create',
+      'store'   => 'admin-pengumuman-store',
+      'show'    => 'admin-pengumuman-show',
+      'edit'    => 'admin-pengumuman-edit',
+      'update'  => 'admin-pengumuman-update',
+      'destroy' => 'admin-pengumuman-destroy',
+    ]);
   });
 });
 
@@ -147,6 +157,8 @@ Route::prefix('dosen')->group(
         Route::post('/jadwal-kuliah/{jadwal}/nilai/{mahasiswa}', [DosenNilaiController::class, 'store'])->name('dosen.nilai.store');
         Route::post('jadwal/{jadwal}/nilai/import', [DosenNilaiController::class, 'import'])->name('dosen.nilai.import');
         Route::get('jadwal/{jadwal}/nilai/template', [DosenNilaiController::class, 'downloadTemplate'])->name('dosen.nilai.template');
+        Route::delete('jadwal/{jadwal}/mahasiswa/{mahasiswa}/nilai', [DosenNilaiController::class, 'destroy'])->name('dosen.nilai.destroy');
+        Route::delete('jadwal/{jadwal}/nilai/all', [DosenNilaiController::class, 'destroyAll'])->name('dosen.nilai.destroyAll');
 
         // Route FRS
         Route::get('/frs', [DosenFrsController::class, 'index'])->name('dosen-frs-index');
