@@ -75,8 +75,8 @@ $(function () {
         {
           // For NRP
           targets: 2,
-          searchable: false,
-          orderable: false,
+          searchable: true,
+          orderable: true,
           responsivePriority: 5
         },
         {
@@ -89,25 +89,36 @@ $(function () {
         {
           // For Program Studi
           targets: 4,
-          searchable: true,
+          searchable: false,
           orderable: true,
           responsivePriority: 5,
           render: function (data, type, full, meta) {
-            var $kode_jurusan = full['kode_jurusan'];
-            var $jurusan_label = {
-              1: { title: 'Teknik Informatika', class: 'bg-label-primary' },
-              2: { title: 'Sains Data Terapan', class: 'bg-label-success' },
-              3: { title: 'Teknik Komputer', class: 'bg-label-danger' }
-            };
-            if (typeof $jurusan_label[$kode_jurusan] === 'undefined') {
-              return data;
+            var $program_studi = full['program_studi'];
+
+            // Array of available badge classes
+            var badgeClasses = [
+              'bg-label-primary',
+              'bg-label-success',
+              'bg-label-danger',
+              'bg-label-warning',
+              'bg-label-info',
+              'bg-label-secondary',
+              'bg-label-dark'
+            ];
+
+            // Generate consistent color based on string hash
+            function getHashColor(str) {
+              var hash = 0;
+              for (var i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+              }
+              return badgeClasses[Math.abs(hash) % badgeClasses.length];
             }
+
+            var badgeClass = getHashColor($program_studi);
+
             return (
-              '<span class="badge ' +
-              $jurusan_label[$kode_jurusan].class +
-              '">' +
-              $jurusan_label[$kode_jurusan].title +
-              '</span>'
+              '<span class="badge ' + badgeClass + '">' + $program_studi + '</span>'
             );
           }
         },
@@ -117,21 +128,6 @@ $(function () {
           searchable: false,
           orderable: true,
           responsivePriority: 6,
-          render: function (data, type, full, meta) {
-            var $id_kelas = full['id_kelas'];
-            var $kelas_label = {
-              1: { title: 'A', class: 'bg-label-primary' },
-              2: { title: 'B', class: 'bg-label-success' },
-              3: { title: 'C', class: 'bg-label-danger' },
-              4: { title: 'D', class: 'bg-label-warning' }
-            };
-            if (typeof $kelas_label[$id_kelas] === 'undefined') {
-              return data;
-            }
-            return (
-              '<span class="badge ' + $kelas_label[$id_kelas].class + '">' + $kelas_label[$id_kelas].title + '</span>'
-            );
-          }
         },
         {
           // For Jenis Kelamin
@@ -142,7 +138,7 @@ $(function () {
           render: function (data, type, full, meta) {
             var $jenis_kelamin = full['jenis_kelamin'];
             var $kelamin_label = {
-              L: { title: 'Laki-laki', class: 'bg-label-primary' },
+              L: { title: 'Laki-laki', class: 'bg-label-info' },
               P: { title: 'Perempuan', class: 'bg-label-success' }
             };
             if (typeof $kelamin_label[$jenis_kelamin] === 'undefined') {
